@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>democrat.ai</title>
+<meta name="description" content="A political presence, in one place.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%230a3fd6'/></svg>">
+<style>
+:root{
+  --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
+  --line:rgba(10,32,90,.10); --soft:rgba(10,32,90,.05);
+  --tile:clamp(52px,5.6vw,80px); --pad:clamp(20px,3.2vw,44px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:#fff;color:var(--ink);min-height:100svh;overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+
+.field{position:fixed;inset:0;z-index:0;pointer-events:none;background:#fff}
+.rings{position:absolute;left:50%;top:50%;width:220vmax;height:220vmax;margin:-110vmax 0 0 -110vmax;
+  background:repeating-radial-gradient(circle at center,rgba(10,32,90,0) 0,rgba(10,32,90,.02) 26px,rgba(10,32,90,0) 58px);
+  animation:breathe 26s ease-in-out infinite;will-change:transform}
+.glow{position:absolute;inset:-25%;background:radial-gradient(38% 38% at 22% 30%,rgba(10,63,214,.05),transparent 70%);
+  filter:blur(30px);animation:drift 44s ease-in-out infinite alternate}
+.vignette{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,0) 40%,#fff 92%)}
+@keyframes breathe{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.16) rotate(4deg)}}
+@keyframes drift{0%{transform:translate3d(-2%,-1%,0)}100%{transform:translate3d(3%,2%,0) scale(1.08)}}
+
+.mark{position:fixed;z-index:5;top:clamp(20px,3.4vh,38px);left:var(--pad);display:flex;align-items:center;
+  gap:clamp(9px,1vw,14px);text-decoration:none;color:inherit}
+.dot{width:clamp(13px,1.35vw,19px);aspect-ratio:1;border-radius:50%;background:var(--blue);position:relative;flex:none}
+.dot::after{content:"";position:absolute;inset:0;border-radius:50%;animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(10,63,214,.26)}70%{box-shadow:0 0 0 22px rgba(10,63,214,0)}100%{box-shadow:0 0 0 0 rgba(10,63,214,0)}}
+.word{font-size:clamp(16px,1.7vw,24px);font-weight:590;letter-spacing:-.028em}
+.word .tld{color:var(--blue)}
+
+.stage{position:relative;z-index:2;min-height:100svh;display:grid;grid-template-columns:auto minmax(0,1fr);
+  gap:clamp(22px,3vw,52px);padding:clamp(84px,11vh,120px) var(--pad) clamp(28px,4vh,48px)}
+.rail{display:grid;grid-template-columns:repeat(2,var(--tile));column-gap:calc(var(--tile)*.45);
+  row-gap:calc(var(--tile)*.30);align-content:center;justify-content:start}
+.app{display:flex;flex-direction:column;align-items:center;gap:calc(var(--tile)*.085);background:none;border:0;
+  padding:0;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  opacity:0;transform:translateY(12px);animation:pop .5s cubic-bezier(.2,.9,.25,1) forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.tile{width:var(--tile);height:var(--tile);display:block;position:relative;
+  transition:transform .22s cubic-bezier(.2,.9,.25,1),filter .18s}
+.tile svg{width:100%;height:100%;display:block}
+.app:hover .tile{transform:scale(1.035)}
+.app:active .tile{transform:scale(.90);filter:brightness(.86);transition-duration:.09s}
+.app:focus-visible{outline:none}
+.app:focus-visible .tile{filter:drop-shadow(0 0 3px rgba(10,63,214,.9))}
+.label{font-size:calc(var(--tile)*.175);font-weight:400;color:#1c1c1e;white-space:nowrap;line-height:1.2}
+.app.on .label{font-weight:590}
+.app.on::after{content:"";position:absolute;bottom:calc(var(--tile)*-.20);width:5px;height:5px;
+  border-radius:50%;background:var(--blue)}
+.badge{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;
+  background:var(--blue);color:#fff;font-size:11px;font-weight:650;display:grid;place-items:center;
+  box-shadow:0 0 0 2.5px #fff}
+
+.panel{background:rgba(255,255,255,.9);backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--line);border-radius:26px;
+  box-shadow:0 18px 48px -20px rgba(8,26,72,.20);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.phead{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line);flex:none}
+.hicon{width:34px;height:34px;flex:none;display:block}
+.hicon svg{width:100%;height:100%;display:block}
+.phead h2{font-size:17px;font-weight:640;letter-spacing:-.022em}
+.phead p{font-size:12.5px;color:var(--muted);margin-top:1px}
+.phead .grow{flex:1;min-width:0}
+.acts{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.pclose{width:30px;height:30px;border-radius:50%;border:0;cursor:pointer;background:var(--soft);
+  color:#4c5570;font-size:14px;display:none;place-items:center}
+.pbody{padding:clamp(18px,3vh,30px) 20px;overflow:auto;flex:1;min-height:0;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.screen{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+.btn{border:0;border-radius:11px;padding:9px 15px;font-size:13.5px;font-weight:590;background:var(--blue);
+  color:#fff;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.ghost{background:var(--soft);color:#232a3a}
+.iconbtn{border:0;background:none;cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500;
+  padding:5px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:5px;transition:.15s;
+  text-decoration:none}
+.iconbtn:hover{background:var(--soft);color:var(--ink)}
+.iconbtn.on{color:var(--blue);font-weight:640}
+.inp,.ta{width:100%;border:1px solid var(--line);border-radius:13px;background:#fff;padding:12px 14px;
+  font-size:14.5px;line-height:1.5}
+.inp::placeholder,.ta::placeholder{color:#9aa3b8}
+.inp:focus,.ta:focus{outline:none;border-color:rgba(10,63,214,.5)}
+.ta{resize:none;min-height:96px}
+.frow{display:flex;gap:8px;align-items:center}
+.frow .inp{flex:1}
+.seg{display:flex;background:var(--soft);border-radius:11px;padding:3px;flex:none}
+.seg button{border:0;background:none;cursor:pointer;font-size:13px;font-weight:560;color:var(--muted);
+  padding:7px 13px;border-radius:8px}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(8,26,72,.12)}
+
+.list{display:flex;flex-direction:column}
+.item{padding:15px 0;border-top:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.item:first-child{border-top:0}
+.item .grow{flex:1;min-width:0}
+.item h3{font-size:14.5px;font-weight:600;letter-spacing:-.012em}
+.item p{font-size:14px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.item small,.meta{font-size:12.5px;color:var(--muted)}
+.rowacts{display:flex;gap:2px;margin-top:8px;margin-left:-8px;flex-wrap:wrap}
+.tag{font-size:11.5px;font-weight:640;padding:4px 9px;border-radius:99px;background:var(--soft);
+  color:#333d55;flex:none;border:0;font-family:inherit}
+button.tag{cursor:pointer}
+.tag.b{background:rgba(10,63,214,.1);color:var(--blue)}
+.empty{text-align:center;color:var(--muted);font-size:13.5px;line-height:1.55;padding:46px 10px}
+.empty b{display:block;color:var(--ink);font-size:15.5px;font-weight:620;margin-bottom:5px}
+.bar{height:7px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:7px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--blue);transition:width .4s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;background:#fff}
+.stats>div{padding:15px 6px;text-align:center;border-left:1px solid var(--line)}
+.stats>div:first-child{border-left:0}
+.stats b{display:block;font-size:21px;font-weight:660;letter-spacing:-.02em}
+.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hint{font-size:12.5px;color:var(--muted);text-align:center}
+
+.pbody.pf{display:flex;align-items:center;justify-content:center}
+.pfwrap{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;
+  gap:clamp(13px,2.2vh,20px);text-align:center}
+.pfav{--s:clamp(100px,14vh,132px);width:var(--s);height:var(--s);border-radius:50%;position:relative;
+  border:0;padding:0;cursor:pointer;background:rgba(10,63,214,.05);box-shadow:inset 0 0 0 2px rgba(10,63,214,.15);
+  transition:transform .2s,box-shadow .2s}
+.pfav[disabled]{cursor:default}
+.pfav:not([disabled]):hover{transform:scale(1.02);box-shadow:inset 0 0 0 2px rgba(10,63,214,.32)}
+.pfav:not([disabled]):active{transform:scale(.97)}
+.pfin{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.pfin img{width:100%;height:100%;object-fit:cover;display:block}
+.pfcam{position:absolute;right:1%;bottom:1%;width:31%;height:31%;border-radius:50%;background:var(--blue);
+  display:grid;place-items:center;box-shadow:0 0 0 3px #fff}
+.pfcam svg{width:54%;height:54%}
+.pfname{border:0;background:none;font-size:19px;font-weight:640;letter-spacing:-.024em;padding:3px 8px;
+  margin:-3px -8px;border-radius:9px;width:100%;max-width:300px}
+.pfname::placeholder{color:#9aa3b8;font-weight:500}
+.pfhandle{display:flex;align-items:center;font-size:12.5px;color:var(--muted)}
+.pfhandle input{border:0;background:none;font-size:12.5px;color:var(--muted);padding:2px 5px;margin:-2px -5px;
+  border-radius:7px;width:150px}
+.pfname:focus,.pfhandle input:focus{outline:none;background:rgba(10,63,214,.06)}
+.panel[data-edit="1"] .pfname,.panel[data-edit="1"] .pfhandle input{background:var(--soft)}
+.pfbio{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14.5px;
+  line-height:1.5;padding:12px 14px;resize:none;text-align:center}
+.pfbio::placeholder{color:#9aa3b8}
+.pfbio:focus{outline:none;border-color:rgba(10,63,214,.5)}
+.pfbio[readonly]{border-color:transparent;background:none}
+
+.auth{max-width:330px;margin:auto;text-align:center;display:flex;flex-direction:column;gap:13px;padding:34px 0}
+.auth h3{font-size:19px;font-weight:640;letter-spacing:-.024em}
+.auth p{font-size:13.5px;color:var(--muted);line-height:1.55}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,18px);z-index:60;background:rgba(12,18,34,.93);
+  color:#fff;font-size:13px;font-weight:500;padding:10px 16px;border-radius:11px;opacity:0;pointer-events:none;
+  transition:.26s;max-width:86vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.mode{position:fixed;right:var(--pad);top:clamp(20px,3.4vh,38px);z-index:5;font-size:11.5px;font-weight:600;
+  color:var(--muted);background:var(--soft);padding:5px 11px;border-radius:99px}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--soft);border-top-color:var(--blue);
+  animation:sp .7s linear infinite;margin:60px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media (max-width:900px){
+  :root{--tile:clamp(58px,16vw,78px)}
+  .stage{grid-template-columns:1fr;padding-top:92px}
+  .rail{grid-template-columns:repeat(4,var(--tile));justify-content:center;align-content:start}
+  .panel{position:fixed;inset:auto 0 0 0;height:90svh;z-index:20;border-radius:24px 24px 0 0;
+    transform:translateY(101%);transition:transform .38s cubic-bezier(.25,.9,.3,1)}
+  body.open .panel{transform:none}
+  .pclose{display:grid}
+  .mode{display:none}
+}
+@media (max-width:420px){.rail{grid-template-columns:repeat(3,var(--tile))}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stats>div:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (prefers-reduced-motion:reduce){.rings,.glow,.dot::after{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
+<a class="mark" href="?"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+<div class="mode" id="mode" hidden></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<clipPath id="sq" clipPathUnits="userSpaceOnUse"><path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z"/></clipPath>
+<linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#fff" stop-opacity=".13"/><stop offset=".5" stop-color="#fff" stop-opacity=".02"/>
+  <stop offset="1" stop-color="#040C22" stop-opacity=".07"/></linearGradient>
+<linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".55" stop-color="#fff" stop-opacity=".04"/>
+  <stop offset="1" stop-color="#fff" stop-opacity=".12"/></linearGradient>
+<radialGradient id="lift" cx=".3" cy=".04" r=".9">
+  <stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs></svg>
+
+<div class="stage">
+  <nav class="rail" id="rail" aria-label="Apps"></nav>
+  <section class="panel" id="panel"></section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ===========================================================================
+   democrat.ai
+   Paste your Supabase project URL and anon key below and the whole site runs
+   on a real backend: accounts, public profiles, posts, polls, events, likes,
+   follows, shares. Leave them blank and it runs locally in this browser.
+   =========================================================================== */
+const CFG = {
+  url: '',   // https://xxxxxxxx.supabase.co
+  key: ''    // anon / publishable key
+};
+
+const BLUE = '#0A3FD6';
+const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
+const APPS = [
+{id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
+       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"/>
+       <circle cx="88" cy="60" r="16" fill="${BLUE}"/>
+       <circle cx="88" cy="60" r="12" fill="#fff"/>
+       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="${BLUE}" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`},
+{id:'feed',name:'Feed',art:`<circle cx="27" cy="34" r="7" fill="#fff"/>
+       <rect x="44" y="28" width="52" height="12" rx="6" fill="#fff"/>
+       <circle cx="27" cy="60" r="7" fill="#fff"/>
+       <rect x="44" y="54" width="52" height="12" rx="6" fill="#fff"/>
+       <circle cx="27" cy="86" r="7" fill="#fff"/>
+       <rect x="44" y="80" width="34" height="12" rx="6" fill="#fff"/>`},
+{id:'compose',name:'Compose',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
+       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
+       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
+{id:'issues',name:'Issues',art:`<circle cx="60" cy="26" r="7" fill="#fff"/>
+       <rect x="56.5" y="30" width="7" height="62" rx="3.5" fill="#fff"/>
+       <rect x="18" y="40" width="84" height="7" rx="3.5" fill="#fff"/>
+       <path d="M28 47v9M92 47v9" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+       <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
+       <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
+       <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"/>`},
+{id:'endorsed',name:'Endorsed',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
+{id:'townhall',name:'Town Hall',art:`<rect x="58.6" y="10" width="2.8" height="9" rx="1.4" fill="#fff"/>
+       <path d="M49 30a11 11 0 0 1 22 0Z" fill="#fff"/>
+       <path d="M13 52 60 28l47 24Z" fill="#fff"/>
+       <rect x="19" y="54" width="82" height="7" rx="2" fill="#fff"/>
+       <rect x="31" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="55" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="79" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="15" y="96" width="90" height="9" rx="3" fill="#fff"/>`},
+{id:'ballot',name:'Ballot',art:`<rect x="38" y="14" width="44" height="42" rx="7" fill="#fff"/>
+       <path d="M50 34.5l7.5 7.5 14.5-15" stroke="#E5352B" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+       <rect x="16" y="52" width="88" height="54" rx="11" fill="#fff"/>
+       <rect x="42" y="60" width="36" height="9" rx="4.5" fill="${BLUE}"/>`},
+{id:'polls',name:'Polls',art:`<rect x="16" y="56" width="20" height="42" rx="10" fill="#fff"/>
+       <rect x="50" y="30" width="20" height="68" rx="10" fill="#fff"/>
+       <rect x="84" y="44" width="20" height="54" rx="10" fill="#fff"/>`},
+{id:'fundraise',name:'Fundraise',art:`<path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"/>
+       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"/>`},
+{id:'reach',name:'Reach',art:`<circle cx="60" cy="60" r="46" fill="none" stroke="#fff" stroke-width="8"/>
+       <circle cx="60" cy="60" r="31" fill="none" stroke="#fff" stroke-width="8"/>
+       <circle cx="60" cy="60" r="16" fill="none" stroke="#fff" stroke-width="8"/>`}
+];
+
+const ONLINE = !!(CFG.url && CFG.key && window.supabase);
+const sb = ONLINE ? window.supabase.createClient(CFG.url, CFG.key) : null;
+
+/* ------------------------------------------------------------------ helpers */
+const $  = id => document.getElementById(id);
+const uid = () => Math.random().toString(36).slice(2,10);
+const esc = t => (t||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => '$' + Math.round(n||0).toLocaleString();
+function ago(ts){
+  const s = (Date.now() - new Date(ts).getTime())/1e3;
+  if(s<60) return 'now';
+  if(s<3600) return Math.floor(s/60)+'m';
+  if(s<86400) return Math.floor(s/3600)+'h';
+  if(s<604800) return Math.floor(s/86400)+'d';
+  return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function dfmt(d){
+  const [y,m,dd] = String(d).split('-').map(Number);
+  return new Date(y,m-1,dd).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+}
+let toastEl;
+function toast(m){
+  if(!toastEl){ toastEl=document.createElement('div'); toastEl.className='toast'; document.body.appendChild(toastEl); }
+  toastEl.textContent=m; toastEl.classList.add('on');
+  clearTimeout(toast._t); toast._t=setTimeout(()=>toastEl.classList.remove('on'),2400);
+}
+function crop(file,size,cb){
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const s=Math.min(img.width,img.height), c=document.createElement('canvas');
+      c.width=c.height=size;
+      c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,size,size);
+      c.toBlob(b=>cb(b, c.toDataURL('image/jpeg',.88)), 'image/jpeg', .88);
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(file);
+}
+
+/* ------------------------------------------------------------------- state */
+let ME = null;            // signed-in profile row
+let V  = null;            // the profile being viewed
+let D  = blank();         // that profile's content
+let RO = false;           // read-only (viewing someone else)
+let current = 'profile';
+
+function blank(){
+  return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
+          followers:0,following:0,shares:0,isFollowing:false};
+}
+const qHandle = () => new URLSearchParams(location.search).get('u');
+const publicUrl = h => location.origin + location.pathname + (h ? '?u='+h : '');
+
+/* -------------------------------------------------------------- local mode */
+const LKEY='dai.local';
+function localDB(){
+  try{ return JSON.parse(localStorage.getItem(LKEY)||'null') || seedLocal(); }
+  catch(e){ return seedLocal(); }
+}
+function seedLocal(){
+  return {profile:{id:'local',handle:'',name:'',bio:'',photo_url:'',ballot:{},goal:0,donate_link:''},
+          posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],shares:0};
+}
+function localSave(db){ try{ localStorage.setItem(LKEY, JSON.stringify(db)) }catch(e){} }
+
+/* ------------------------------------------------------------------- data */
+async function load(){
+  if(!ONLINE){
+    const db = localDB();
+    ME = V = db.profile; RO = false;
+    D = Object.assign(blank(), {posts:db.posts, issues:db.issues, ends:db.ends,
+        events:db.events, polls:db.polls, gifts:db.gifts, shares:db.shares||0});
+    return;
+  }
+  const { data:{ session } } = await sb.auth.getSession();
+  ME = session ? (await sb.from('profiles').select('*').eq('id',session.user.id).maybeSingle()).data : null;
+
+  const h = qHandle();
+  V = h ? (await sb.from('profiles').select('*').eq('handle',h).maybeSingle()).data : ME;
+  RO = !!(V && ME && V.id !== ME.id) || !!(V && !ME);
+  D = blank();
+  if(!V) return;
+
+  const pid = V.id;
+  const [posts,issues,ends,events,polls,gifts,followers,following,shares] = await Promise.all([
+    sb.from('posts').select('*').eq('author',pid).order('created_at',{ascending:false}).limit(100),
+    sb.from('issues').select('*').eq('author',pid).order('created_at',{ascending:false}),
+    sb.from('endorsements').select('*').eq('author',pid).order('created_at',{ascending:false}),
+    sb.from('events').select('*').eq('author',pid).order('date'),
+    sb.from('polls').select('*, poll_options(*)').eq('author',pid).order('created_at',{ascending:false}),
+    ME && (!RO) ? sb.from('gifts').select('*').eq('author',pid) : Promise.resolve({data:[]}),
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('followee',pid),
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('follower',pid),
+    sb.from('shares').select('*',{count:'exact',head:true}).eq('profile_id',pid)
+  ]);
+
+  D.posts  = posts.data||[];  D.issues = issues.data||[]; D.ends = ends.data||[];
+  D.events = events.data||[]; D.polls  = polls.data||[];  D.gifts = gifts.data||[];
+  D.followers = followers.count||0; D.following = following.count||0; D.shares = shares.count||0;
+
+  const ids = D.posts.map(p=>p.id);
+  if(ids.length){
+    const { data:likes } = await sb.from('likes').select('post_id,user_id').in('post_id',ids);
+    D.posts.forEach(p=>{
+      const mine = (likes||[]).filter(l=>l.post_id===p.id);
+      p.likes = mine.length;
+      p.liked = !!(ME && mine.some(l=>l.user_id===ME.id));
+    });
+  }
+  const pids = D.polls.map(p=>p.id);
+  if(pids.length){
+    const { data:votes } = await sb.from('poll_votes').select('poll_id,option_id,user_id').in('poll_id',pids);
+    D.polls.forEach(p=>{
+      p.poll_options.sort((a,b)=>a.ord-b.ord);
+      const vs = (votes||[]).filter(v=>v.poll_id===p.id);
+      p.total = vs.length;
+      p.poll_options.forEach(o=>o.v = vs.filter(v=>v.option_id===o.id).length);
+      p.voted = ME ? (vs.find(v=>v.user_id===ME.id)||{}).option_id || null : null;
+    });
+  }
+  const eids = D.events.map(e=>e.id);
+  if(eids.length){
+    const { data:rs } = await sb.from('rsvps').select('event_id,user_id').in('event_id',eids);
+    D.events.forEach(e=>{
+      const mine = (rs||[]).filter(r=>r.event_id===e.id);
+      e.going = mine.length;
+      e.rsvped = !!(ME && mine.some(r=>r.user_id===ME.id));
+    });
+  }
+  if(ME && RO){
+    const { data:f } = await sb.from('follows').select('*').eq('follower',ME.id).eq('followee',pid).maybeSingle();
+    D.isFollowing = !!f;
+  }
+}
+
+/* every mutation goes through here: write, reload, repaint */
+async function mutate(fn){
+  try{
+    if(!ONLINE){
+      const db = localDB(); fn.local && fn.local(db); localSave(db);
+    } else {
+      const err = await fn.remote();
+      if(err){ toast(friendly(err)); return; }
+    }
+  }catch(e){ toast('Something went wrong'); return; }
+  await load(); render();
+}
+function friendly(e){
+  const m = (e.message||'').toLowerCase();
+  if(m.includes('duplicate') && m.includes('handle')) return 'That handle is taken';
+  if(m.includes('handle_format')) return 'Handles are 2–20 letters, numbers or _';
+  if(m.includes('row-level security')) return 'Sign in first';
+  return e.message || 'Something went wrong';
+}
+
+async function needAuth(){
+  if(ME) return true;
+  if(!ONLINE) return true;
+  toast('Sign in to do that'); open_('profile'); return false;
+}
+
+/* ------------------------------------------------------------------ share */
+async function share(text){
+  const url = publicUrl(V && V.handle);
+  if(ONLINE && V) sb.from('shares').insert({profile_id:V.id}).then(()=>{});
+  if(!ONLINE){ const db=localDB(); db.shares=(db.shares||0)+1; localSave(db); D.shares=db.shares; }
+  try{
+    if(navigator.share){ await navigator.share({text,url}); return; }
+  }catch(e){ return; }
+  try{ await navigator.clipboard.writeText(text+'\n'+url); toast('Copied to clipboard'); }
+  catch(e){ toast(url); }
+}
+
+/* ------------------------------------------------------------------ icons */
+const ico = {
+  like :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.5S3.5 14.6 3.5 9.4A5 5 0 0 1 12 6.3a5 5 0 0 1 8.5 3.1c0 5.2-8.5 11.1-8.5 11.1Z"/></svg>',
+  liked:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5S3.5 14.6 3.5 9.4A5 5 0 0 1 12 6.3a5 5 0 0 1 8.5 3.1c0 5.2-8.5 11.1-8.5 11.1Z"/></svg>',
+  share:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg>',
+  del  :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M10 7V5h4v2M8 7l.8 12.1a1 1 0 0 0 1 .9h4.4a1 1 0 0 0 1-.9L16 7"/></svg>'
+};
+const act = (k,label,on) => `<button class="iconbtn${on?' on':''}" data-act="${k}">${ico[k]||''}${label!==undefined&&label!==''?`<span>${label}</span>`:''}</button>`;
+
+const icon = a => `<svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="${BLUE}"/>
+    ${a.id==='profile' && V && V.photo_url
+      ? `<image href="${V.photo_url}" width="120" height="120" preserveAspectRatio="xMidYMid slice"/>`
+      : a.art}
+    <rect width="120" height="120" fill="url(#lift)"/>
+    <rect width="120" height="120" fill="url(#sheen)"/>
+    <path d="${SQ}" fill="none" stroke="url(#rim)" stroke-width="2"/>
+  </g>
+  <path d="${SQ}" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"/>
+</svg>`;
+
+/* ---------------------------------------------------------------- screens */
+const S = {};
+
+S.profile = {
+  sub:'Your public identity',
+  head(){
+    if(!V) return `<h2>democrat.ai</h2><p>Sign in to claim your profile</p>`;
+    return `<input id="pfName" class="pfname" placeholder="Type your name" value="${esc(V.name)}" ${RO?'readonly':''}>
+      <div class="pfhandle"><span>@</span><input id="pfHandle" placeholder="handle" value="${esc(V.handle)}" ${RO?'readonly':''}></div>`;
+  },
+  acts(){
+    if(!V) return '';
+    if(RO) return `<button class="btn ghost" id="pfShare">Share</button>
+                   <button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`;
+    return `<button class="btn ghost" id="pfShare">Share</button><button class="btn" id="pfEdit">Edit</button>`;
+  },
+  view(){
+    if(!V) return authView();
+    return `<div class="pfwrap">
+      <button class="pfav" id="pfAv" ${RO?'disabled':''} aria-label="Add a photo">
+        <span class="pfin">${V.photo_url?`<img src="${V.photo_url}" alt="">`:''}</span>
+        ${RO?'':`<span class="pfcam"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3.2L9 6h6l1.8 2.5H20A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span>`}
+      </button>
+      ${RO?'':`<p class="hint">${V.photo_url?'Change photo':'Add a photo'}</p>`}
+      <textarea class="pfbio" id="pfBio" rows="3" placeholder="Write a short bio." ${RO?'readonly':''}>${esc(V.bio)}</textarea>
+      <div class="stats">
+        <div><b>${D.followers}</b><span>Followers</span></div>
+        <div><b>${D.following}</b><span>Following</span></div>
+        <div><b>${D.posts.length}</b><span>Posts</span></div>
+        <div><b>${D.shares}</b><span>Shares</span></div>
+      </div>
+      ${RO?`<p class="hint">Viewing @${esc(V.handle)} · <a href="?" style="color:var(--blue)">make your own</a></p>`
+          :`<p class="hint">${ONLINE?`Your page: ${publicUrl(V.handle||'yourhandle')}`:'Saved in this browser'}</p>`}
+      <input type="file" id="pfFile" accept="image/*" hidden>
+    </div>`;
+  },
+  init(){
+    document.querySelector('.pbody').classList.add('pf');
+    if(!V){ authInit(); return; }
+    const name=$('pfName'), handle=$('pfHandle'), bio=$('pfBio');
+    $('pfShare') && ($('pfShare').onclick = ()=>share(V.name?`${V.name} on democrat.ai`:'democrat.ai'));
+    if(RO){
+      $('pfFollow').onclick = async ()=>{
+        if(!await needAuth()) return;
+        mutate({ remote: async ()=>{
+          const q = D.isFollowing
+            ? await sb.from('follows').delete().eq('follower',ME.id).eq('followee',V.id)
+            : await sb.from('follows').insert({follower:ME.id, followee:V.id});
+          return q.error;
+        }});
+      };
+      return;
+    }
+    const edit=$('pfEdit');
+    const setEdit = on => {
+      panel.dataset.edit = on?'1':'0';
+      [name,handle,bio].forEach(el=>el.readOnly=!on);
+      edit.textContent = on?'Done':'Edit'; edit.className = on?'btn':'btn ghost';
+      if(on) name.focus();
+    };
+    setEdit(!V.name);
+    edit.onclick = ()=>{
+      const on = panel.dataset.edit!=='1';
+      if(!on) saveProfile();
+      setEdit(on);
+    };
+    let t; const debounce = ()=>{ clearTimeout(t); t=setTimeout(saveProfile,600) };
+    [name,handle,bio].forEach(el=>el.addEventListener('input',debounce));
+    name.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); handle.focus() } });
+
+    async function saveProfile(){
+      const patch = { name:name.value.trim(),
+                      handle:handle.value.trim().toLowerCase().replace(/^@/,'') || null,
+                      bio:bio.value.trim() };
+      if(!ONLINE){ const db=localDB(); Object.assign(db.profile,patch); localSave(db); Object.assign(V,patch); return; }
+      const { error } = await sb.from('profiles').update(patch).eq('id',ME.id);
+      if(error) return toast(friendly(error));
+      Object.assign(V,patch); Object.assign(ME,patch);
+    }
+
+    $('pfAv').onclick = ()=>$('pfFile').click();
+    $('pfFile').onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      toast('Uploading photo…');
+      crop(f, 640, async (blob, dataUrl)=>{
+        if(!ONLINE){
+          const db=localDB(); db.profile.photo_url=dataUrl; localSave(db); V.photo_url=dataUrl;
+          render(); toast('Photo saved'); return;
+        }
+        const path = `${ME.id}/${Date.now()}.jpg`;
+        const up = await sb.storage.from('avatars').upload(path, blob, {contentType:'image/jpeg', upsert:true});
+        if(up.error) return toast(up.error.message);
+        const { data:{ publicUrl:url } } = sb.storage.from('avatars').getPublicUrl(path);
+        const { error } = await sb.from('profiles').update({photo_url:url}).eq('id',ME.id);
+        if(error) return toast(friendly(error));
+        V.photo_url = ME.photo_url = url; render(); toast('Photo saved');
+      });
+    };
+  }
+};
+
+function authView(){
+  return `<div class="auth">
+    <h3>Claim your page</h3>
+    <p>One link that holds your positions, your posts, your events and your ballot information.</p>
+    <input class="inp" id="auEmail" type="email" placeholder="you@email.com" autocomplete="email">
+    <button class="btn" id="auGo">Email me a link</button>
+    <p class="hint">No password. We send a one-tap sign-in link.</p>
+  </div>`;
+}
+function authInit(){
+  const go = async ()=>{
+    const email = $('auEmail').value.trim();
+    if(!email) return toast('Enter your email');
+    $('auGo').disabled = true;
+    const { error } = await sb.auth.signInWithOtp({ email,
+      options:{ emailRedirectTo: location.origin + location.pathname } });
+    $('auGo').disabled = false;
+    toast(error ? error.message : 'Check your email');
+  };
+  $('auGo').onclick = go;
+  $('auEmail').onkeydown = e => { if(e.key==='Enter') go() };
+}
+
+S.feed = {
+  sub(){ return RO ? `Posts by @${V.handle}` : 'Everything you have posted' },
+  acts(){ return RO?'':`<button class="btn" data-go="compose">New post</button>` },
+  view(){
+    if(!D.posts.length) return `<div class="empty"><b>Nothing posted yet</b>${RO?'Check back soon.':'Write your first post and it will appear here.'}</div>`;
+    return `<div class="screen"><div class="list">${D.posts.map(p=>`
+      <article class="item" data-id="${p.id}"><div class="grow">
+        <p>${esc(p.text)}</p>
+        <div class="rowacts">
+          ${act(p.liked?'liked':'like', p.likes||'', p.liked)}
+          ${act('share','Share')}
+          ${RO?'':act('del')}
+          <span class="iconbtn" style="pointer-events:none">${ago(p.created_at)}</span>
+        </div>
+      </div></article>`).join('')}</div></div>`;
+  },
+  init(){ rows(D.posts, async (p,a)=>{
+    if(a==='share') return share(p.text);
+    if(a==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
+                                  remote:async()=>(await sb.from('posts').delete().eq('id',p.id)).error });
+    if(!await needAuth()) return;
+    mutate({ local:db=>{ const q=db.posts.find(x=>x.id===p.id); q.liked=!q.liked; q.likes=(q.likes||0)+(q.liked?1:-1) },
+             remote:async()=>{ const q = p.liked
+               ? await sb.from('likes').delete().eq('post_id',p.id).eq('user_id',ME.id)
+               : await sb.from('likes').insert({post_id:p.id,user_id:ME.id});
+               return q.error } });
+  })}
+};
+
+S.compose = {
+  sub:'Write a post',
+  view(){
+    if(RO) return `<div class="empty"><b>Nothing to write here</b>This is someone else's page.</div>`;
+    return `<div class="screen">
+      <textarea class="ta" id="cText" maxlength="280" placeholder="What is happening in your district?"></textarea>
+      <div class="frow" style="justify-content:space-between">
+        <span class="meta" id="cCount">280</span>
+        <button class="btn" id="cPost" disabled>Post</button>
+      </div></div>`;
+  },
+  init(){
+    if(RO) return;
+    const t=$('cText'), c=$('cCount'), b=$('cPost');
+    t.focus();
+    t.oninput = ()=>{ c.textContent = 280-t.value.length; b.disabled = !t.value.trim() };
+    b.onclick = async ()=>{
+      if(!await needAuth()) return;
+      const text = t.value.trim(); b.disabled = true;
+      await mutate({ local:db=>db.posts.unshift({id:uid(),text,created_at:new Date().toISOString(),likes:0,liked:false}),
+                     remote:async()=>(await sb.from('posts').insert({author:ME.id,text})).error });
+      toast('Posted'); open_('feed');
+    };
+  }
+};
+
+S.issues = {
+  sub:'Where you stand',
+  view(){
+    return `<div class="screen">
+      ${RO?'':`<div class="frow">
+        <input class="inp" id="iText" placeholder="Add an issue">
+        <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
+        <button class="btn" id="iAdd">Add</button></div>`}
+      ${D.issues.length?`<div class="list">${D.issues.map(i=>`
+        <div class="item" data-id="${i.id}"><div class="grow">
+          <h3>${esc(i.title)}</h3>
+          <div class="rowacts">${act('share','Share')}${RO?'':act('del')}</div>
+        </div><span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span></div>`).join('')}</div>`
+        :`<div class="empty"><b>No positions yet</b>Say where you stand. Positions travel further than anything else.</div>`}
+    </div>`;
+  },
+  init(){
+    if(!RO){
+      let stance='Support';
+      const seg=$('iSeg'), t=$('iText');
+      seg.onclick = e => { const b=e.target.closest('button'); if(!b) return;
+        stance=b.dataset.v; [...seg.children].forEach(x=>x.classList.toggle('on',x===b)) };
+      const add = async ()=>{
+        const title=t.value.trim(); if(!title) return;
+        if(!await needAuth()) return;
+        mutate({ local:db=>db.issues.unshift({id:uid(),title,stance}),
+                 remote:async()=>(await sb.from('issues').insert({author:ME.id,title,stance})).error });
+      };
+      $('iAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
+    }
+    rows(D.issues,(i,a)=>{
+      if(a==='share') return share(`${i.stance}: ${i.title}`);
+      if(a==='del') return mutate({ local:db=>db.issues=db.issues.filter(x=>x.id!==i.id),
+                                    remote:async()=>(await sb.from('issues').delete().eq('id',i.id)).error });
+    });
+  }
+};
+
+S.endorsed = {
+  sub:'Who is behind you',
+  view(){
+    return `<div class="screen">
+      ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add an endorsement"><button class="btn" id="eAdd">Add</button></div>`}
+      ${D.ends.length?`<div class="list">${D.ends.map(e=>`
+        <div class="item" data-id="${e.id}"><div class="grow"><h3>${esc(e.name)}</h3>
+          <div class="rowacts">${act('share','Share')}${RO?'':act('del')}</div></div></div>`).join('')}</div>`
+        :`<div class="empty"><b>No endorsements yet</b>Add each one as it comes in.</div>`}
+    </div>`;
+  },
+  init(){
+    if(!RO){
+      const t=$('eText');
+      const add = async ()=>{
+        const name=t.value.trim(); if(!name) return;
+        if(!await needAuth()) return;
+        mutate({ local:db=>db.ends.unshift({id:uid(),name}),
+                 remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error });
+      };
+      $('eAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
+    }
+    rows(D.ends,(x,a)=>{
+      if(a==='share') return share(`Endorsed by ${x.name}`);
+      if(a==='del') return mutate({ local:db=>db.ends=db.ends.filter(y=>y.id!==x.id),
+                                    remote:async()=>(await sb.from('endorsements').delete().eq('id',x.id)).error });
+    });
+  }
+};
+
+S.townhall = {
+  sub:'Meet people in person',
+  view(){
+    return `<div class="screen">
+      ${RO?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
+        <input class="inp" id="tDate" type="date" style="max-width:165px"></div>
+      <div class="frow"><input class="inp" id="tPlace" placeholder="Where"><button class="btn" id="tAdd">Add</button></div>`}
+      ${D.events.length?`<div class="list">${D.events.map(e=>`
+        <div class="item" data-id="${e.id}"><div class="grow">
+          <h3>${esc(e.title)}</h3>
+          <small>${dfmt(e.date)}${e.place?' · '+esc(e.place):''}${e.going?' · '+e.going+' going':''}</small>
+          <div class="rowacts">${act('share','Share')}${RO?'':act('del')}</div>
+        </div>${ONLINE?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}</div>`).join('')}</div>`
+        :`<div class="empty"><b>No events yet</b>Showing up in person is the whole point.</div>`}
+    </div>`;
+  },
+  init(){
+    if(!RO){
+      $('tAdd').onclick = async ()=>{
+        const title=$('tTitle').value.trim(), date=$('tDate').value, place=$('tPlace').value.trim();
+        if(!title || !date) return toast('Add a name and a date');
+        if(!await needAuth()) return;
+        mutate({ local:db=>db.events.push({id:uid(),title,date,place}),
+                 remote:async()=>(await sb.from('events').insert({author:ME.id,title,date,place})).error });
+      };
+    }
+    document.querySelectorAll('[data-rsvp]').forEach(b=>b.onclick = async ()=>{
+      if(!await needAuth()) return;
+      const e = D.events.find(x=>x.id===b.dataset.rsvp);
+      mutate({ remote:async()=>{ const q = e.rsvped
+        ? await sb.from('rsvps').delete().eq('event_id',e.id).eq('user_id',ME.id)
+        : await sb.from('rsvps').insert({event_id:e.id,user_id:ME.id});
+        return q.error } });
+    });
+    rows(D.events,(e,a)=>{
+      if(a==='share') return share(`${e.title} — ${dfmt(e.date)}${e.place?' at '+e.place:''}`);
+      if(a==='del') return mutate({ local:db=>db.events=db.events.filter(x=>x.id!==e.id),
+                                    remote:async()=>(await sb.from('events').delete().eq('id',e.id)).error });
+    });
+  }
+};
+
+const BALLOT = [
+  ['reg','Register to vote','https://vote.gov'],
+  ['chk','Check your registration','https://www.nass.org/can-i-vote'],
+  ['off','Find your election office','https://www.usa.gov/election-office']
+];
+S.ballot = {
+  sub:'Make voting easy',
+  view(){
+    const b = (V && V.ballot) || {};
+    const left = b.date ? Math.ceil((new Date(b.date+'T00:00') - Date.now())/864e5) : null;
+    return `<div class="screen">
+      <div class="frow">
+        <input class="inp" id="bDate" type="date" value="${b.date||''}" ${RO?'disabled':''}>
+        <span class="meta" style="flex:none">${left!=null ? (left>0 ? left+' days out' : 'Election day') : 'Your election date'}</span>
+      </div>
+      <div class="list">${BALLOT.map(x=>`
+        <div class="item"><div class="grow"><h3>${x[1]}</h3>
+          <div class="rowacts"><a class="iconbtn" href="${x[2]}" target="_blank" rel="noopener">Open ${ico.share}</a></div></div>
+          ${RO?'':`<button class="tag ${b[x[0]]?'b':''}" data-chk="${x[0]}">${b[x[0]]?'Done':'Mark done'}</button>`}
+        </div>`).join('')}</div>
+      <button class="btn" id="bShare">Share this checklist</button>
+    </div>`;
+  },
+  init(){
+    $('bShare').onclick = ()=>share('Register, check your registration, find your polling place:');
+    if(RO) return;
+    const put = patch => mutate({
+      local:db=>Object.assign(db.profile.ballot, patch),
+      remote:async()=>(await sb.from('profiles').update({ballot:Object.assign({}, V.ballot, patch)}).eq('id',ME.id)).error
+    });
+    $('bDate').onchange = e => put({date:e.target.value});
+    document.querySelectorAll('[data-chk]').forEach(b=>b.onclick = ()=>{
+      const k=b.dataset.chk; put({[k]: !((V.ballot||{})[k])});
+    });
+  }
+};
+
+S.polls = {
+  sub:'Ask, then listen',
+  view(){
+    return `<div class="screen">
+      ${RO?'':`<div class="frow"><input class="inp" id="pQ" placeholder="Ask a question"></div>
+      <div class="frow"><input class="inp" id="pA" placeholder="Option 1"><input class="inp" id="pB" placeholder="Option 2">
+        <button class="btn" id="pAdd">Post</button></div>`}
+      ${D.polls.length? D.polls.map(p=>`
+        <div class="item" data-poll="${p.id}" style="display:block">
+          <h3>${esc(p.question)}</h3>
+          <small>${p.total||0} vote${p.total===1?'':'s'}</small>
+          <div style="margin-top:10px">${(p.poll_options||[]).map(o=>`
+            <div style="margin-bottom:9px">
+              <button class="iconbtn" data-opt="${o.id}" style="padding:0;color:inherit;font-size:14px;font-weight:${p.voted===o.id?'640':'450'}">
+                ${esc(o.text)}${p.voted?` · ${p.total?Math.round(o.v/p.total*100):0}%`:''}</button>
+              <div class="bar"><i style="width:${p.total?o.v/p.total*100:0}%"></i></div>
+            </div>`).join('')}</div>
+          <div class="rowacts">${act('share','Share')}${RO?'':act('del')}</div>
+        </div>`).join('')
+        :`<div class="empty"><b>No polls yet</b>One good question travels further than ten posts.</div>`}
+    </div>`;
+  },
+  init(){
+    if(!RO){
+      $('pAdd').onclick = async ()=>{
+        const q=$('pQ').value.trim(), a=$('pA').value.trim(), b=$('pB').value.trim();
+        if(!q||!a||!b) return toast('Add a question and two options');
+        if(!await needAuth()) return;
+        mutate({
+          local:db=>db.polls.unshift({id:uid(),question:q,total:0,voted:null,
+                    poll_options:[{id:uid(),text:a,v:0,ord:0},{id:uid(),text:b,v:0,ord:1}]}),
+          remote:async()=>{
+            const ins = await sb.from('polls').insert({author:ME.id,question:q}).select().single();
+            if(ins.error) return ins.error;
+            return (await sb.from('poll_options').insert([
+              {poll_id:ins.data.id,text:a,ord:0},{poll_id:ins.data.id,text:b,ord:1}])).error;
+          }});
+      };
+    }
+    document.querySelectorAll('[data-poll]').forEach(el=>{
+      const p = D.polls.find(x=>x.id===el.dataset.poll);
+      el.addEventListener('click', async e=>{
+        const o = e.target.closest('[data-opt]'), b = e.target.closest('[data-act]');
+        if(b && b.dataset.act==='share') return share(p.question);
+        if(b && b.dataset.act==='del') return mutate({
+          local:db=>db.polls=db.polls.filter(x=>x.id!==p.id),
+          remote:async()=>(await sb.from('polls').delete().eq('id',p.id)).error });
+        if(o && !p.voted){
+          if(!await needAuth()) return;
+          const oid = o.dataset.opt;
+          mutate({ local:db=>{ const q=db.polls.find(x=>x.id===p.id);
+                     q.poll_options.find(x=>x.id===oid).v++; q.total=(q.total||0)+1; q.voted=oid },
+                   remote:async()=>(await sb.from('poll_votes').insert(
+                     {poll_id:p.id,option_id:oid,user_id:ME.id})).error });
+        }
+      });
+    });
+  }
+};
+
+S.fundraise = {
+  sub:'Small-dollar, steady',
+  view(){
+    const raised = D.gifts.reduce((s,g)=>s+Number(g.amount),0),
+          goal = Number(V&&V.goal||0),
+          pct = goal ? Math.min(100, raised/goal*100) : 0;
+    if(RO) return `<div class="screen">
+      ${V.donate_link?`<a class="btn" style="text-align:center;padding:14px" href="${esc(V.donate_link)}" target="_blank" rel="noopener">Chip in</a>`
+        :`<div class="empty"><b>No link yet</b>This page is not collecting contributions.</div>`}</div>`;
+    return `<div class="screen">
+      <div class="stats">
+        <div><b>${money(raised)}</b><span>Raised</span></div>
+        <div><b>${D.gifts.length}</b><span>Gifts</span></div>
+        <div><b>${D.gifts.length?money(raised/D.gifts.length):'$0'}</b><span>Average</span></div>
+        <div><b>${goal?Math.round(pct)+'%':'—'}</b><span>Of goal</span></div>
+      </div>
+      ${goal?`<div class="bar" style="height:9px"><i style="width:${pct}%"></i></div>`:''}
+      <div class="frow">
+        <input class="inp" id="fGoal" type="number" min="0" placeholder="Goal" value="${goal||''}">
+        <input class="inp" id="fLink" placeholder="Donation link" value="${esc(V&&V.donate_link)}">
+      </div>
+      <div class="frow">
+        <input class="inp" id="fGift" type="number" min="1" placeholder="Log a gift">
+        <button class="btn ghost" id="fAdd">Add</button>
+        <button class="btn" id="fShare">Share link</button>
+      </div>
+    </div>`;
+  },
+  init(){
+    if(RO) return;
+    let t;
+    const put = patch => { clearTimeout(t); t = setTimeout(()=>{
+      if(!ONLINE){ const db=localDB(); Object.assign(db.profile,patch); localSave(db); Object.assign(V,patch); }
+      else sb.from('profiles').update(patch).eq('id',ME.id).then(({error})=>{ if(error) toast(friendly(error)); else Object.assign(V,patch) });
+    }, 500) };
+    $('fGoal').oninput = e => put({goal:Number(e.target.value)||0});
+    $('fLink').oninput = e => put({donate_link:e.target.value.trim()});
+    $('fAdd').onclick = async ()=>{
+      const amount = Number($('fGift').value); if(!amount) return;
+      if(!await needAuth()) return;
+      mutate({ local:db=>db.gifts.push({id:uid(),amount}),
+               remote:async()=>(await sb.from('gifts').insert({author:ME.id,amount})).error });
+    };
+    $('fShare').onclick = ()=>share(V.donate_link || 'Chip in:');
+  }
+};
+
+S.reach = {
+  sub:'What is actually working',
+  view(){
+    const likes = D.posts.reduce((s,p)=>s+(p.likes||0),0),
+          votes = D.polls.reduce((s,p)=>s+(p.total||0),0),
+          going = D.events.reduce((s,e)=>s+(e.going||0),0),
+          top = [...D.posts].sort((a,b)=>(b.likes||0)-(a.likes||0))[0];
+    return `<div class="screen">
+      <div class="stats">
+        <div><b>${D.posts.length}</b><span>Posts</span></div>
+        <div><b>${likes}</b><span>Likes</span></div>
+        <div><b>${votes}</b><span>Poll votes</span></div>
+        <div><b>${D.shares}</b><span>Shares</span></div>
+      </div>
+      <div class="stats">
+        <div><b>${D.followers}</b><span>Followers</span></div>
+        <div><b>${going}</b><span>RSVPs</span></div>
+        <div><b>${D.issues.length}</b><span>Positions</span></div>
+        <div><b>${D.ends.length}</b><span>Endorsements</span></div>
+      </div>
+      ${top && top.likes ? `<div class="item"><div class="grow"><small>Most liked</small><p>${esc(top.text)}</p></div></div>`
+        : `<div class="empty"><b>Nothing to measure yet</b>Post something, then come back.</div>`}
+    </div>`;
+  }
+};
+
+/* wire up per-row action buttons */
+function rows(list, fn){
+  document.querySelectorAll('[data-id]').forEach(el=>{
+    const item = list.find(x=>String(x.id)===el.dataset.id); if(!item) return;
+    el.addEventListener('click', e=>{ const b=e.target.closest('[data-act]'); if(b) fn(item, b.dataset.act) });
+  });
+}
+
+/* ------------------------------------------------------------------ shell */
+const rail = $('rail'), panel = $('panel');
+
+function renderRail(){
+  rail.innerHTML = APPS.map((a,i)=>{
+    const n = a.id==='feed' ? D.posts.length : 0;
+    return `<button class="app${a.id===current?' on':''}" data-id="${a.id}" style="animation-delay:${(i*.045+.05).toFixed(2)}s">
+      <span class="tile">${icon(a)}${n?`<span class="badge">${n}</span>`:''}</span>
+      <span class="label">${a.name}</span></button>`;
+  }).join('');
+}
+
+function render(){ renderRail(); open_(current, true); }
+
+function open_(id, quiet){
+  const a = APPS.find(x=>x.id===id), s = S[id]; if(!a||!s) return;
+  current = id;
+  document.querySelectorAll('.app').forEach(el=>el.classList.toggle('on', el.dataset.id===id));
+  const sub = typeof s.sub==='function' ? s.sub() : s.sub;
+  panel.innerHTML = `<header class="phead">
+      <span class="hicon">${icon(a)}</span>
+      <div class="grow">${s.head?s.head():`<h2>${a.name}</h2><p>${sub}</p>`}</div>
+      <div class="acts">${s.acts?s.acts():''}<button class="pclose" id="pclose">&#10005;</button></div>
+    </header>
+    <div class="pbody">${s.view()}</div>`;
+  if(s.init) s.init();
+  document.body.classList.add('open');
+  panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
+  $('pclose').onclick = ()=>{ document.body.classList.remove('open'); current='';
+    document.querySelectorAll('.app').forEach(x=>x.classList.remove('on')) };
+  if(!quiet) renderRail();
+}
+
+rail.addEventListener('click', e=>{ const b=e.target.closest('.app'); if(b) open_(b.dataset.id) });
+
+/* ------------------------------------------------------------------- boot */
+(async function boot(){
+  renderRail();
+  panel.innerHTML = '<div class="spin"></div>';
+  if(ONLINE){
+    sb.auth.onAuthStateChange(async (evt)=>{
+      if(evt==='SIGNED_IN' || evt==='SIGNED_OUT'){ await load(); render(); }
+    });
+  } else {
+    const m = $('mode'); m.hidden=false; m.textContent='Local mode';
+  }
+  await load();
+  render();
+})();
+
+</script>
+</body>
+</html>
