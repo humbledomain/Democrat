@@ -150,6 +150,67 @@ button.tag{cursor:pointer}
 .pfbio:focus{outline:none;border-color:rgba(10,63,214,.5)}
 .pfbio[readonly]{border-color:transparent;background:none}
 
+/* profile page layout */
+.pbody.pf{display:block;padding:clamp(18px,2.6vh,26px) clamp(18px,2.4vw,30px)}
+.pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
+  align-items:start;max-width:1100px;margin:0 auto}
+.pcolL{display:flex;flex-direction:column;gap:13px;position:sticky;top:0}
+.pcolR{display:flex;flex-direction:column;gap:22px;min-width:0}
+.photo{width:100%;aspect-ratio:1;border-radius:22px;position:relative;border:0;padding:0;overflow:hidden;
+  background:rgba(10,63,214,.05);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;display:block;
+  transition:box-shadow .2s}
+.photo[disabled]{cursor:default}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo:not([disabled]):hover{box-shadow:inset 0 0 0 2px rgba(10,63,214,.35)}
+.photo .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--blue);opacity:.5}
+.photo .ph svg{width:34%;height:34%}
+.photo .cam{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:var(--blue);
+  display:grid;place-items:center;box-shadow:0 2px 8px rgba(8,26,72,.3)}
+.photo .cam svg{width:17px;height:17px}
+.pfield{border:0;background:none;font-size:14.5px;padding:7px 9px;margin:0 -9px;border-radius:9px;width:calc(100% + 18px);
+  line-height:1.45}
+.pfield::placeholder{color:#9aa3b8}
+.pfield:focus{outline:none;background:rgba(10,63,214,.06)}
+.panel[data-edit="1"] .pfield{background:var(--soft)}
+.panel:not([data-edit="1"]) .pfield:placeholder-shown{display:none}
+.pfield.role{font-weight:640;font-size:16px;letter-spacing:-.015em}
+.pfield.loc{color:var(--muted);font-size:13.5px;margin-top:-6px}
+.pfield.bio{resize:none;line-height:1.55}
+.pfield.link{color:var(--blue);font-size:13.5px}
+.pflink{display:block;text-align:center;text-decoration:none;padding:11px;border-radius:12px;background:var(--soft);
+  color:var(--blue);font-size:13.5px;font-weight:590;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow{display:flex;gap:8px}
+.prow>*{flex:1}
+.sec{display:flex;flex-direction:column;gap:2px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.sechead h4{font-size:11.5px;font-weight:660;letter-spacing:.08em;text-transform:uppercase;color:#8b93a8}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:13px;font-weight:540;padding:7px 12px;border-radius:99px;background:var(--soft);color:#28304a}
+.stand{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.stand:first-child{border-top:0}
+.stand span{flex:1;font-size:14.5px;min-width:0}
+.qpost{padding:12px 0;border-top:1px solid var(--line)}
+.qpost:first-child{border-top:0}
+.qpost p{font-size:14px;line-height:1.5}
+.qpost small{font-size:12px;color:var(--muted)}
+.next{display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:14px}
+.next b{display:block;font-size:14.5px;font-weight:600}
+.next small{font-size:12.5px;color:var(--muted)}
+.datechip{flex:none;width:46px;text-align:center}
+.datechip i{display:block;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--blue)}
+.datechip b{font-size:20px;font-weight:660;line-height:1.05;letter-spacing:-.02em}
+.start{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.start button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;text-align:left;
+  cursor:pointer;transition:.15s}
+.start button:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03)}
+.start b{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
+.start small{font-size:12.5px;color:var(--muted);line-height:1.4}
+@media (max-width:860px){
+  .pgrid{grid-template-columns:1fr}
+  .pcolL{position:static}
+  .photo{max-width:260px;margin:0 auto}
+}
+
 /* social + AI */
 .tabs{align-self:flex-start}
 .who{display:flex;align-items:center;gap:8px;margin-bottom:8px;text-decoration:none;color:inherit}
@@ -618,41 +679,83 @@ S.profile = {
     const done  = steps.filter(Boolean).length;
     const link  = (V.link||'').trim();
     const href  = link && !/^https?:/i.test(link) ? 'https://'+link : link;
+    const cam   = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3.2L9 6h6l1.8 2.5H20A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.5"/></svg>`;
 
-    return `<div class="pfwrap">
-      <button class="pfav" id="pfAv" ${RO?'disabled':''} aria-label="Add a photo">
-        <span class="pfin">${V.photo_url?`<img src="${V.photo_url}" alt="">`:''}</span>
-        ${RO?'':`<span class="pfcam"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3.2L9 6h6l1.8 2.5H20A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span>`}
-      </button>
+    const sec = (title, go, inner) => inner ? `<section class="sec">
+      <div class="sechead"><h4>${title}</h4>${go?`<button class="linkbtn" data-go="${go}">Open</button>`:''}</div>
+      ${inner}</section>` : '';
 
-      <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:2px">
-        <input id="pfRole" class="pfline pfrole" placeholder="What you care about most" value="${esc(V.role)}" ${RO?'readonly':''}>
-        <input id="pfLoc"  class="pfline" style="color:var(--muted)" placeholder="Where you vote" value="${esc(V.location)}" ${RO?'readonly':''}>
+    const stands = D.issues.slice(0,5).map(i=>`<div class="stand">
+        <span>${esc(i.title)}</span>
+        <span class="tag ${i.stance==='Support'?'b':''}" style="flex:none">${i.stance}</span></div>`).join('');
+
+    const posts = D.posts.slice(0,3).map(p=>`<div class="qpost">
+        <p>${esc(p.text)}</p><small>${ago(p.created_at)}${p.likes?` · ${p.likes} like${p.likes===1?'':'s'}`:''}</small></div>`).join('');
+
+    const soon = D.events.filter(e=>e.date >= new Date().toISOString().slice(0,10)).slice(0,2)
+      .map(e=>{ const [y,m,d]=e.date.split('-');
+        const mon=new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short'}).toUpperCase();
+        return `<div class="next"><div class="datechip"><i>${mon}</i><b>${+d}</b></div>
+          <div><b>${esc(e.title)}</b><small>${esc(e.place||'')}${e.going?` · ${e.going} going`:''}</small></div></div>`}).join('');
+
+    const backs = D.ends.slice(0,8).map(e=>`<span class="chip">${esc(e.name)}</span>`).join('');
+
+    const nothing = !D.issues.length && !D.posts.length && !D.events.length && !D.ends.length;
+
+    return `<div class="pgrid">
+      <aside class="pcolL">
+        <button class="photo" id="pfAv" ${RO?'disabled':''} aria-label="Change photo">
+          ${V.photo_url ? `<img src="${V.photo_url}" alt="">`
+            : `<span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="4"/><path d="M4.5 20c1.2-4.2 4-6.3 7.5-6.3s6.3 2.1 7.5 6.3"/></svg></span>`}
+          ${RO?'':`<span class="cam">${cam}</span>`}
+        </button>
+
+        <div>
+          <input id="pfRole" class="pfield role" placeholder="What you care about most" value="${esc(V.role)}" ${RO?'readonly':''}>
+          <input id="pfLoc"  class="pfield loc"  placeholder="Where you vote" value="${esc(V.location)}" ${RO?'readonly':''}>
+        </div>
+
+        <textarea id="pfBio" class="pfield bio" rows="4" placeholder="Write a short bio." ${RO?'readonly':''}>${esc(V.bio)}</textarea>
+        ${RO?'':`<button class="linkbtn" id="pfTighten" hidden style="align-self:flex-start">Tighten this</button>
+                 <div class="ai" id="pfAi" hidden></div>`}
+
+        ${RO ? (href?`<a class="pflink" href="${esc(href)}" target="_blank" rel="noopener">${esc(link.replace(/^https?:\/\//,''))}</a>`:'')
+             : `<input id="pfLink" class="pfield link" placeholder="Add a link" value="${esc(V.link)}">`}
+
+        ${RO?'':`<div class="prow">
+            <button class="btn ghost" id="pfCopy">Copy link</button>
+            <button class="btn ghost" id="pfQR">QR code</button></div>
+          ${done<5?`<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
+            <span>${done} of 5 done — ${nextStep(steps)}</span></div>`:''}
+          ${ONLINE?`<button class="signout" id="pfOut" style="align-self:flex-start">Sign out</button>`:''}`}
+      </aside>
+
+      <div class="pcolR">
+        <div class="stats">
+          <div><b>${D.followers}</b><span>Followers</span></div>
+          <div><b>${D.following}</b><span>Following</span></div>
+          <div><b>${D.posts.length}</b><span>Posts</span></div>
+          <div><b>${D.shares}</b><span>Shares</span></div>
+        </div>
+
+        ${sec('Where '+(RO?'they stand':'I stand'), 'issues', stands)}
+        ${sec('Latest', 'feed', posts)}
+        ${sec('Coming up', 'townhall', soon)}
+        ${sec('Backing', 'endorsed', backs && `<div class="chips">${backs}</div>`)}
+
+        ${nothing ? (RO
+          ? `<div class="empty"><b>Nothing here yet</b>@${esc(V.handle)} has not posted anything.</div>`
+          : `<section class="sec"><div class="sechead"><h4>Start here</h4></div>
+             <div class="start">
+               <button data-go="issues"><b>Take a position</b><small>Say where you stand on one thing.</small></button>
+               <button data-go="compose"><b>Write a post</b><small>Something happening where you live.</small></button>
+               <button data-go="polls"><b>Ask a question</b><small>Find out what people think.</small></button>
+               <button data-go="ballot"><b>Sort your ballot</b><small>Registration and your election date.</small></button>
+             </div></section>`) : ''}
+
+        ${RO ? `<p class="hint"><a href="?" style="color:var(--blue);font-weight:590">Make your own page</a></p>`
+             : `<p class="hint" style="text-align:left">${V.handle?`Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`:'Pick a handle to get your link'}</p>`}
       </div>
-
-      <textarea class="pfbio" id="pfBio" rows="3" placeholder="Write a short bio." ${RO?'readonly':''}>${esc(V.bio)}</textarea>
-      ${RO?'':`<button class="linkbtn" id="pfTighten" hidden>Tighten this</button><div class="ai" id="pfAi" hidden></div>`}
-
-      ${RO
-        ? (href?`<a class="pflink" href="${esc(href)}" target="_blank" rel="noopener">${esc(link.replace(/^https?:\/\//,''))}</a>`:'')
-        : `<input id="pfLink" class="pfline" style="color:var(--blue);max-width:100%" placeholder="Add a link" value="${esc(V.link)}">`}
-
-      <div class="stats">
-        <div><b>${D.followers}</b><span>Followers</span></div>
-        <div><b>${D.following}</b><span>Following</span></div>
-        <div><b>${D.posts.length}</b><span>Posts</span></div>
-        <div><b>${D.shares}</b><span>Shares</span></div>
-      </div>
-
-      ${RO ? `<p class="hint"><a href="?" style="color:var(--blue);font-weight:590">Make your own page</a></p>`
-        : `<div class="pfacts">
-             <button class="btn ghost" id="pfCopy">Copy link</button>
-             <button class="btn ghost" id="pfQR">QR code</button>
-           </div>
-           ${done<5 ? `<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
-              <span>${done} of 5 done — ${nextStep(steps)}</span></div>` : ''}
-           <p class="hint">${V.handle?`Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`:'Pick a handle to get your link'}</p>
-           ${ONLINE?`<button class="signout" id="pfOut">Sign out</button>`:''}`}
       <input type="file" id="pfFile" accept="image/*" hidden>
     </div>`;
   },
