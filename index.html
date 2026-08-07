@@ -361,17 +361,16 @@ button.tag{cursor:pointer}
 .pbody.chatbody{overflow:hidden;display:flex;flex-direction:column}
 .pbody.chatbody .split{flex:1;min-height:0}
 .chat{display:flex;flex-direction:column;height:100%;min-height:0;gap:14px}
-.msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:22px;
+.msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:18px;
   padding:8px 8px 10px 2px;scroll-behavior:smooth}
 .msg{display:flex;gap:11px;animation:rise .3s ease both;max-width:100%}
 .msg.me{justify-content:flex-end}
-.msg.me .bubble{background:var(--blue);color:#fff;padding:12px 17px;border-radius:20px 20px 6px 20px;
-  font-size:15px;line-height:1.55;max-width:min(78%,520px);white-space:pre-wrap;word-wrap:break-word}
-.mavatar{width:24px;height:24px;border-radius:50%;flex:none;background:var(--blue);margin-top:3px}
-.say{flex:1;min-width:0;font-size:15px;line-height:1.68;color:#1b2233;max-width:640px}
-.say p{margin:0 0 12px}
+.msg.me .bubble{background:var(--blue);color:#fff;padding:11px 15px;border-radius:18px 18px 5px 18px;
+  font-size:14px;line-height:1.5;max-width:min(80%,480px);white-space:pre-wrap;word-wrap:break-word}
+.say{flex:1;min-width:0;font-size:14px;line-height:1.62;color:#1b2233;max-width:620px}
+.say p{margin:0 0 10px}
 .say p:last-child{margin-bottom:0}
-.say ul,.say ol{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+.say ul,.say ol{margin:0 0 10px;padding-left:19px;display:flex;flex-direction:column;gap:6px}
 .say li{line-height:1.6}
 .say li::marker{color:#93a0bd}
 .say strong{font-weight:640}
@@ -430,7 +429,12 @@ button.tag{cursor:pointer}
   background:rgba(10,63,214,.05);border:1px solid rgba(10,63,214,.14)}
 .joinbar span{flex:1;font-size:14px;color:#25304a;min-width:180px}
 .joinbar .btn{flex:none}
-
+.mecol{display:flex;flex-direction:column;align-items:flex-end;max-width:min(80%,480px)}
+.mact{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.msg.me .mact{justify-content:flex-end}
+.mact button{border:1px solid var(--line);background:#fff;color:#4a5470;border-radius:99px;
+  padding:5px 11px;font-size:12px;font-weight:540;cursor:pointer;transition:.14s;white-space:nowrap}
+.mact button:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}
 .lookedat{margin-top:9px;font-size:11.5px;color:#93a0bd;letter-spacing:.01em}
 .briefout{font-size:13px;line-height:1.55;color:#39415a}
 .briefout p{margin:0 0 8px}
@@ -507,16 +511,73 @@ button.tag{cursor:pointer}
   :root{--tile:clamp(58px,16vw,78px)}
   .stage{grid-template-columns:1fr;padding-top:92px}
   .rail{grid-template-columns:repeat(4,var(--tile));justify-content:center;align-content:start}
-  .panel{position:fixed;inset:auto 0 0 0;height:90svh;z-index:20;border-radius:24px 24px 0 0;
+  .panel{position:fixed;inset:auto 0 0 0;height:88vh;height:88dvh;z-index:20;border-radius:24px 24px 0 0;
     transform:translateY(101%);transition:transform .38s cubic-bezier(.25,.9,.3,1)}
   body.open .panel{transform:none}
   .pclose{display:grid}
   .mode{display:none}
 }
-@media (max-width:420px){.rail{grid-template-columns:repeat(3,var(--tile))}
+
+/* ---------------- phones ---------------- */
+@media (max-width:900px){
+  /* iOS zooms the page whenever a field is smaller than 16px */
+  .inp,.ta,.canvas,.chatbar textarea,.quick textarea,.pfname,.pfhandle input,.pfbio,.pfield,.msgbox,
+  input,textarea,select{font-size:16px}
+  .pfhandle input,.pfield.loc{font-size:15px}
+
+  .stage{padding-left:16px;padding-right:16px;gap:18px}
+  .mark{left:16px}
+  .panel{height:88vh;height:88dvh;padding-bottom:env(safe-area-inset-bottom,0px)}
+  .pbody{padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+  .phead{padding:13px 15px;gap:11px}
+  .phead h2{font-size:16px}
+  .acts{gap:6px}
+  .acts .btn{padding:9px 13px}
+  .acts .seg button{padding:7px 10px;font-size:12px}
+
+  /* thumbs need something to hit */
+  .tag{padding:7px 12px}
+  .iconbtn{padding:7px 9px}
+  .net{width:46px;height:46px}
+  .btn{padding:11px 16px}
+
+  .split{gap:20px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .person{padding:13px;border-radius:16px}
+  .pface{width:48px;height:48px;font-size:17px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .stats>div:nth-child(3){border-left:0}
-  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .quick{flex-wrap:wrap}
+  .quick textarea{min-width:60%}
+  .quick .btn{margin-left:auto}
+
+  /* chat fills the sheet, composer stays above the keyboard */
+  .chat{gap:10px}
+  .msgs{gap:16px;padding-right:0}
+  .msg.me .bubble{max-width:86%}
+  .say{font-size:14.5px}
+  .chatbar{padding:6px 6px 6px 14px;border-radius:20px}
+  .chatintro{padding:14px 4px}
+  .chatintro h3{font-size:18px}
+  .starters{grid-template-columns:1fr;gap:8px}
+  .starter{padding:12px 14px}
+
+  /* sheets sit at the bottom, where the thumb is */
+  .sheet{padding:0;align-items:end}
+  .sheetbox{max-width:none;border-radius:22px 22px 0 0;max-height:90vh;max-height:90dvh;
+    padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+  .sheetfoot .btn{min-width:0}
+  .talist{left:0;right:0}
+}
+@media (max-width:420px){
+  .rail{grid-template-columns:repeat(3,var(--tile))}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .pgrid{gap:16px}
+  .datechip{width:42px}
+  .sechead h4{font-size:11px}
+}
+
 @media (prefers-reduced-motion:reduce){.rings,.glow,.dot::after{animation:none}}
 </style>
 </head>
@@ -1740,6 +1801,23 @@ const IDEAS = [
   'A piece of news everyone got wrong about your area',
   'Something you changed your mind about'
 ];
+/* every message can be pushed further — for, against, deeper, plainer */
+const MSG_ACTIONS = {
+  assistant: [['for','The case for'], ['against','The case against'], ['deeper','Go deeper'], ['simple','Put it simply']],
+  user:      [['for','Make the case'], ['against','Argue the other side'], ['deeper','Go deeper']]
+};
+function actPrompt(kind, role, text){
+  const q = (text||'').length > 240 ? text.slice(0,240) + '…' : (text||'');
+  const it = role === 'user' ? `this: "${q}"` : 'that';
+  if(kind === 'for')     return `Make the strongest case for ${it}. Who is helped, by how much, and what is the argument at its best?`;
+  if(kind === 'against') return `Now the strongest honest case against ${it} — the version its smartest opponent would actually make, not a caricature. Then say where you think it holds up and where it does not.`;
+  if(kind === 'deeper')  return `Go deeper on ${it}: the mechanics, who actually decides, what it costs, and where this usually goes wrong in practice.`;
+  return `Put that more simply — as if explaining it to someone hearing about it for the first time.`;
+}
+const actionRow = (i, role) => `<div class="mact">${
+  (MSG_ACTIONS[role]||[]).map(([k,label]) =>
+    `<button data-mact="${k}" data-mi="${i}">${label}</button>`).join('')}</div>`;
+
 const STARTERS = [
   'What are people on here taking positions on?',
   'Who else is in my state, and what do they care about?',
@@ -1780,12 +1858,12 @@ S.compose = {
       <p>Make an account and think through anything political, privately.</p>
       <button class="btn" data-go="profile">Create an account</button>
     </div>`;
-    const bubbles = CHAT.map(m => m.role==='user'
-      ? `<div class="msg me"><div class="bubble">${esc(m.content)}</div></div>`
-      : `<div class="msg ai"><span class="mavatar"></span><div class="say">${md(m.content)}${
+    const bubbles = CHAT.map((m,i) => m.role==='user'
+      ? `<div class="msg me" data-i="${i}"><div class="mecol"><div class="bubble">${esc(m.content)}</div>${actionRow(i,'user')}</div></div>`
+      : `<div class="msg ai" data-i="${i}"><div class="say">${md(m.content)}${
            m.used && m.used.length
              ? `<div class="lookedat">Read ${[...new Set(m.used)].map(u=>TOOLNAME[u]||u).join(', ')} on this site</div>`
-             : ''}</div></div>`
+             : ''}${actionRow(i,'assistant')}</div></div>`
     ).join('');
 
     return `<div class="split"><div class="main chat">
@@ -1807,7 +1885,6 @@ S.compose = {
             <path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
         </button>
       </div>
-      <p class="hint" style="text-align:left">Claude has no live information. Check anything time-sensitive at the source.</p>
     </div>
     <aside class="side">
       <div class="card"><h5>Things to think about</h5>
@@ -1835,10 +1912,12 @@ S.compose = {
 
     const bubble = (role, text) => {
       const div = document.createElement('div');
+      const i = CHAT.length - 1;
       div.className = 'msg ' + (role==='user'?'me':'ai');
+      div.dataset.i = i;
       div.innerHTML = role==='user'
-        ? `<div class="bubble">${esc(text)}</div>`
-        : `<span class="mavatar"></span><div class="say">${md(text)}</div>`;
+        ? `<div class="mecol"><div class="bubble">${esc(text)}</div>${actionRow(i,'user')}</div>`
+        : `<div class="say">${md(text)}${actionRow(i,'assistant')}</div>`;
       const intro = box.querySelector('.chatintro'); if(intro) intro.remove();
       box.appendChild(div); bottom();
       return div;
@@ -1853,7 +1932,7 @@ S.compose = {
 
       const wait = document.createElement('div');
       wait.className = 'msg ai';
-      wait.innerHTML = '<span class="mavatar"></span><div class="typing"><i></i><i></i><i></i></div>';
+      wait.innerHTML = '<div class="typing"><i></i><i></i><i></i></div>';
       box.appendChild(wait); bottom();
 
       try{
@@ -1882,6 +1961,12 @@ S.compose = {
       busy = false; grow();
       if(CHAT.length === 2) open_('compose', true);   // reveal the New chat button
     }
+
+    box.addEventListener('click', e=>{
+      const b = e.target.closest('[data-mact]'); if(!b || busy) return;
+      const m = CHAT[+b.dataset.mi]; if(!m) return;
+      ask(actPrompt(b.dataset.mact, m.role, m.content));
+    });
 
     send.onclick = ()=>ask(t.value);
     t.onkeydown = e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); ask(t.value) } };
