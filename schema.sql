@@ -152,6 +152,8 @@ create policy gifts_own on gifts for select using (auth.uid() = author);
 -- you may only write your own rows
 drop policy if exists profiles_write on profiles;
 create policy profiles_write on profiles for update using (auth.uid() = id) with check (auth.uid() = id);
+drop policy if exists profiles_insert on profiles;
+create policy profiles_insert on profiles for insert with check (auth.uid() = id);
 
 do $$
 declare t text;
