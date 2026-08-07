@@ -41,6 +41,7 @@ button,input,textarea{font:inherit;color:inherit}
   gap:clamp(22px,3vw,52px);padding:clamp(84px,11vh,120px) var(--pad) clamp(28px,4vh,48px)}
 .rail{display:grid;grid-template-columns:repeat(2,var(--tile));column-gap:calc(var(--tile)*.45);
   row-gap:calc(var(--tile)*.30);align-content:center;justify-content:start}
+.rail.settled .app{animation:none;opacity:1;transform:none}
 .app{display:flex;flex-direction:column;align-items:center;gap:calc(var(--tile)*.085);background:none;border:0;
   padding:0;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;
   opacity:0;transform:translateY(12px);animation:pop .5s cubic-bezier(.2,.9,.25,1) forwards}
@@ -963,6 +964,7 @@ function scoped(key, mine, all){
   if(RO || !ONLINE) return {list:mine, note:''};
   const sc = SC[key] || 'all';
   if(sc==='mine') return {list:mine, note:''};
+  if(all === null) return {list:[], note:'', loading:true};   // still fetching
   const everyone = all || [];
   if(sc==='near'){
     const n = everyone.filter(isNear);
@@ -1091,6 +1093,13 @@ function authInit(){
   $('auEmail').onkeydown = e => { if(e.key==='Enter') $('auPw').focus() };
   $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
 }
+/* load a cache once, then repaint the screen a single time */
+function ensure(kind, screen){
+  if(!ONLINE || G[kind]) return;
+  const job = kind==='people' ? loadPeople() : loadGlobal(kind);
+  job.then(()=>{ if(current===screen) open_(screen, true) });
+}
+
 /* people, for the side rails */
 async function loadPeople(){
   if(!ONLINE || G.people) return;
@@ -1128,7 +1137,7 @@ S.feed = {
   acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${RO?'':`<button class="btn" data-go="compose">Post</button>`}` },
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
-    const {list, note} = scoped('feed', D.posts, G.posts);
+    const {list, note, loading} = scoped('feed', D.posts, G.posts);
     const people = (G.people||[]).filter(x=>!ME||x.id!==ME.id).filter(x=>SC.feed==='near'?isNear({profiles:x}):true).slice(0,6);
     const hot = issueTally(SC.feed==='near'?'near':'all').slice(0,4);
 
@@ -1139,7 +1148,7 @@ S.feed = {
         <button class="btn" id="qPost" disabled>Post</button>
       </div>`}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${list.length ? `<div class="list">${list.map(p=>`
+      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map(p=>`
         <article class="item" data-id="${p.id}"><div class="grow">
           ${!mine && p.profiles ? who(p.profiles) : ''}
           <p>${esc(p.text)}</p>
@@ -1163,8 +1172,8 @@ S.feed = {
   },
   init(){
     wireTabs();
-    loadPeople().then(()=>{ if(current==='feed' && G.people && !document.querySelector('[data-follow]')) open_('feed',true) });
-    loadGlobal('issues');
+    ensure('people','feed');
+    ensure('issues','feed');
     const q=$('qText');
     if(q){
       const b=$('qPost');
@@ -1278,7 +1287,7 @@ S.issues = {
   sub(){ return RO ? `Where @${V.handle} stands` : 'Where you stand' },
   acts(){ return tabs('issues',[['all','Everyone'],['mine','Yours']]) },
   view(){
-    const {list, note} = scoped('issues', D.issues, G.issues);
+    const {list, note, loading} = scoped('issues', D.issues, G.issues);
     const own = RO || SC.issues==='mine' || !ONLINE;
     const tally = issueTally(SC.issues==='near'?'near':'all');
     const contested = tally.filter(t=>t.s+t.o>2).sort((a,b)=>Math.abs(a.s-a.o)/(a.s+a.o) - Math.abs(b.s-b.o)/(b.s+b.o)).slice(0,4);
@@ -1291,7 +1300,7 @@ S.issues = {
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
         <button class="btn" id="iAdd">Add</button></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${list.length?`<div class="list">${list.map(i=>{
+      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(i=>{
         const a = ONLINE ? agree(i.title) : {s:0,o:0};
         const tot = a.s+a.o;
         return `<div class="item" data-id="${i.id}" style="display:block">
@@ -1323,7 +1332,7 @@ S.issues = {
     </aside></div>`;
   },
   init(){
-    wireTabs(); loadGlobal('issues');
+    wireTabs(); ensure('issues','issues');
     const {list} = scoped('issues', D.issues, G.issues);
     let stance='Support';
     if(!RO){
@@ -1356,7 +1365,7 @@ S.endorsed = {
   sub(){ return RO ? `Who @${V.handle} backs` : 'Who you back' },
   acts(){ return tabs('endorsed',[['all','Everyone'],['mine','Yours']]) },
   view(){
-    const {list, note} = scoped('endorsed', D.ends, G.ends);
+    const {list, note, loading} = scoped('endorsed', D.ends, G.ends);
     const own = RO || SC.endorsed==='mine' || !ONLINE;
     const pool = (SC.endorsed==='near' ? (G.ends||[]).filter(isNear) : (G.ends||[]));
     const count = {}; pool.forEach(e=>{ const k=e.name.trim(); count[k]=(count[k]||0)+1 });
@@ -1366,7 +1375,7 @@ S.endorsed = {
     return `<div class="split"><div class="main">
       ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add a candidate, group or measure"><button class="btn" id="eAdd">Add</button></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${list.length?`<div class="list">${list.map(e=>`
+      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(e=>`
         <div class="item" data-id="${e.id}"><div class="grow">
           ${!own && e.profiles ? who(e.profiles) : ''}
           <h3>${esc(e.name)}</h3>
@@ -1386,7 +1395,7 @@ S.endorsed = {
     </aside></div>`;
   },
   init(){
-    wireTabs(); loadGlobal('ends');
+    wireTabs(); ensure('ends','endorsed');
     const {list} = scoped('endorsed', D.ends, G.ends);
     const add = async name=>{
       name=(name||$('eText').value).trim(); if(!name) return;
@@ -1416,7 +1425,7 @@ S.townhall = {
   acts(){ return tabs('townhall',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const mine = RO || !ONLINE || SC.townhall==='mine';
-    let {list, note} = scoped('townhall', D.events, G.events);
+    let {list, note, loading} = scoped('townhall', D.events, G.events);
     const today = new Date().toISOString().slice(0,10);
     const days = new Set(list.map(e=>e.date));
     if(CAL.pick) list = list.filter(e=>e.date===CAL.pick);
@@ -1439,7 +1448,7 @@ S.townhall = {
       <div class="ai" id="tAi" hidden></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
       ${CAL.pick?`<p class="meta">Showing ${dfmt(CAL.pick)} · <button class="linkbtn" id="calClear">clear</button></p>`:''}
-      ${list.length?`<div class="list">${list.map(e=>`
+      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(e=>`
         <div class="item" data-id="${e.id}">
           <div class="datechip" style="padding-top:2px">
             <i>${new Date(e.date+'T00:00').toLocaleDateString(undefined,{month:'short'}).toUpperCase()}</i>
@@ -1628,13 +1637,13 @@ S.polls = {
   acts(){ return tabs('polls',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const mine = RO || !ONLINE || SC.polls==='mine';
-    const {list, note} = scoped('polls', D.polls, G.polls);
+    const {list, note, loading} = scoped('polls', D.polls, G.polls);
     const answered = list.filter(p=>p.voted).length;
     const busiest = [...list].sort((a,b)=>(b.total||0)-(a.total||0)).slice(0,3).filter(p=>p.total);
 
     return `<div class="split"><div class="main">
       ${note?`<p class="meta">${note}</p>`:''}
-      ${list.length? list.map(p=>{
+      ${loading ? '<div class="spin"></div>' : list.length? list.map(p=>{
         const opts=p.poll_options||[];
         return `<div class="item" data-poll="${p.id}" style="display:block">
           ${!mine && p.profiles ? who(p.profiles) : ''}
@@ -1852,6 +1861,7 @@ function rows(list, fn){
 /* -------------------------------------------------------------------- shell */
 const rail = $('rail'), panel = $('panel');
 
+let railPainted = false;
 function renderRail(){
   rail.innerHTML = APPS.map((a,i)=>{
     const n = a.id==='feed' ? D.posts.length : 0;
@@ -1859,6 +1869,8 @@ function renderRail(){
       <span class="tile">${icon(a)}${n?`<span class="badge">${n}</span>`:''}</span>
       <span class="label">${a.name}</span></button>`;
   }).join('');
+  if(railPainted) rail.classList.add('settled');
+  railPainted = true;
 }
 function render(){ renderRail(); if(current) open_(current, true); }
 
