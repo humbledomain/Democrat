@@ -68,3 +68,21 @@ Done. Anyone can now visit your site, enter their email, and get a sign-in link.
 ## Making changes later
 
 Edit any file on GitHub directly: open the file, click the pencil, edit, commit. Your live site updates in about a minute.
+
+
+---
+
+## Part 4 — Switch on the AI features (5 minutes)
+
+Four screens use Claude, and each one works on text *you* typed. Compose and Profile can tighten your
+own writing. Issues can give you the strongest argument against a position you hold. Polls can flag a
+leading question. Ballot can turn a pasted measure into plain English. Until you do this step, those
+buttons simply say the AI is not switched on — nothing else breaks.
+
+1. Go to **console.anthropic.com** → sign in → **API Keys** → **Create Key**. Copy it.
+2. Go to **vercel.com** → your `democrat` project → **Settings** → **Environment Variables**.
+3. Name: `ANTHROPIC_API_KEY`. Value: paste the key. Leave all three environments checked. **Save**.
+4. Go to **Deployments** → the top one → the three dots → **Redeploy**.
+
+The key stays on Vercel's servers. It is never sent to anyone's browser, which is why the `api/ai.js`
+file in this folder exists — every AI request goes through it.
