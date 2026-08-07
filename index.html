@@ -288,6 +288,38 @@ button.tag{cursor:pointer}
 .blink:hover h3{color:var(--blue)}
 .blink:hover span{opacity:1}
 
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:12px}
+.person{border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;
+  align-items:center;text-align:center;gap:7px;background:#fff;transition:border-color .15s,transform .15s}
+.person:hover{border-color:rgba(10,63,214,.3);transform:translateY(-2px)}
+.pface{width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;
+  font-size:19px;font-weight:650;overflow:hidden;text-decoration:none;flex:none}
+.pface img{width:100%;height:100%;object-fit:cover}
+.pmeta a{text-decoration:none;color:inherit}
+.pmeta b{font-size:14.5px;font-weight:620;letter-spacing:-.01em;display:block}
+.pmeta a:hover b{color:var(--blue)}
+.pmeta small{font-size:12.5px;color:var(--muted)}
+.prole{font-size:13px;line-height:1.4;color:#39415a}
+.ploc{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--soft);color:#4c5570}
+.pstats{font-size:11.5px;color:var(--muted)}
+.pfollow{width:100%;margin-top:4px;text-align:center;text-decoration:none;display:block}
+
+/* the first thing anyone sees */
+.gate{min-height:min(64vh,540px);display:grid;place-items:center;padding:20px 0}
+.gatecard{width:100%;max-width:380px;display:flex;flex-direction:column;gap:13px;align-items:stretch;
+  text-align:center;padding:clamp(26px,4vw,38px) clamp(22px,3.4vw,34px);border:1px solid var(--line);
+  border-radius:26px;background:#fff;box-shadow:0 24px 60px -30px rgba(8,26,72,.35)}
+.gatedot{width:34px;height:34px;border-radius:50%;background:var(--blue);margin:0 auto 2px;position:relative}
+.gatedot::after{content:"";position:absolute;inset:0;border-radius:50%;
+  animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
+.gatecard h2{font-size:clamp(21px,2.6vw,26px);font-weight:660;letter-spacing:-.03em;margin-bottom:2px}
+.gtabs{align-self:center;margin-bottom:4px}
+.gtabs button{padding:8px 20px;font-size:13.5px}
+.inp.big{padding:14px 16px;font-size:15.5px;border-radius:14px;text-align:left}
+.btn.big{padding:14px;font-size:15px;border-radius:14px;margin-top:2px}
+.gatecard .linkbtn{margin:0 auto;font-weight:520;color:var(--muted)}
+.gatecard .linkbtn:hover{color:var(--blue);background:none}
+
 /* social + AI */
 .tahead{position:relative}
 .talist{position:absolute;left:-9px;right:-9px;top:calc(100% + 5px);background:#fff;border:1px solid var(--line);
@@ -395,15 +427,16 @@ const APPS = [
        <circle cx="88" cy="60" r="16" fill="${BLUE}"/>
        <circle cx="88" cy="60" r="12" fill="#fff"/>
        <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="${BLUE}" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`},
+{id:'endorsed',name:'People',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
+{id:'compose',name:'Compose',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
+       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
+       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
 {id:'feed',name:'Feed',art:`<circle cx="27" cy="34" r="7" fill="#fff"/>
        <rect x="44" y="28" width="52" height="12" rx="6" fill="#fff"/>
        <circle cx="27" cy="60" r="7" fill="#fff"/>
        <rect x="44" y="54" width="52" height="12" rx="6" fill="#fff"/>
        <circle cx="27" cy="86" r="7" fill="#fff"/>
        <rect x="44" y="80" width="34" height="12" rx="6" fill="#fff"/>`},
-{id:'compose',name:'Compose',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
-       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
-       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
 {id:'issues',name:'Issues',art:`<circle cx="60" cy="26" r="7" fill="#fff"/>
        <rect x="56.5" y="30" width="7" height="62" rx="3.5" fill="#fff"/>
        <rect x="18" y="40" width="84" height="7" rx="3.5" fill="#fff"/>
@@ -411,7 +444,6 @@ const APPS = [
        <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
        <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
        <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"/>`},
-{id:'endorsed',name:'Endorsed',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
 {id:'townhall',name:'Town Hall',art:`<rect x="58.6" y="10" width="2.8" height="9" rx="1.4" fill="#fff"/>
        <path d="M49 30a11 11 0 0 1 22 0Z" fill="#fff"/>
        <path d="M13 52 60 28l47 24Z" fill="#fff"/>
@@ -513,13 +545,15 @@ async function suggest(boxId, btn, task, input, opts){
 
 /* ------------------------------------------------------------------- state */
 let ME = null;            // signed-in profile
+let MYFOLLOWS = new Set();
 let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
 const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null};   // everyone's content
 const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'mine'};
-const CAL = {month:new Date().toISOString().slice(0,7), pick:null};            // per-screen scope
+const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
+let PSEARCH = '';            // per-screen scope
 
 function blank(){
   return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
@@ -564,6 +598,11 @@ async function load(){
       if(ins.error) toast(friendly(ins.error)); else ME = ins.data;
     }
   }
+
+  if(ME){
+    const { data:f } = await sb.from('follows').select('followee').eq('follower',ME.id);
+    MYFOLLOWS = new Set((f||[]).map(x=>x.followee));
+  } else MYFOLLOWS = new Set();
 
   const h = qHandle();
   V = h ? (await sb.from('profiles').select('*').eq('handle',h).maybeSingle()).data : ME;
@@ -758,7 +797,7 @@ const S = {};
 S.profile = {
   sub:'Who you are',
   head(){
-    if(!V) return `<h2>democrat.ai</h2><p>Sign in to claim your page</p>`;
+    if(!V) return `<h2>democrat.ai</h2>`;
     return `<input id="pfName" class="pfname" placeholder="Type your name" value="${esc(V.name)}" ${RO?'readonly':''}>
       <div class="pfhandle"><span>@</span><input id="pfHandle" placeholder="handle" value="${esc(V.handle)}" ${RO?'readonly':''}></div>`;
   },
@@ -796,9 +835,7 @@ S.profile = {
         return `<div class="next"><div class="datechip"><i>${mon}</i><b>${+d}</b></div>
           <div><b>${esc(e.title)}</b><small>${esc(e.place||'')}${e.going?` · ${e.going} going`:''}</small></div></div>`}).join('');
 
-    const backs = D.ends.slice(0,8).map(e=>`<span class="chip">${esc(e.name)}</span>`).join('');
-
-    const nothing = !D.issues.length && !D.posts.length && !D.events.length && !D.ends.length;
+    const nothing = !D.issues.length && !D.posts.length && !D.events.length;
 
     return `<div class="pgrid">
       <aside class="pcolL">
@@ -833,12 +870,12 @@ S.profile = {
         ${sec('Where '+(RO?'they stand':'I stand'), 'issues', stands)}
         ${sec('Latest', 'feed', posts)}
         ${sec('Coming up', 'townhall', soon)}
-        ${sec('Backing', 'endorsed', backs && `<div class="chips">${backs}</div>`)}
 
         ${nothing ? (RO
           ? `<div class="empty"><b>Nothing here yet</b>@${esc(V.handle)} has not posted anything.</div>`
           : `<section class="sec"><div class="sechead"><h4>Start here</h4></div>
              <div class="start">
+               <button data-go="endorsed"><b>Find people</b><small>See who else is here and follow them.</small></button>
                <button data-go="issues"><b>Take a position</b><small>Say where you stand on one thing.</small></button>
                <button data-go="compose"><b>Write a post</b><small>Something happening where you live.</small></button>
                <button data-go="polls"><b>Ask a question</b><small>Find out what people think.</small></button>
@@ -852,8 +889,8 @@ S.profile = {
     </div>`;
   },
   init(){
-    document.querySelector('.pbody').classList.add('pf');
     if(!V){ authInit(); return; }
+    document.querySelector('.pbody').classList.add('pf');
     $('pfShare') && ($('pfShare').onclick = ()=>share(shareLine()));
 
     if(RO){
@@ -1045,90 +1082,69 @@ function nextStep(steps){
   const labels = ['add a photo','add your name','pick a handle','write a bio','say what you care about'];
   return labels[steps.findIndex(x=>!x)] || '';
 }
+let AUTHMODE = 'in';
 function authView(){
-  return `<div class="auth">
-    <h3>Claim your page</h3>
-    <p>Your positions, your posts, the events you are going to and your ballot, on one link.</p>
-    <input class="inp" id="auEmail" type="email" placeholder="you@email.com" autocomplete="email">
-    <input class="inp" id="auPw" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="btn" id="auGo">Continue</button>
-    <button class="linkbtn" id="auLink" style="margin:0 auto">Email me a link instead</button>
+  const up = AUTHMODE==='up';
+  return `<div class="gate">
+    <div class="gatecard">
+      <span class="gatedot"></span>
+      <h2>${up ? 'Create your page' : 'Welcome back'}</h2>
+      <div class="seg gtabs" id="auTabs">
+        <button class="${up?'':'on'}" data-m="in">Sign in</button>
+        <button class="${up?'on':''}" data-m="up">Sign up</button>
+      </div>
+      <input class="inp big" id="auEmail" type="email" placeholder="Email" autocomplete="email">
+      <input class="inp big" id="auPw" type="password" placeholder="Password"
+             autocomplete="${up?'new-password':'current-password'}">
+      <button class="btn big" id="auGo">${up ? 'Create account' : 'Sign in'}</button>
+      <button class="linkbtn" id="auLink">Email me a sign-in link</button>
+    </div>
   </div>`;
 }
 function authInit(){
-  const email = () => $('auEmail').value.trim();
-
-  const go = async ()=>{
-    const e = email(), pw = $('auPw').value;
-    if(!e) return toast('Enter your email');
-    if(!pw) return toast('Enter a password, or use the email link');
-    if(pw.length < 6) return toast('Passwords need six characters');
-    $('auGo').disabled = true;
-
-    const { error } = await sb.auth.signInWithPassword({ email:e, password:pw });
-    if(!error){ $('auGo').disabled = false; return; }               // signed in
-
-    if(/invalid login credentials/i.test(error.message)){           // no account yet: make one
-      const up = await sb.auth.signUp({ email:e, password:pw });
-      $('auGo').disabled = false;
-      if(up.error) return toast(up.error.message);
-      return toast(up.data.session ? 'Welcome' : 'Check your email to confirm');
-    }
-    $('auGo').disabled = false;
-    toast(error.message);
+  const tabs = $('auTabs');
+  tabs.onclick = e => {
+    const b = e.target.closest('button'); if(!b) return;
+    AUTHMODE = b.dataset.m;
+    const email = $('auEmail').value;
+    open_('profile', true);
+    $('auEmail').value = email;
+    ($('auEmail').value ? $('auPw') : $('auEmail')).focus();
   };
 
-  const magic = async ()=>{
-    const e = email();
-    if(!e) return toast('Enter your email');
+  const go = async ()=>{
+    const email = $('auEmail').value.trim(), pw = $('auPw').value;
+    if(!email) return toast('Enter your email');
+    if(!pw) return toast('Enter a password');
+    if(pw.length < 6) return toast('Passwords need six characters');
+    const btn = $('auGo'); btn.disabled = true;
+
+    if(AUTHMODE === 'up'){
+      const { data, error } = await sb.auth.signUp({ email, password:pw });
+      btn.disabled = false;
+      if(error) return toast(/already/i.test(error.message) ? 'You already have an account — choose Sign in' : error.message);
+      return toast(data.session ? 'Welcome' : 'Check your email to confirm');
+    }
+    const { error } = await sb.auth.signInWithPassword({ email, password:pw });
+    btn.disabled = false;
+    if(error) toast(/invalid login/i.test(error.message)
+      ? 'Wrong email or password — or choose Sign up' : error.message);
+  };
+
+  $('auGo').onclick = go;
+  $('auEmail').onkeydown = e => { if(e.key==='Enter') $('auPw').focus() };
+  $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
+  $('auEmail').focus();
+
+  $('auLink').onclick = async ()=>{
+    const email = $('auEmail').value.trim();
+    if(!email) return toast('Enter your email first');
     $('auLink').disabled = true;
-    const { error } = await sb.auth.signInWithOtp({ email:e,
+    const { error } = await sb.auth.signInWithOtp({ email,
       options:{ emailRedirectTo: location.origin + location.pathname } });
     $('auLink').disabled = false;
     toast(error ? error.message : 'Check your email');
   };
-
-  $('auGo').onclick = go;
-  $('auLink').onclick = magic;
-  $('auEmail').onkeydown = e => { if(e.key==='Enter') $('auPw').focus() };
-  $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
-}
-/* load a cache once, then repaint the screen a single time */
-function ensure(kind, screen){
-  if(!ONLINE || G[kind]) return;
-  const job = kind==='people' ? loadPeople() : loadGlobal(kind);
-  job.then(()=>{ if(current===screen) open_(screen, true) });
-}
-
-/* people, for the side rails */
-async function loadPeople(){
-  if(!ONLINE || G.people) return;
-  const { data } = await sb.from('profiles').select('id,handle,name,photo_url,location,role')
-    .not('handle','is',null).order('created_at',{ascending:false}).limit(60);
-  G.people = data||[];
-}
-function personRow(p, extra){
-  return `<div class="who-row">
-    <a class="whoav" href="?u=${esc(p.handle)}">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</a>
-    <a class="grow" href="?u=${esc(p.handle)}" style="text-decoration:none;color:inherit">
-      <b>${esc(p.name||p.handle)}</b><small>${esc(p.role||p.location||'@'+p.handle)}</small></a>
-    ${extra||''}</div>`;
-}
-/* the most held positions across the site, and how they split */
-function issueTally(scope){
-  const src = (G.issues||[]).filter(i => scope==='near' ? isNear(i) : true);
-  const m = {};
-  src.forEach(i=>{
-    const k = i.title.trim().toLowerCase();
-    m[k] = m[k] || {title:i.title.trim(), s:0, o:0};
-    m[k][i.stance==='Support'?'s':'o']++;
-  });
-  return Object.values(m).sort((a,b)=>(b.s+b.o)-(a.s+a.o));
-}
-function splitbar(s0,o0){
-  const t=s0+o0||1;
-  return `<div class="splitbar"><i class="s" style="width:${s0/t*100}%"></i><i class="o" style="width:${o0/t*100}%"></i></div>
-    <div class="legend"><span>${s0} support</span><span>${o0} oppose</span></div>`;
 }
 
 /* --------------------------------------------------------------------- feed */
@@ -1362,60 +1378,86 @@ S.issues = {
 
 /* ----------------------------------------------------------------- endorsed */
 S.endorsed = {
-  sub(){ return RO ? `Who @${V.handle} backs` : 'Who you back' },
-  acts(){ return tabs('endorsed',[['all','Everyone'],['mine','Yours']]) },
+  sub(){ return 'Who is here' },
+  acts(){ return tabs('endorsed',[['all','Everyone'],['mine','Following']]) },
   view(){
-    const {list, note, loading} = scoped('endorsed', D.ends, G.ends);
-    const own = RO || SC.endorsed==='mine' || !ONLINE;
-    const pool = (SC.endorsed==='near' ? (G.ends||[]).filter(isNear) : (G.ends||[]));
-    const count = {}; pool.forEach(e=>{ const k=e.name.trim(); count[k]=(count[k]||0)+1 });
-    const top = Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const mineSet = new Set(D.ends.map(e=>e.name.trim().toLowerCase()));
+    if(!ONLINE) return `<div class="empty"><b>People show up once you are online</b>Connect the backend and everyone who joins appears here.</div>`;
+    const all = G.people;
+    if(all === null) return `<div class="spin"></div>`;
+
+    const mineId = ME && ME.id;
+    let people = (all||[]).filter(x=>x.id!==mineId);
+    const sc = SC.endorsed;
+    if(sc==='near')  people = people.filter(x=>isNear({profiles:x}));
+    if(sc==='mine')  people = people.filter(x=>MYFOLLOWS.has(x.id));
+    if(PSEARCH){
+      const q = PSEARCH.toLowerCase();
+      people = people.filter(x=>((x.name||'')+' '+(x.handle||'')+' '+(x.role||'')+' '+(x.location||'')).toLowerCase().includes(q));
+    }
+    const nearCount = (all||[]).filter(x=>x.id!==mineId && isNear({profiles:x})).length;
+    const counts = id => ({
+      posts:  (G.posts ||[]).filter(p=>p.author===id).length,
+      stands: (G.issues||[]).filter(i=>i.author===id).length
+    });
 
     return `<div class="split"><div class="main">
-      ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add a candidate, group or measure"><button class="btn" id="eAdd">Add</button></div>`}
-      ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(e=>`
-        <div class="item" data-id="${e.id}"><div class="grow">
-          ${!own && e.profiles ? who(e.profiles) : ''}
-          <h3>${esc(e.name)}</h3>
-          <div class="rowacts">${act('share','Share')}${own&&!RO?act('del'):''}</div></div></div>`).join('')}</div>`
-        :`<div class="empty"><b>Nothing here yet</b>${RO?'':'Add the candidates, groups and measures you support.'}</div>`}
+      <div class="frow"><input class="inp" id="pSearch" placeholder="Search people" value="${esc(PSEARCH)}"></div>
+      ${sc==='near' && !nearCount ? `<p class="meta">Nobody in ${stateName(myState())||'your state'} yet — these are everyone.</p>` : ''}
+      ${people.length ? `<div class="grid">${people.map(x=>{
+        const c = counts(x.id), following = MYFOLLOWS.has(x.id);
+        return `<div class="person">
+          <a class="pface" href="?u=${esc(x.handle)}">${x.photo_url?`<img src="${x.photo_url}" alt="">`:esc(initials(x))}</a>
+          <div class="pmeta">
+            <a href="?u=${esc(x.handle)}"><b>${esc(x.name||x.handle)}</b></a>
+            <small>@${esc(x.handle)}</small>
+          </div>
+          ${x.role?`<p class="prole">${esc(x.role)}</p>`:''}
+          ${x.location?`<span class="ploc">${esc(x.location)}</span>`:''}
+          <div class="pstats">${c.stands} position${c.stands===1?'':'s'} · ${c.posts} post${c.posts===1?'':'s'}</div>
+          ${ME ? `<button class="btn ${following?'ghost':''} pfollow" data-follow="${x.id}">${following?'Following':'Follow'}</button>`
+               : `<a class="btn ghost pfollow" href="${location.pathname}">Sign in to follow</a>`}
+        </div>`}).join('')}</div>`
+        : `<div class="empty"><b>${PSEARCH?'Nobody by that name':'Nobody here yet'}</b>${PSEARCH?'Try another search.':'Share your page and this fills up.'}</div>`}
     </div>
     <aside class="side">
-      ${top.length?`<div class="card"><h5>Backed most</h5>
-        ${top.map(([n,c])=>`<div class="row"><span style="flex:1">${esc(n)}</span>
-          ${(!RO && ONLINE && !mineSet.has(n.toLowerCase()))
-            ? `<button class="mini-btn" data-back="${esc(n)}">Back</button>` : `<b>${c}</b>`}</div>`).join('')}
-      </div>`:''}
-      ${!RO?`<div class="card"><h5>Your list</h5>
-        <div class="row"><span>Backing</span><b>${D.ends.length}</b></div>
-        <button class="mini-btn" id="eShareAll" style="align-self:flex-start">Share the whole list</button>
+      <div class="card"><h5>The network</h5>
+        <div class="row"><span>People</span><b>${(all||[]).length}</b></div>
+        <div class="row"><span>In ${stateName(myState())||'your state'}</span><b>${nearCount}</b></div>
+        <div class="row"><span>You follow</span><b>${MYFOLLOWS.size}</b></div>
+        <div class="row"><span>Follow you</span><b>${D.followers}</b></div>
+      </div>
+      <div class="card"><h5>Grow it</h5>
+        <button class="mini-btn" id="pInvite" style="text-align:left">Invite someone</button>
+        <span class="ainote">Every share is counted on your Reach.</span>
+      </div>
+      ${(all||[]).length ? `<div class="card"><h5>Newest here</h5>
+        ${(all||[]).filter(x=>x.id!==mineId).slice(0,4).map(x=>personRow(x)).join('') || '<span class="ainote">Just you so far.</span>'}
       </div>`:''}
     </aside></div>`;
   },
   init(){
-    wireTabs(); ensure('ends','endorsed');
-    const {list} = scoped('endorsed', D.ends, G.ends);
-    const add = async name=>{
-      name=(name||$('eText').value).trim(); if(!name) return;
-      if(!await needAuth()) return;
-      mutate({ local:db=>db.ends.unshift({id:uid(),name}),
-        remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error, clears:['ends'] });
-    };
-    if(!RO){
-      $('eAdd').onclick=()=>add(); $('eText').onkeydown=e=>{ if(e.key==='Enter') add() };
-      document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>add(b.dataset.back));
-      const sa=$('eShareAll');
-      if(sa) sa.onclick=()=>share(D.ends.length
-        ? 'I back ' + D.ends.slice(0,6).map(e=>e.name).join(', ') + (D.ends.length>6?` and ${D.ends.length-6} more`:'')
-        : 'democrat.ai');
+    wireTabs(); ensure('people','endorsed'); ensure('posts','endorsed'); ensure('issues','endorsed');
+    const q=$('pSearch');
+    if(q){
+      let t;
+      q.oninput=()=>{ clearTimeout(t); t=setTimeout(()=>{ PSEARCH=q.value.trim(); open_('endorsed',true);
+        const el=$('pSearch'); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length) } },250) };
     }
-    rows(list,(x,a)=>{
-      if(a==='share') return share(`I back ${x.name}`, x.profiles && x.profiles.handle);
-      if(a==='del') return mutate({ local:db=>db.ends=db.ends.filter(y=>y.id!==x.id),
-        remote:async()=>(await sb.from('endorsements').delete().eq('id',x.id)).error, clears:['ends'] });
+    document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ()=>{
+      if(!await needAuth()) return;
+      const id=b.dataset.follow, following=MYFOLLOWS.has(id);
+      b.disabled=true;
+      const { error } = following
+        ? await sb.from('follows').delete().eq('follower',ME.id).eq('followee',id)
+        : await sb.from('follows').insert({follower:ME.id, followee:id});
+      b.disabled=false;
+      if(error) return toast(friendly(error));
+      following ? MYFOLLOWS.delete(id) : MYFOLLOWS.add(id);
+      b.textContent = following ? 'Follow' : 'Following';
+      b.classList.toggle('ghost', !following);
     });
+    const inv=$('pInvite');
+    if(inv) inv.onclick=()=>share(V&&V.name?`${V.name} is on democrat.ai`:'democrat.ai');
   }
 };
 
@@ -1833,7 +1875,6 @@ S.reach = {
         <div class="row"><span>Positions</span><b>${D.issues.length}</b></div>
         <div class="row"><span>Questions asked</span><b>${D.polls.length}</b></div>
         <div class="row"><span>Events</span><b>${D.events.length}</b></div>
-        <div class="row"><span>Backing</span><b>${D.ends.length}</b></div>
         <div class="row"><span>RSVPs received</span><b>${going}</b></div>
       </div>
       ${!RO?`<div class="card"><h5>Reach further</h5>
