@@ -13,18 +13,17 @@
 <meta name="theme-color" content="#0A3FD6">
 <meta name="apple-mobile-web-app-title" content="democrat.ai">
 
-<!-- Share card. Swap these two for your absolute URL once the domain is final,
-     e.g. https://democrat.si/icons/og.png — some scrapers insist on absolute. -->
+<meta property="og:url" content="https://democrat.si/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="democrat.ai">
 <meta property="og:description" content="A political presence, in one place.">
-<meta property="og:image" content="/icons/og.png">
+<meta property="og:image" content="https://democrat.si/icons/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="democrat.ai">
 <meta name="twitter:description" content="A political presence, in one place.">
-<meta name="twitter:image" content="/icons/og.png">
+<meta name="twitter:image" content="https://democrat.si/icons/og.png">
 <style>
 :root{
   --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
@@ -401,6 +400,25 @@ button.tag{cursor:pointer}
   font-size:13.5px;line-height:1.45;color:#28304a;cursor:pointer;transition:.15s}
 .starter:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03);color:var(--blue)}
 
+/* share + invite sheet */
+.sheet{position:fixed;inset:0;z-index:80;background:rgba(8,20,45,.34);backdrop-filter:blur(4px);
+  display:grid;place-items:center;padding:22px;animation:fade .2s ease}
+.sheetbox{background:#fff;border-radius:26px;padding:26px 26px 22px;width:100%;max-width:440px;
+  display:flex;flex-direction:column;gap:14px;box-shadow:0 40px 90px -30px rgba(8,26,72,.5);
+  animation:rise .3s cubic-bezier(.2,.9,.25,1) both;max-height:92vh;overflow-y:auto}
+.sheetbox h3{font-size:19px;font-weight:640;letter-spacing:-.025em}
+.sheetmsg{font-size:14.5px;line-height:1.55;color:#242b3d}
+.msgbox{font-size:14.5px;line-height:1.55;resize:none;min-height:92px}
+.urlrow{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:12px;padding:10px 12px;
+  font-size:12.5px;color:var(--muted)}
+.urlrow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.net{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-size:13px;
+  font-weight:560;color:#28304a;cursor:pointer;transition:.15s}
+.net:hover{border-color:rgba(10,63,214,.45);color:var(--blue);background:rgba(10,63,214,.03)}
+.sheetfoot{display:flex;gap:8px;flex-wrap:wrap}
+.sheetfoot .btn{flex:1;min-width:110px}
+
 /* social + AI */
 .tahead{position:relative}
 .talist{position:absolute;left:-9px;right:-9px;top:calc(100% + 5px);background:#fff;border:1px solid var(--line);
@@ -505,6 +523,8 @@ const CFG = {
 };
 
 const BLUE = '#0A3FD6';
+/* every link we hand out points here, whatever address the app is being viewed at */
+const SITE = 'https://democrat.si';
 const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
 const APPS = [
 {id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
@@ -682,7 +702,7 @@ function blank(){
           followers:0,following:0,shares:0,isFollowing:false};
 }
 const qHandle = () => new URLSearchParams(location.search).get('u');
-const publicUrl = h => location.origin + location.pathname + (h ? '?u='+h : '');
+const publicUrl = h => SITE + '/' + (h ? '?u='+h : '');
 
 /* -------------------------------------------------------------- local mode */
 const LKEY='dai.local';
@@ -859,14 +879,85 @@ async function needAuth(){
 }
 
 /* ------------------------------------------------------------------- share */
-async function share(text, handle){
-  const who = handle || (V && V.handle);
-  const url = publicUrl(who);
+const NETS = [
+  ['X',        t=>`https://twitter.com/intent/tweet?text=${t.t}&url=${t.u}`],
+  ['Threads',  t=>`https://www.threads.net/intent/post?text=${t.t}%20${t.u}`],
+  ['Bluesky',  t=>`https://bsky.app/intent/compose?text=${t.t}%20${t.u}`],
+  ['Facebook', t=>`https://www.facebook.com/sharer/sharer.php?u=${t.u}`],
+  ['WhatsApp', t=>`https://wa.me/?text=${t.t}%20${t.u}`],
+  ['Reddit',   t=>`https://www.reddit.com/submit?url=${t.u}&title=${t.t}`],
+  ['LinkedIn', t=>`https://www.linkedin.com/sharing/share-offsite/?url=${t.u}`],
+  ['Telegram', t=>`https://t.me/share/url?url=${t.u}&text=${t.t}`],
+  ['Email',    t=>`mailto:?subject=${t.t}&body=${t.t}%0A%0A${t.u}`],
+  ['Messages', t=>`sms:?&body=${t.t}%20${t.u}`]
+];
+
+function logShare(){
   if(ONLINE && V) sb.from('shares').insert({profile_id:V.id}).then(()=>{});
   if(!ONLINE){ const db=localDB(); db.shares=(db.shares||0)+1; localSave(db); D.shares=db.shares; }
-  try{ if(navigator.share){ await navigator.share({text,url}); return } }catch(e){ return }
-  try{ await navigator.clipboard.writeText(text+'\n'+url); toast('Copied to clipboard') }
-  catch(e){ toast(url) }
+}
+
+/* one sheet, used by every Share button and by Invite */
+function shareSheet({title, text, url, editable, canPost}){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>${esc(title)}</h3>
+    ${editable
+      ? `<textarea class="inp msgbox" id="shText" rows="3">${esc(text)}</textarea>`
+      : `<p class="sheetmsg">${esc(text)}</p>`}
+    <div class="urlrow"><span id="shUrl">${esc(url.replace(/^https?:\/\//,''))}</span>
+      <button class="mini-btn" id="shCopy">Copy</button></div>
+    <div class="nets">${NETS.map((n,i)=>`<button class="net" data-net="${i}">${n[0]}</button>`).join('')}</div>
+    <div class="sheetfoot">
+      ${canPost ? `<button class="btn" id="shPost">Post it to my feed</button>` : ''}
+      ${navigator.share ? `<button class="btn ghost" id="shMore">More…</button>` : ''}
+      <button class="btn ghost" id="shClose">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const msg = ()=> (editable ? ($('shText').value.trim() || text) : text);
+  const close = ()=>wrap.remove();
+
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('shClose').onclick = close;
+  $('shCopy').onclick = async ()=>{
+    try{ await navigator.clipboard.writeText(msg()+'\n'+url); toast('Copied'); logShare() }
+    catch(e){ toast(url) }
+  };
+  wrap.querySelectorAll('[data-net]').forEach(b=>b.onclick=()=>{
+    const enc = {t:encodeURIComponent(msg()), u:encodeURIComponent(url)};
+    window.open(NETS[+b.dataset.net][1](enc), '_blank', 'noopener,width=620,height=640');
+    logShare();
+  });
+  const more = $('shMore');
+  if(more) more.onclick = async ()=>{
+    try{ await navigator.share({text:msg(), url}); logShare() }catch(e){}
+  };
+  const post = $('shPost');
+  if(post) post.onclick = async ()=>{
+    if(!await needAuth()) return;
+    const text = (msg()+'\n'+url).slice(0,1000);
+    post.disabled = true;
+    await mutate({ local:db=>db.posts.unshift({id:uid(),text,created_at:new Date().toISOString(),likes:0,liked:false}),
+      remote:async()=>(await sb.from('posts').insert({author:ME.id,text})).error, clears:['posts'] });
+    logShare(); close(); toast('Posted'); open_('feed');
+  };
+}
+
+function share(text, handle){
+  const who = handle || (V && V.handle);
+  shareSheet({ title:'Share', text, url:publicUrl(who) });
+}
+
+/* the invitation is a written message, not a bare link */
+function inviteSheet(){
+  const me   = (ME && (ME.name || ME.handle)) || '';
+  const here = myState() ? ` in ${stateName(myState())}` : '';
+  const text = (me ? `${me} is on democrat.si. ` : '')
+    + `It is one page for where you stand, what you post, the events you turn up to and your ballot`
+    + `${here}. Free, and it takes a minute.`;
+  shareSheet({ title:'Invite someone', text, url:publicUrl(ME && ME.handle), editable:true, canPost:true });
 }
 
 /* ------------------------------------------------------------------- icons */
@@ -1687,8 +1778,8 @@ S.endorsed = {
         <div class="row"><span>Follow you</span><b>${D.followers}</b></div>
       </div>
       <div class="card"><h5>Grow it</h5>
-        <button class="mini-btn" id="pInvite" style="text-align:left">Invite someone</button>
-        <span class="ainote">Every share is counted on your Reach.</span>
+        <button class="btn" id="pInvite">Write an invitation</button>
+        <span class="ainote">Sends to X, Threads, Bluesky, WhatsApp, Messages and the rest — or posts it to your feed.</span>
       </div>
       ${(all||[]).length ? `<div class="card"><h5>Newest here</h5>
         ${(all||[]).filter(x=>x.id!==mineId).slice(0,4).map(x=>personRow(x)).join('') || '<span class="ainote">Just you so far.</span>'}
@@ -1720,7 +1811,7 @@ S.endorsed = {
       setTimeout(()=>{ if(current==='endorsed') open_('endorsed',true) }, 600);
     });
     const inv=$('pInvite');
-    if(inv) inv.onclick=()=>share(V&&V.name?`${V.name} is on democrat.ai`:'democrat.ai');
+    if(inv) inv.onclick=inviteSheet;
   }
 };
 
