@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>democrat.ai</title>
 <meta name="description" content="A political presence, in one place.">
-<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+<link rel="shortcut icon" href="/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0A3FD6">
@@ -412,12 +415,19 @@ button.tag{cursor:pointer}
 .urlrow{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:12px;padding:10px 12px;
   font-size:12.5px;color:var(--muted)}
 .urlrow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
-.net{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-size:13px;
-  font-weight:560;color:#28304a;cursor:pointer;transition:.15s}
-.net:hover{border-color:rgba(10,63,214,.45);color:var(--blue);background:rgba(10,63,214,.03)}
+.nets{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:2px 0}
+.net{width:42px;height:42px;border:0;border-radius:50%;background:var(--brand);color:#fff;cursor:pointer;
+  display:grid;place-items:center;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 6px -2px rgba(8,26,72,.4)}
+.net svg{width:19px;height:19px}
+.net:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 8px 16px -6px rgba(8,26,72,.5)}
+.net:active{transform:scale(.94)}
 .sheetfoot{display:flex;gap:8px;flex-wrap:wrap}
 .sheetfoot .btn{flex:1;min-width:110px}
+
+.joinbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:15px 18px;border-radius:16px;
+  background:rgba(10,63,214,.05);border:1px solid rgba(10,63,214,.14)}
+.joinbar span{flex:1;font-size:14px;color:#25304a;min-width:180px}
+.joinbar .btn{flex:none}
 
 /* social + AI */
 .tahead{position:relative}
@@ -486,7 +496,7 @@ button.tag{cursor:pointer}
 <body>
 
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
-<a class="mark" href="?"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+<a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
 <div class="mode" id="mode" hidden></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -701,8 +711,18 @@ function blank(){
   return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
           followers:0,following:0,shares:0,isFollowing:false};
 }
-const qHandle = () => new URLSearchParams(location.search).get('u');
-const publicUrl = h => SITE + '/' + (h ? '?u='+h : '');
+const RESERVED = new Set(['','index.html','api','icons','favicon.ico','site.webmanifest','robots.txt']);
+/* the handle now lives in the path: democrat.si/god  (?u=god still works, and gets tidied away) */
+function qHandle(){
+  const q = new URLSearchParams(location.search).get('u');
+  if(q){
+    try{ history.replaceState(null,'','/'+q) }catch(e){}
+    return q;
+  }
+  const seg = decodeURIComponent(location.pathname.replace(/^\/+|\/+$/g,'')).split('/')[0];
+  return RESERVED.has(seg) ? null : seg;
+}
+const publicUrl = h => SITE + '/' + (h || '');
 
 /* -------------------------------------------------------------- local mode */
 const LKEY='dai.local';
@@ -870,26 +890,46 @@ function friendly(e){
   if(m.includes('row-level security')) return 'Sign in first';
   return e.message || 'Something went wrong';
 }
+const GUEST = ()=> ONLINE && !ME;                 /* looking around, no account yet */
+function joinBar(line){
+  return `<div class="joinbar">
+    <span>${esc(line)}</span>
+    <button class="btn" data-go="profile">Create an account</button>
+  </div>`;
+}
+
 async function needAuth(){
   if(ME || !ONLINE) return true;
   toast('Sign in first');
-  if(RO) location.href = location.pathname;   // drop ?u= so the sign-in form is reachable
+  if(RO) location.href = '/';   // drop ?u= so the sign-in form is reachable
   else open_('profile');
   return false;
 }
 
 /* ------------------------------------------------------------------- share */
+const G_ = {
+  x:'<path d="M17.5 3h3.2l-7 8 8.2 10.9h-6.4l-5-6.5-5.7 6.5H1.6l7.5-8.6L1.4 3h6.6l4.5 6L17.5 3z"/>',
+  threads:'<path d="M16.4 11.3c-.1 0-.2-.1-.3-.1-.2-3.1-1.9-4.9-4.7-4.9-2 0-3.6.9-4.4 2.4l1.7 1.2c.6-1 1.6-1.2 2.7-1.2 1.5 0 2.5.7 2.7 2.2-.7-.1-1.4-.2-2.2-.2-2.7 0-4.5 1.4-4.5 3.5 0 1.9 1.6 3.2 3.6 3.2 1.7 0 3-.8 3.7-2.2.4 1 1.1 1.6 1.9 2l.9-1.7c-.9-.5-1.2-1.3-1.2-2.4 1.4.5 2.1 1.6 2.1 3.2 0 2.7-2.2 4.9-6.2 4.9-4.3 0-6.8-2.9-6.8-7.9s2.5-7.9 6.8-7.9c3.4 0 5.6 1.7 6.4 4.6l2-.5C19.5 5.4 16.6 3 12 3 6.5 3 3 6.7 3 13s3.5 10 9 10c5.1 0 8.2-3 8.2-6.9 0-2.5-1.4-4.2-3.8-4.8zm-5.3 4.2c-.9 0-1.6-.4-1.6-1.2 0-.9.9-1.5 2.4-1.5.7 0 1.3.1 1.9.2-.2 1.6-1.2 2.5-2.7 2.5z"/>',
+  bluesky:'<path d="M6.3 4.5C8.7 6.3 11.3 9.9 12 12c.7-2.1 3.3-5.7 5.7-7.5C19.5 3.2 22 2.2 22 5c0 .6-.3 4.7-.5 5.4-.6 2.3-3 2.9-5.1 2.5 3.7.6 4.6 2.7 2.6 4.8-3.9 4-5.6-1-6-2.3-.1-.2-.1-.3-.1-.2 0-.1 0 0-.1.2-.4 1.3-2.1 6.3-6 2.3-2-2.1-1.1-4.2 2.6-4.8-2.1.4-4.5-.2-5.1-2.5C2.3 9.7 2 5.6 2 5c0-2.8 2.5-1.8 4.3-.5z"/>',
+  facebook:'<path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/>',
+  whatsapp:'<path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2zm5.3 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.5-4-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5.2.5.8 1.8.8 2 .1.1.1.3 0 .4l-.3.5-.4.4c-.1.1-.3.3-.1.5.1.3.6 1.1 1.4 1.7 1 .8 1.7 1.1 2 1.2.2.1.4.1.5-.1l.8-.9c.2-.2.3-.2.5-.1l1.8.9c.3.1.4.2.5.3 0 .1 0 .6-.2 1.2z"/>',
+  reddit:'<path d="M22 12c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.5-1-3.4-1.7-5.6-1.8l1-4.4 3.1.7c0 1 .8 1.7 1.8 1.7s1.8-.8 1.8-1.8-.8-1.8-1.8-1.8c-.7 0-1.3.4-1.6 1L13.3 3c-.2 0-.4.1-.5.3l-1.2 5.2c-2.2 0-4.2.7-5.7 1.8-.4-.4-.9-.6-1.5-.6C3.1 9.8 2 10.8 2 12c0 .8.4 1.5 1.1 1.9v.6c0 3.3 3.9 6 8.7 6s8.7-2.7 8.7-6v-.6c.7-.4 1.1-1.1 1.1-1.9zM7.5 13.6c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5zm8.3 4.1c-1 1-2.6 1.4-3.8 1.4s-2.8-.4-3.8-1.4c-.2-.2-.2-.4 0-.6.2-.2.4-.2.6 0 .7.7 2.1 1 3.2 1s2.5-.3 3.2-1c.2-.2.4-.2.6 0 .2.2.2.4 0 .6zm-.8-2.6c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"/>',
+  linkedin:'<path d="M6.9 20.5H3.6V9.3h3.3v11.2zM5.2 7.9a1.9 1.9 0 1 1 0-3.9 1.9 1.9 0 0 1 0 3.9zM20.4 20.5h-3.3v-5.5c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.6H9.9V9.3h3.1v1.5h.1c.4-.8 1.5-1.7 3.1-1.7 3.3 0 3.9 2.2 3.9 5v6.4z"/>',
+  telegram:'<path d="M21.9 4.5 18.9 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.6 8.5-7.7c.4-.3-.1-.5-.6-.2L7.2 13.1 2.6 11.7c-1-.3-1-1 .2-1.5l18-6.9c.8-.3 1.5.2 1.1 1.2z"/>',
+  email:'<path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 8.2 8-5V6l-8 5-8-5v1.2l8 5z"/>',
+  messages:'<path d="M12 3c5.5 0 10 3.6 10 8s-4.5 8-10 8c-1.1 0-2.2-.2-3.2-.4L3 21l1.6-3.9C3 15.7 2 13.9 2 11c0-4.4 4.5-8 10-8z"/>'
+};
 const NETS = [
-  ['X',        t=>`https://twitter.com/intent/tweet?text=${t.t}&url=${t.u}`],
-  ['Threads',  t=>`https://www.threads.net/intent/post?text=${t.t}%20${t.u}`],
-  ['Bluesky',  t=>`https://bsky.app/intent/compose?text=${t.t}%20${t.u}`],
-  ['Facebook', t=>`https://www.facebook.com/sharer/sharer.php?u=${t.u}`],
-  ['WhatsApp', t=>`https://wa.me/?text=${t.t}%20${t.u}`],
-  ['Reddit',   t=>`https://www.reddit.com/submit?url=${t.u}&title=${t.t}`],
-  ['LinkedIn', t=>`https://www.linkedin.com/sharing/share-offsite/?url=${t.u}`],
-  ['Telegram', t=>`https://t.me/share/url?url=${t.u}&text=${t.t}`],
-  ['Email',    t=>`mailto:?subject=${t.t}&body=${t.t}%0A%0A${t.u}`],
-  ['Messages', t=>`sms:?&body=${t.t}%20${t.u}`]
+  ['X',        '#000000', G_.x,        t=>`https://twitter.com/intent/tweet?text=${t.t}&url=${t.u}`],
+  ['Threads',  '#000000', G_.threads,  t=>`https://www.threads.net/intent/post?text=${t.t}%20${t.u}`],
+  ['Bluesky',  '#0285FF', G_.bluesky,  t=>`https://bsky.app/intent/compose?text=${t.t}%20${t.u}`],
+  ['Facebook', '#1877F2', G_.facebook, t=>`https://www.facebook.com/sharer/sharer.php?u=${t.u}`],
+  ['WhatsApp', '#25D366', G_.whatsapp, t=>`https://wa.me/?text=${t.t}%20${t.u}`],
+  ['Reddit',   '#FF4500', G_.reddit,   t=>`https://www.reddit.com/submit?url=${t.u}&title=${t.t}`],
+  ['LinkedIn', '#0A66C2', G_.linkedin, t=>`https://www.linkedin.com/sharing/share-offsite/?url=${t.u}`],
+  ['Telegram', '#229ED9', G_.telegram, t=>`https://t.me/share/url?url=${t.u}&text=${t.t}`],
+  ['Messages', '#34C759', G_.messages, t=>`sms:?&body=${t.t}%20${t.u}`],
+  ['Email',    '#6B7488', G_.email,    t=>`mailto:?subject=${t.t}&body=${t.t}%0A%0A${t.u}`]
 ];
 
 function logShare(){
@@ -908,7 +948,9 @@ function shareSheet({title, text, url, editable, canPost}){
       : `<p class="sheetmsg">${esc(text)}</p>`}
     <div class="urlrow"><span id="shUrl">${esc(url.replace(/^https?:\/\//,''))}</span>
       <button class="mini-btn" id="shCopy">Copy</button></div>
-    <div class="nets">${NETS.map((n,i)=>`<button class="net" data-net="${i}">${n[0]}</button>`).join('')}</div>
+    <div class="nets">${NETS.map((n,i)=>`
+      <button class="net" data-net="${i}" title="${n[0]}" aria-label="${n[0]}" style="--brand:${n[1]}">
+        <svg viewBox="0 0 24 24" fill="currentColor">${n[2]}</svg></button>`).join('')}</div>
     <div class="sheetfoot">
       ${canPost ? `<button class="btn" id="shPost">Post it to my feed</button>` : ''}
       ${navigator.share ? `<button class="btn ghost" id="shMore">More…</button>` : ''}
@@ -927,7 +969,7 @@ function shareSheet({title, text, url, editable, canPost}){
   };
   wrap.querySelectorAll('[data-net]').forEach(b=>b.onclick=()=>{
     const enc = {t:encodeURIComponent(msg()), u:encodeURIComponent(url)};
-    window.open(NETS[+b.dataset.net][1](enc), '_blank', 'noopener,width=620,height=640');
+    window.open(NETS[+b.dataset.net][3](enc), '_blank', 'noopener,width=620,height=640');
     logShare();
   });
   const more = $('shMore');
@@ -985,7 +1027,7 @@ const icon = a => `<svg viewBox="0 0 120 120" aria-hidden="true">
 /* author line on anything from another person */
 function who(p){
   if(!p) return '';
-  return `<a class="who" href="?u=${esc(p.handle||'')}">
+  return `<a class="who" href="/${esc(p.handle||'')}">
     <span class="whoav">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</span>
     <b>${esc(p.name||p.handle||'Someone')}</b><span>@${esc(p.handle||'')}</span></a>`;
 }
@@ -1022,7 +1064,7 @@ S.profile = {
     if(!V) return '';
     if(RO) return `<button class="btn ghost" id="pfShare">Share</button>` +
       (ME ? `<button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
-          : `<a class="btn" href="${location.pathname}">Sign in</a>`);
+          : `<a class="btn" href="/">Sign in</a>`);
     return `${ONLINE?`<button class="btn ghost" id="pfOut">Sign out</button>`:''}
       <button class="btn ghost" id="pfShare">Share</button>
       <button class="btn" id="pfEdit">Edit</button>`;
@@ -1099,7 +1141,7 @@ S.profile = {
                <button data-go="ballot"><b>Sort your ballot</b><small>Registration and your election date.</small></button>
              </div></section>`) : ''}
 
-        ${RO ? `<p class="hint"><a href="${location.pathname}" style="color:var(--blue);font-weight:590">${ME?'Back to your page':'Make your own page'}</a></p>`
+        ${RO ? `<p class="hint"><a href="/" style="color:var(--blue);font-weight:590">${ME?'Back to your page':'Make your own page'}</a></p>`
              : `<p class="hint" style="text-align:left">${V.handle?`Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`:'Pick a handle to get your link'}</p>`}
       </div>
       <input type="file" id="pfFile" accept="image/*" hidden>
@@ -1163,12 +1205,12 @@ S.profile = {
       Object.assign(V,patch); Object.assign(ME,patch);
     }
 
-    $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut(); location.href = location.pathname });
-    placeahead($('pfLoc'), ()=>{ if(ONLINE && myState())
+    $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut(); location.href = '/' });
+    if($('pfLoc')) placeahead($('pfLoc'), ()=>{ if(ONLINE && myState())
       ['feed','polls','townhall'].forEach(k=>SC[k]='near'); });
 
-    $('pfAv').onclick = ()=>$('pfFile').click();
-    $('pfFile').onchange = e => {
+    if($('pfAv')) $('pfAv').onclick = ()=>$('pfFile').click();
+    if($('pfFile')) $('pfFile').onchange = e => {
       const f = e.target.files[0]; if(!f) return;
       toast('Uploading photo…');
       crop(f, 640, async (blob, dataUrl)=>{
@@ -1363,7 +1405,7 @@ function authInit(){
     if(!email) return toast('Enter your email first');
     $('auLink').disabled = true;
     const { error } = await sb.auth.signInWithOtp({ email,
-      options:{ emailRedirectTo: location.origin + location.pathname } });
+      options:{ emailRedirectTo: location.origin + '/' } });
     $('auLink').disabled = false;
     toast(error ? error.message : 'Check your email');
   };
@@ -1393,8 +1435,8 @@ function ensure(kind, screen){
 
 function personRow(p, extra){
   return `<div class="who-row">
-    <a class="whoav" href="?u=${esc(p.handle)}">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</a>
-    <a class="grow" href="?u=${esc(p.handle)}" style="text-decoration:none;color:inherit">
+    <a class="whoav" href="/${esc(p.handle)}">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</a>
+    <a class="grow" href="/${esc(p.handle)}" style="text-decoration:none;color:inherit">
       <b>${esc(p.name||p.handle)}</b><small>${esc(p.role||p.location||'@'+p.handle)}</small></a>
     ${extra||''}</div>`;
 }
@@ -1419,7 +1461,7 @@ function splitbar(s0,o0){
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
-  acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${RO?'':`<button class="btn" id="feedPost">Post</button>`}` },
+  acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${(RO||GUEST())?'':`<button class="btn" id="feedPost">Post</button>`}` },
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
     const {list, note, loading} = scoped('feed', D.posts, G.posts);
@@ -1430,7 +1472,8 @@ S.feed = {
     const hot = issueTally(SC.feed==='near'?'near':'all').slice(0,4);
 
     return `<div class="split"><div class="main">
-      ${RO?'':`<div class="quick">
+      ${GUEST() ? joinBar('Sign in to post, like and follow.') : ''}
+      ${(RO||GUEST())?'':`<div class="quick">
         <span class="whoav" style="width:34px;height:34px">${V&&V.photo_url?`<img src="${V.photo_url}" alt="">`:esc(initials(V||{}))}</span>
         <textarea id="qText" rows="1" maxlength="1000" placeholder="Say something"></textarea>
         <button class="btn" id="qPost" disabled>Post</button>
@@ -1548,6 +1591,12 @@ S.compose = {
   acts(){ chatLoad(); return CHAT.length ? `<button class="btn ghost" id="chNew">New chat</button>` : '' },
   view(){
     chatLoad();
+    if(GUEST()) return `<div class="chatintro" style="margin:auto">
+      <span class="introdot"></span>
+      <h3>Chat is for members</h3>
+      <p>Make an account and think through anything political, privately.</p>
+      <button class="btn" data-go="profile">Create an account</button>
+    </div>`;
     const bubbles = CHAT.map(m => m.role==='user'
       ? `<div class="msg me"><div class="bubble">${esc(m.content)}</div></div>`
       : `<div class="msg ai"><span class="mavatar"></span><div class="say">${md(m.content)}</div></div>`
@@ -1588,6 +1637,7 @@ S.compose = {
   },
   init(){
     chatLoad();
+    if(GUEST()) return;
     const box=$('chMsgs'), t=$('chText'), send=$('chSend');
     let busy = false;
     const bottom = ()=>{ box.scrollTop = box.scrollHeight };
@@ -1659,7 +1709,8 @@ S.issues = {
     const held = new Set(D.issues.map(i=>i.title.trim().toLowerCase()));
 
     return `<div class="split"><div class="main">
-      ${RO?'':`<div class="frow">
+      ${GUEST() ? joinBar('Sign in to take a position.') : ''}
+      ${(RO||GUEST())?'':`<div class="frow">
         <input class="inp" id="iText" placeholder="Add an issue">
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
         <button class="btn" id="iAdd">Add</button></div>`}
@@ -1686,7 +1737,7 @@ S.issues = {
     <aside class="side">
       ${common.length?`<div class="card"><h5>Most held</h5>
         ${common.map(t=>`<div class="row"><span style="flex:1">${esc(t.title)}</span>
-          ${(!RO && ONLINE && !held.has(t.title.toLowerCase()))
+          ${(!RO && !GUEST() && ONLINE && !held.has(t.title.toLowerCase()))
             ? `<button class="mini-btn" data-adopt="${esc(t.title)}">Take a side</button>`
             : `<b>${t.s+t.o}</b>`}</div>`).join('')}
       </div>`:''}
@@ -1699,7 +1750,7 @@ S.issues = {
     wireTabs(); ensure('issues','issues');
     const {list} = scoped('issues', D.issues, G.issues);
     let stance='Support';
-    if(!RO){
+    if(!RO && !GUEST()){
       const seg=$('iSeg'), t=$('iText');
       seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
         stance=b.dataset.v; [...seg.children].forEach(x=>x.classList.toggle('on',x===b)) };
@@ -1757,16 +1808,16 @@ S.endorsed = {
         : people.length ? `<div class="grid">${people.map(x=>{
         const c = counts(x.id), following = MYFOLLOWS.has(x.id);
         return `<div class="person">
-          <a class="pface" href="?u=${esc(x.handle)}">${x.photo_url?`<img src="${x.photo_url}" alt="">`:esc(initials(x))}</a>
+          <a class="pface" href="/${esc(x.handle)}">${x.photo_url?`<img src="${x.photo_url}" alt="">`:esc(initials(x))}</a>
           <div class="pmeta">
-            <a href="?u=${esc(x.handle)}"><b>${esc(x.name||x.handle)}</b></a>
+            <a href="/${esc(x.handle)}"><b>${esc(x.name||x.handle)}</b></a>
             <small>@${esc(x.handle)}</small>
           </div>
           ${x.role?`<p class="prole">${esc(x.role)}</p>`:''}
           ${x.location?`<span class="ploc">${esc(x.location)}</span>`:''}
           <div class="pstats">${c.stands} position${c.stands===1?'':'s'} · ${c.posts} post${c.posts===1?'':'s'}</div>
           ${ME ? `<button class="btn ${following?'ghost':''} pfollow" data-follow="${x.id}">${following?'Following':'Follow'}</button>`
-               : `<a class="btn ghost pfollow" href="${location.pathname}">Sign in to follow</a>`}
+               : `<a class="btn ghost pfollow" href="/">Sign in to follow</a>`}
         </div>`}).join('')}</div>`
         : `<div class="empty"><b>${PSEARCH?'Nobody by that name':'Nobody here yet'}</b>${PSEARCH?'Try another search.':'Share your page and this fills up.'}</div>`}
     </div>
@@ -1778,7 +1829,8 @@ S.endorsed = {
         <div class="row"><span>Follow you</span><b>${D.followers}</b></div>
       </div>
       <div class="card"><h5>Grow it</h5>
-        <button class="btn" id="pInvite">Write an invitation</button>
+        ${GUEST() ? `<button class="btn" data-go="profile">Create an account</button>`
+                  : `<button class="btn" id="pInvite">Write an invitation</button>`}
         <span class="ainote">Sends to X, Threads, Bluesky, WhatsApp, Messages and the rest — or posts it to your feed.</span>
       </div>
       ${(all||[]).length ? `<div class="card"><h5>Newest here</h5>
@@ -1836,7 +1888,8 @@ S.townhall = {
     }
 
     return `<div class="split"><div class="main">
-      ${RO?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
+      ${GUEST() ? joinBar('Sign in to add an event or RSVP.') : ''}
+      ${(RO||GUEST())?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
         <input class="inp" id="tDate" type="date" value="${CAL.pick||''}"></div>
       <div class="frow"><input class="inp" id="tPlace" placeholder="Where">
         <button class="linkbtn" id="tInvite" hidden>Write the invite</button>
@@ -1855,7 +1908,7 @@ S.townhall = {
             <small>${dfmt(e.date)}${e.place?' · '+esc(e.place):''}${e.going?' · '+e.going+' going':''}${e.date<today?' · past':''}</small>
             <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
           </div>
-          ${ONLINE?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}
+          ${(ONLINE && !GUEST())?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}
         </div>`).join('')}</div>`
         :`<div class="empty"><b>Nothing coming up</b>${mine?'Add something people can show up to.':'No events posted yet.'}</div>`}
     </div>
@@ -1888,15 +1941,15 @@ S.townhall = {
       CAL.month = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
       open_('townhall', true);
     };
-    $('calPrev').onclick=()=>shift(-1);
-    $('calNext').onclick=()=>shift(1);
+    if($('calPrev')) $('calPrev').onclick=()=>shift(-1);
+    if($('calNext')) $('calNext').onclick=()=>shift(1);
     document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{
       CAL.pick = CAL.pick===b.dataset.day ? null : b.dataset.day;
       open_('townhall', true);
     });
     const cc=$('calClear'); if(cc) cc.onclick=()=>{ CAL.pick=null; open_('townhall',true) };
 
-    if(!RO){
+    if(!RO && !GUEST()){
       const T=$('tTitle'), Dt=$('tDate'), P=$('tPlace'), inv=$('tInvite');
       const canInvite = ()=>{ inv.hidden = !(T.value.trim() && Dt.value) };
       [T,Dt,P].forEach(el=>el.addEventListener('input',canInvite)); canInvite();
@@ -1957,31 +2010,34 @@ S.ballot = {
     const C = 2*Math.PI*26, off = C - C*pct/100;
 
     return `<div class="split"><div class="main">
-      ${st ? '' : `<p class="meta">Add where you vote on your profile and this fills in with your state's deadlines and forms.</p>`}
+      ${GUEST() ? joinBar('The links below are free to use. Sign in to keep your checklist.') : ''}
+      ${st || GUEST() ? '' : `<p class="meta">Add where you vote on your profile and this fills in with your state's deadlines and forms.</p>`}
       <div class="list">${links.map(x=>`
         <div class="item" style="align-items:center">
           <a class="grow blink" href="${x[2]}" target="_blank" rel="noopener">
             <h3>${esc(x[1])}</h3><span>${ico.share}</span></a>
-          ${RO?'':`<button class="tag ${b[x[0]]?'b':''}" data-chk="${x[0]}">${b[x[0]]?'Done':'Mark done'}</button>`}
+          ${(RO||GUEST())?'':`<button class="tag ${b[x[0]]?'b':''}" data-chk="${x[0]}">${b[x[0]]?'Done':'Mark done'}</button>`}
         </div>`).join('')}</div>
       <p class="hint" style="text-align:left">Links go to Vote.org, a nonpartisan nonprofit.</p>
 
       <div class="divide"></div>
       <div>
         <div class="sect">Make sense of a measure</div>
-        <textarea class="ta" id="bText" style="min-height:130px"
-          placeholder="Paste the text of a ballot measure and get it in plain English."></textarea>
-        <div class="frow" style="justify-content:space-between;margin-top:9px">
-          <span class="meta">Nothing you paste is stored.</span>
-          <button class="btn" id="bExplain">Explain it</button>
-        </div>
-        <div class="ai" id="bAi" hidden></div>
+        ${GUEST()
+          ? `<p class="meta">Sign in to have a measure explained in plain English.</p>`
+          : `<textarea class="ta" id="bText" style="min-height:130px"
+               placeholder="Paste the text of a ballot measure and get it in plain English."></textarea>
+             <div class="frow" style="justify-content:space-between;margin-top:9px">
+               <span class="meta">Nothing you paste is stored.</span>
+               <button class="btn" id="bExplain">Explain it</button>
+             </div>
+             <div class="ai" id="bAi" hidden></div>`}
       </div>
     </div>
     <aside class="side">
       <div class="card">
         <h5>Your election</h5>
-        ${RO?`<b style="font-size:15px">${b.date?dfmt(b.date):'Not set'}</b>`
+        ${(RO||GUEST())?`<b style="font-size:15px">${b.date?dfmt(b.date):'Not set'}</b>`
           :`<input class="inp" id="bDate" type="date" value="${b.date||''}" style="max-width:none">`}
         <div style="font-size:26px;font-weight:660;letter-spacing:-.02em">
           ${left!=null?(left>0?left:(left===0?'Today':'Passed')):'—'}
@@ -2008,17 +2064,17 @@ S.ballot = {
     </aside></div>`;
   },
   init(){
-    $('bShare').onclick = ()=>{
+    if($('bShare')) $('bShare').onclick = ()=>{
       const st=myState();
       share(st ? `Register, check your registration and see what is on your ballot in ${stateName(st)}:`
                : 'Register, check your registration, find your polling place:');
     };
-    $('bExplain').onclick = ()=>{
+    if($('bExplain')) $('bExplain').onclick = ()=>{
       const t=$('bText').value.trim();
       if(t.length<40) return toast('Paste the measure text first');
       suggest('bAi',$('bExplain'),'measure',t,{note:'AI reading of the text you pasted. Verify before you vote.'});
     };
-    if(RO) return;
+    if(RO || GUEST()) return;
     const put = patch => mutate({
       local:db=>Object.assign(db.profile.ballot,patch),
       remote:async()=>(await sb.from('profiles').update({ballot:Object.assign({},V.ballot,patch)}).eq('id',ME.id)).error });
@@ -2056,7 +2112,8 @@ S.polls = {
         :`<div class="empty"><b>No questions yet</b>${mine?'One good question travels further than ten posts.':'Nobody has asked anything yet.'}</div>`}
     </div>
     <aside class="side">
-      ${RO?'':`<div class="card">
+      ${GUEST() ? joinBar('Sign in to ask a question or vote.') : ''}
+      ${(RO||GUEST())?'':`<div class="card">
         <h5>Ask a question</h5>
         <input class="inp" id="pQ" placeholder="Your question">
         <div class="ai" id="pAi" hidden></div>
@@ -2081,7 +2138,7 @@ S.polls = {
   init(){
     wireTabs();
     const {list} = scoped('polls', D.polls, G.polls);
-    if(!RO){
+    if(!RO && !GUEST()){
       const Q=$('pQ'), chk=$('pCheck');
       Q.oninput=()=>{ chk.hidden = Q.value.trim().length<12 };
       chk.onclick=()=>suggest('pAi',chk,'neutral',Q.value,{apply:o=>{Q.value=o}});
@@ -2130,6 +2187,7 @@ S.fundraise = {
           link = (V&&V.donate_link||'').trim(),
           href = link && !/^https?:/i.test(link) ? 'https://'+link : link,
           avg = gifts.length ? raised/gifts.length : 0;
+    if(GUEST()) return `<div class="screen">${joinBar('Sign in to track what you give and set a goal.')}</div>`;
     if(RO) return `<div class="screen">${href
       ? `<a class="btn" style="text-align:center;padding:14px;max-width:320px" href="${esc(href)}" target="_blank" rel="noopener">Chip in</a>
          <p class="hint" style="text-align:left">Goes to a page @${esc(V.handle)} chose. Check it before you give.</p>`
@@ -2166,7 +2224,7 @@ S.fundraise = {
     </aside></div>`;
   },
   init(){
-    if(RO) return;
+    if(RO || GUEST()) return;
     let t;
     const put = patch => { clearTimeout(t); t=setTimeout(()=>{
       if(!ONLINE){ const db=localDB(); Object.assign(db.profile,patch); localSave(db); Object.assign(V,patch) }
@@ -2189,6 +2247,7 @@ S.fundraise = {
 S.reach = {
   sub(){ return RO ? `@${V.handle} in numbers` : 'What is actually working' },
   view(){
+    if(GUEST()) return `<div class="screen">${joinBar('Sign in to see how far your posts travel.')}</div>`;
     const likes = D.posts.reduce((s,p)=>s+(p.likes||0),0),
           votes = D.polls.reduce((s,p)=>s+(p.total||0),0),
           going = D.events.reduce((s,e)=>s+(e.going||0),0),
@@ -2299,7 +2358,7 @@ function open_(id, quiet){
 
 rail.addEventListener('click', e=>{
   const b = e.target.closest('.app'); if(!b) return;
-  if(b.dataset.id==='profile' && RO){ location.href = location.pathname; return; }  /* back to your own page */
+  if(b.dataset.id==='profile' && RO){ location.href = '/'; return; }  /* back to your own page */
   open_(b.dataset.id);
 });
 
