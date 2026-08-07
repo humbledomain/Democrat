@@ -269,19 +269,6 @@ button.tag{cursor:pointer}
   .acts{width:100%;margin-left:0;overflow-x:auto;padding-bottom:2px}
 }
 /* compose */
-.pbody.composebody{display:flex;flex-direction:column}
-.composer{display:flex;flex-direction:column;gap:12px;height:100%;min-height:min(58vh,420px);max-width:720px}
-.ideas{display:flex;align-items:center;gap:4px;transition:opacity .3s}
-.idea{flex:1;border:0;background:none;text-align:left;cursor:text;font-size:13.5px;color:var(--muted);
-  padding:6px 4px;line-height:1.4}
-.idnav{border:0;background:var(--soft);color:#4c5570;width:26px;height:26px;border-radius:50%;cursor:pointer;
-  font-size:15px;line-height:1;flex:none;display:grid;place-items:center}
-.idnav:hover{background:rgba(10,63,214,.1);color:var(--blue)}
-.canvas{flex:1;width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;
-  font-size:16px;line-height:1.6;resize:none;min-height:200px}
-.canvas:focus{outline:none;border-color:rgba(10,63,214,.45)}
-.cbar{display:flex;align-items:center;gap:12px}
-.cbar .meta{margin-left:auto}
 
 .blink{display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit}
 .blink span{color:var(--muted);display:inline-flex;opacity:0;transition:opacity .15s}
@@ -345,6 +332,44 @@ button.tag{cursor:pointer}
 .gatecard .linkbtn{margin:2px auto 0;font-weight:520;color:var(--muted)}
 .gatecard .linkbtn:hover{color:var(--blue);background:none}
 @media (prefers-reduced-motion:reduce){ .halo i,.aurora,.gatecard{animation:none} .halo i{opacity:.12} }
+
+/* chat */
+.chat{display:flex;flex-direction:column;height:100%;min-height:min(64vh,560px);gap:10px}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:6px 2px 8px;scroll-behavior:smooth}
+.msg{display:flex;gap:9px;max-width:min(86%,620px);align-items:flex-end;animation:rise .3s ease both}
+.msg.me{align-self:flex-end}
+.msg.ai{align-self:flex-start}
+.mavatar{width:26px;height:26px;border-radius:50%;flex:none;background:var(--blue);margin-bottom:2px}
+.bubble{padding:12px 16px;border-radius:20px;font-size:14.5px;line-height:1.6;white-space:pre-wrap;
+  word-wrap:break-word}
+.msg.me .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:7px}
+.msg.ai .bubble{background:rgba(10,32,90,.055);color:var(--ink);border-bottom-left-radius:7px}
+.typing{display:flex;gap:5px;align-items:center;padding:15px 17px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#93a0bd;animation:blink 1.3s infinite}
+.typing i:nth-child(2){animation-delay:.18s}
+.typing i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.chatbar{display:flex;gap:9px;align-items:flex-end;border:1px solid var(--line);border-radius:20px;
+  padding:8px 8px 8px 16px;background:#fff;transition:border-color .18s}
+.chatbar:focus-within{border-color:rgba(10,63,214,.45)}
+.chatbar textarea{flex:1;border:0;resize:none;font-size:15px;line-height:1.55;padding:8px 0;max-height:180px}
+.chatbar textarea:focus{outline:none}
+.sendbtn{width:38px;height:38px;flex:none;border:0;border-radius:50%;background:var(--blue);color:#fff;
+  cursor:pointer;display:grid;place-items:center;transition:opacity .15s,transform .15s}
+.sendbtn svg{width:18px;height:18px}
+.sendbtn:disabled{opacity:.25;cursor:default}
+.sendbtn:not(:disabled):hover{transform:translateY(-1px)}
+.chatintro{margin:auto;text-align:center;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:9px;
+  padding:30px 10px}
+.introdot{width:32px;height:32px;border-radius:50%;background:var(--blue);position:relative;margin-bottom:4px}
+.introdot::after{content:"";position:absolute;inset:0;border-radius:50%;
+  animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
+.chatintro h3{font-size:20px;font-weight:640;letter-spacing:-.025em}
+.chatintro p{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;width:100%}
+.starter{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 15px;text-align:left;
+  font-size:13.5px;line-height:1.45;color:#28304a;cursor:pointer;transition:.15s}
+.starter:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03);color:var(--blue)}
 
 /* social + AI */
 .tahead{position:relative}
@@ -458,7 +483,7 @@ const APPS = [
        <circle cx="88" cy="60" r="12" fill="#fff"/>
        <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="${BLUE}" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`},
 {id:'endorsed',name:'People',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
-{id:'compose',name:'Compose',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
+{id:'compose',name:'Chat',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
        <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
        <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
 {id:'feed',name:'Feed',art:`<circle cx="27" cy="34" r="7" fill="#fff"/>
@@ -553,6 +578,15 @@ async function ai(task, input){
     return (d.text||'').trim() || null;
   }catch(e){ AI_OK=false; toast('AI is not reachable here'); return null; }
 }
+async function aiChat(messages){
+  const r = await fetch('/api/ai', { method:'POST', headers:{'content-type':'application/json'},
+    body: JSON.stringify({task:'chat', messages}) });
+  if(r.status===404 || r.status===501){ AI_OK=false; throw new Error('Chat is not switched on yet') }
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error==='upstream' ? 'The model is busy — try again' : 'That did not go through');
+  return (d.text||'').trim();
+}
+
 /* one shared pattern: ask, show, let the person accept or ignore. Never overwrite silently. */
 async function suggest(boxId, btn, task, input, opts){
   const box = $(boxId); if(!box) return;
@@ -1236,7 +1270,7 @@ function splitbar(s0,o0){
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
-  acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${RO?'':`<button class="btn" data-go="compose">Post</button>`}` },
+  acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${RO?'':`<button class="btn" id="feedPost">Post</button>`}` },
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
     const {list, note, loading} = scoped('feed', D.posts, G.posts);
@@ -1276,6 +1310,8 @@ S.feed = {
     wireTabs();
     ensure('people','feed');
     ensure('issues','feed');
+    const fp=$('feedPost');
+    if(fp) fp.onclick=()=>{ const el=$('qText'); if(el){ el.focus(); el.scrollIntoView && el.scrollIntoView({block:'center'}) } };
     const q=$('qText');
     if(q){
       const b=$('qPost');
@@ -1323,64 +1359,113 @@ const IDEAS = [
   'A piece of news everyone got wrong about your area',
   'Something you changed your mind about'
 ];
+const STARTERS = [
+  'Help me think through a housing trade-off in my city',
+  'What should I ask my council member at the next meeting?',
+  'I want to write about transit — help me sharpen the argument',
+  'How do local elections actually decide things?'
+];
+let CHAT = [];
+try{ CHAT = JSON.parse(sessionStorage.getItem('dai.chat')||'[]') }catch(e){ CHAT = [] }
+const chatSave = ()=>{ try{ sessionStorage.setItem('dai.chat', JSON.stringify(CHAT.slice(-40))) }catch(e){} };
+
 S.compose = {
-  sub:'Say something',
+  sub:'Think it through',
+  acts(){ return CHAT.length ? `<button class="btn ghost" id="chNew">New chat</button>` : '' },
   view(){
-    if(RO) return `<div class="empty"><b>This is someone else's page</b>Open your own to post.</div>`;
-    return `<div class="split"><div class="main composer">
-      <div class="ideas">
-        <button class="idnav" id="idPrev" aria-label="Previous idea">&#8249;</button>
-        <button class="idea" id="idText"></button>
-        <button class="idnav" id="idNext" aria-label="Next idea">&#8250;</button>
+    const bubbles = CHAT.map(m=>`
+      <div class="msg ${m.role==='user'?'me':'ai'}">
+        ${m.role==='user' ? '' : '<span class="mavatar"></span>'}
+        <div class="bubble">${esc(m.content)}</div>
+      </div>`).join('');
+
+    return `<div class="split"><div class="main chat">
+      <div class="msgs" id="chMsgs">
+        ${CHAT.length ? bubbles : `
+          <div class="chatintro">
+            <span class="introdot"></span>
+            <h3>What are you working out?</h3>
+            <p>Think out loud about something local or national. Nothing here is posted anywhere.</p>
+            <div class="starters">
+              ${STARTERS.map((t,i)=>`<button class="starter" data-starter="${i}">${esc(t)}</button>`).join('')}
+            </div>
+          </div>`}
       </div>
-      <textarea class="canvas" id="cText" maxlength="1000"></textarea>
-      <div class="cbar">
-        <button class="linkbtn" id="cTighten" hidden>Tighten this</button>
-        <span class="meta" id="cCount">1000</span>
-        <button class="btn" id="cPost" disabled>Post</button>
+      <div class="chatbar">
+        <textarea id="chText" rows="1" placeholder="Ask anything about politics" maxlength="4000"></textarea>
+        <button class="sendbtn" id="chSend" aria-label="Send" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+        </button>
       </div>
-      <div class="ai" id="cAi" hidden></div>
+      <p class="hint" style="text-align:left">Claude has no live information. Check anything time-sensitive at the source.</p>
     </div>
     <aside class="side">
-      <div class="card"><h5>Ideas</h5>
+      <div class="card"><h5>Things to think about</h5>
         ${IDEAS.slice(0,6).map((t,i)=>`<button class="mini-btn" data-idea="${i}" style="text-align:left">${esc(t)}</button>`).join('')}
       </div>
       ${D.posts.length?`<div class="card"><h5>Your last posts</h5>
         ${D.posts.slice(0,3).map(p=>`<div style="font-size:13px;line-height:1.5;color:#39415a">${esc(p.text.slice(0,90))}${p.text.length>90?'…':''}</div>`).join('')}
-      </div>`:''}
+        <button class="mini-btn" data-go="feed" style="align-self:flex-start">Open Feed</button>
+      </div>`:`<div class="card"><h5>When you are ready</h5>
+        <button class="mini-btn" data-go="feed" style="text-align:left">Post something to your feed</button>
+      </div>`}
     </aside></div>`;
   },
   init(){
-    if(RO) return;
-    const t=$('cText'), c=$('cCount'), b=$('cPost'), tight=$('cTighten'), idea=$('idText'), LIM=1000;
-    let i = Math.floor(Math.random()*IDEAS.length), timer;
-    const paint = ()=>{ idea.textContent = IDEAS[i] };
-    const step  = d => { i=(i+d+IDEAS.length)%IDEAS.length; paint() };
-    paint();
-    const cycle = ()=>{ timer=setInterval(()=>{ if(!t.value) step(1) },7000) };
-    cycle();
-    $('idPrev').onclick=()=>{ clearInterval(timer); step(-1); cycle() };
-    $('idNext').onclick=()=>{ clearInterval(timer); step(1);  cycle() };
-    idea.onclick=()=>t.focus();
-    document.querySelectorAll('[data-idea]').forEach(el=>el.onclick=()=>{
-      clearInterval(timer); i=+el.dataset.idea; paint(); t.focus();
-    });
-    const sync=()=>{
-      const n=t.value.length;
-      c.textContent=LIM-n; c.style.color = n>LIM-60 ? '#c2410c' : '';
-      b.disabled=!t.value.trim();
-      tight.hidden = t.value.trim().length<120;
-      document.querySelector('.ideas').style.opacity = t.value ? '.25' : '1';
+    const box=$('chMsgs'), t=$('chText'), send=$('chSend');
+    let busy = false;
+    const bottom = ()=>{ box.scrollTop = box.scrollHeight };
+    bottom();
+
+    const grow = ()=>{ t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,180)+'px';
+                       send.disabled = !t.value.trim() || busy };
+    t.oninput = grow; grow(); t.focus();
+
+    const bubble = (role, text) => {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (role==='user'?'me':'ai');
+      div.innerHTML = (role==='user'?'':'<span class="mavatar"></span>') + `<div class="bubble">${esc(text)}</div>`;
+      const intro = box.querySelector('.chatintro'); if(intro) intro.remove();
+      box.appendChild(div); bottom();
+      return div;
     };
-    t.oninput=sync; sync(); t.focus();
-    tight.onclick=()=>suggest('cAi',tight,'tighten',t.value,{apply:o=>{t.value=o;sync()}});
-    b.onclick=async ()=>{
-      if(!await needAuth()) return;
-      const text=t.value.trim(); b.disabled=true;
-      await mutate({ local:db=>db.posts.unshift({id:uid(),text,created_at:new Date().toISOString(),likes:0,liked:false}),
-        remote:async()=>(await sb.from('posts').insert({author:ME.id,text})).error, clears:['posts'] });
-      toast('Posted'); open_('feed');
-    };
+
+    async function ask(text){
+      if(busy || !text.trim()) return;
+      busy = true; send.disabled = true;
+      CHAT.push({role:'user', content:text.trim()});
+      bubble('user', text.trim());
+      t.value=''; grow();
+
+      const wait = document.createElement('div');
+      wait.className = 'msg ai';
+      wait.innerHTML = '<span class="mavatar"></span><div class="bubble typing"><i></i><i></i><i></i></div>';
+      box.appendChild(wait); bottom();
+
+      try{
+        const reply = await aiChat(CHAT);
+        wait.remove();
+        if(reply){ CHAT.push({role:'assistant', content:reply}); bubble('assistant', reply); }
+        else toast('No answer came back');
+      }catch(e){
+        wait.remove();
+        toast(e.message || 'That did not go through');
+        CHAT.pop();                                   // let them try again cleanly
+        const last = box.querySelector('.msg.me:last-of-type'); if(last) last.remove();
+        t.value = text; grow();
+      }
+      chatSave();
+      busy = false; grow();
+      if(CHAT.length === 2) open_('compose', true);   // reveal the New chat button
+    }
+
+    send.onclick = ()=>ask(t.value);
+    t.onkeydown = e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); ask(t.value) } };
+    document.querySelectorAll('[data-starter]').forEach(b=>b.onclick=()=>ask(STARTERS[+b.dataset.starter]));
+    document.querySelectorAll('[data-idea]').forEach(b=>b.onclick=()=>ask('Help me think about this: ' + IDEAS[+b.dataset.idea]));
+    const nw=$('chNew');
+    if(nw) nw.onclick=()=>{ CHAT=[]; chatSave(); open_('compose') };
   }
 };
 
@@ -2019,7 +2104,6 @@ function open_(id, quiet){
       <div class="acts">${s.acts?s.acts():''}<button class="pclose" id="pclose">&#10005;</button></div>
     </header>
     <div class="pbody">${s.view()}</div>`;
-  if(id==='compose') panel.querySelector('.pbody').classList.add('composebody');
   if(s.init) s.init();
   document.body.classList.add('open');
   panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
