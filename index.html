@@ -74,7 +74,55 @@ button,input,textarea{font:inherit;color:inherit}
   color:#4c5570;font-size:14px;display:none;place-items:center}
 .pbody{padding:clamp(18px,3vh,30px) 20px;overflow:auto;flex:1;min-height:0;animation:fade .3s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.screen{max-width:640px;margin:0;display:flex;flex-direction:column;gap:16px}
+/* ---- wide, two-column screens ---- */
+.screen{max-width:none;margin:0;display:flex;flex-direction:column;gap:16px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) clamp(240px,26%,320px);gap:clamp(18px,2.2vw,30px);
+  align-items:start}
+.split>.main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.split>.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:0}
+@media (max-width:900px){ .split{grid-template-columns:1fr} .split>.side{position:static} }
+.card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px;display:flex;
+  flex-direction:column;gap:11px}
+.card h5{font-size:11.5px;font-weight:660;letter-spacing:.08em;text-transform:uppercase;color:#8b93a8}
+.card .row{display:flex;align-items:center;gap:10px;justify-content:space-between;font-size:13.5px}
+.mini-btn{border:0;background:var(--soft);color:#28304a;border-radius:9px;padding:6px 10px;font-size:12.5px;
+  font-weight:560;cursor:pointer}
+.mini-btn:hover{background:rgba(10,63,214,.1);color:var(--blue)}
+.who-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.who-row:first-of-type{border-top:0}
+.who-row .whoav{width:32px;height:32px;font-size:12px}
+.who-row .grow{min-width:0}
+.who-row b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who-row small{font-size:12px;color:var(--muted)}
+/* split bar for agreement */
+.splitbar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--soft)}
+.splitbar i{display:block;height:100%}
+.splitbar .s{background:var(--blue)}
+.splitbar .o{background:#c9d2e6}
+.legend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:5px}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal span{font-size:9.5px;color:var(--muted);text-align:center;padding-bottom:3px}
+.cal button{aspect-ratio:1;border:0;background:none;border-radius:8px;font-size:12px;cursor:pointer;color:#39415a}
+.cal button.dim{color:#c3c9d8;cursor:default}
+.cal button.has{background:rgba(10,63,214,.12);color:var(--blue);font-weight:660}
+.cal button.on{background:var(--blue);color:#fff}
+.calhead{display:flex;align-items:center;justify-content:space-between}
+.calhead b{font-size:13px;font-weight:620}
+/* sparkline */
+.spark{display:flex;align-items:flex-end;gap:3px;height:64px}
+.spark i{flex:1;background:rgba(10,63,214,.25);border-radius:3px 3px 0 0;min-height:2px}
+.spark i.on{background:var(--blue)}
+.ring{display:flex;align-items:center;gap:13px}
+.ring svg{flex:none}
+.ring b{font-size:22px;font-weight:660;letter-spacing:-.02em;display:block}
+.ring small{font-size:12px;color:var(--muted)}
+/* quick composer at the top of the feed */
+.quick{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:16px;padding:13px 15px}
+.quick textarea{flex:1;border:0;resize:none;font-size:15px;line-height:1.5;min-height:26px;max-height:160px}
+.quick textarea:focus{outline:none}
+.gift{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.gift:first-of-type{border-top:0}
 
 .btn{border:0;border-radius:11px;padding:9px 15px;font-size:13.5px;font-weight:590;background:var(--blue);
   color:#fff;cursor:pointer;transition:opacity .15s;white-space:nowrap}
@@ -468,8 +516,9 @@ let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
-const G  = {posts:null, polls:null, events:null, issues:null, ends:null};   // everyone's content
-const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'mine'};            // per-screen scope
+const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null};   // everyone's content
+const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'mine'};
+const CAL = {month:new Date().toISOString().slice(0,7), pick:null};            // per-screen scope
 
 function blank(){
   return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
@@ -1042,6 +1091,37 @@ function authInit(){
   $('auEmail').onkeydown = e => { if(e.key==='Enter') $('auPw').focus() };
   $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
 }
+/* people, for the side rails */
+async function loadPeople(){
+  if(!ONLINE || G.people) return;
+  const { data } = await sb.from('profiles').select('id,handle,name,photo_url,location,role')
+    .not('handle','is',null).order('created_at',{ascending:false}).limit(60);
+  G.people = data||[];
+}
+function personRow(p, extra){
+  return `<div class="who-row">
+    <a class="whoav" href="?u=${esc(p.handle)}">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</a>
+    <a class="grow" href="?u=${esc(p.handle)}" style="text-decoration:none;color:inherit">
+      <b>${esc(p.name||p.handle)}</b><small>${esc(p.role||p.location||'@'+p.handle)}</small></a>
+    ${extra||''}</div>`;
+}
+/* the most held positions across the site, and how they split */
+function issueTally(scope){
+  const src = (G.issues||[]).filter(i => scope==='near' ? isNear(i) : true);
+  const m = {};
+  src.forEach(i=>{
+    const k = i.title.trim().toLowerCase();
+    m[k] = m[k] || {title:i.title.trim(), s:0, o:0};
+    m[k][i.stance==='Support'?'s':'o']++;
+  });
+  return Object.values(m).sort((a,b)=>(b.s+b.o)-(a.s+a.o));
+}
+function splitbar(s0,o0){
+  const t=s0+o0||1;
+  return `<div class="splitbar"><i class="s" style="width:${s0/t*100}%"></i><i class="o" style="width:${o0/t*100}%"></i></div>
+    <div class="legend"><span>${s0} support</span><span>${o0} oppose</span></div>`;
+}
+
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
@@ -1049,7 +1129,15 @@ S.feed = {
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
     const {list, note} = scoped('feed', D.posts, G.posts);
-    return `<div class="screen">
+    const people = (G.people||[]).filter(x=>!ME||x.id!==ME.id).filter(x=>SC.feed==='near'?isNear({profiles:x}):true).slice(0,6);
+    const hot = issueTally(SC.feed==='near'?'near':'all').slice(0,4);
+
+    return `<div class="split"><div class="main">
+      ${RO?'':`<div class="quick">
+        <span class="whoav" style="width:34px;height:34px">${V&&V.photo_url?`<img src="${V.photo_url}" alt="">`:esc(initials(V||{}))}</span>
+        <textarea id="qText" rows="1" maxlength="1000" placeholder="Say something"></textarea>
+        <button class="btn" id="qPost" disabled>Post</button>
+      </div>`}
       ${note?`<p class="meta">${note}</p>`:''}
       ${list.length ? `<div class="list">${list.map(p=>`
         <article class="item" data-id="${p.id}"><div class="grow">
@@ -1062,21 +1150,51 @@ S.feed = {
             <span class="iconbtn" style="pointer-events:none">${ago(p.created_at)}</span>
           </div></div></article>`).join('')}</div>`
         : `<div class="empty"><b>${mine?'Nothing posted yet':'No posts yet'}</b>${mine?'Write your first post.':'Be the first to say something.'}</div>`}
-    </div>`;
+    </div>
+    <aside class="side">
+      ${people.length?`<div class="card"><h5>People to follow</h5>
+        ${people.map(x=>personRow(x, ME&&!RO?`<button class="mini-btn" data-follow="${x.id}">Follow</button>`:'')).join('')}
+      </div>`:''}
+      ${hot.length?`<div class="card"><h5>What people are taking positions on</h5>
+        ${hot.map(h=>`<div><div class="row"><span>${esc(h.title)}</span><b>${h.s+h.o}</b></div>${splitbar(h.s,h.o)}</div>`).join('')}
+        <button class="mini-btn" data-go="issues" style="align-self:flex-start">Open Issues</button>
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
     wireTabs();
+    loadPeople().then(()=>{ if(current==='feed' && G.people && !document.querySelector('[data-follow]')) open_('feed',true) });
+    loadGlobal('issues');
+    const q=$('qText');
+    if(q){
+      const b=$('qPost');
+      q.oninput=()=>{ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px'; b.disabled=!q.value.trim() };
+      b.onclick=async ()=>{
+        if(!await needAuth()) return;
+        const text=q.value.trim(); b.disabled=true;
+        await mutate({ local:db=>db.posts.unshift({id:uid(),text,created_at:new Date().toISOString(),likes:0,liked:false}),
+          remote:async()=>(await sb.from('posts').insert({author:ME.id,text})).error, clears:['posts'] });
+        toast('Posted');
+      };
+    }
+    document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ()=>{
+      if(!await needAuth()) return;
+      const id=b.dataset.follow;
+      const { error } = await sb.from('follows').insert({follower:ME.id, followee:id});
+      if(error) return toast(friendly(error));
+      b.textContent='Following'; b.disabled=true;
+    });
     const {list} = scoped('feed', D.posts, G.posts);
     rows(list, async (p,a)=>{
       if(a==='share') return share(p.text, p.profiles && p.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
         remote:async()=>(await sb.from('posts').delete().eq('id',p.id)).error, clears:['posts'] });
       if(!await needAuth()) return;
-      mutate({ local:db=>{ const q=db.posts.find(x=>x.id===p.id); q.liked=!q.liked; q.likes=(q.likes||0)+(q.liked?1:-1) },
-        remote:async()=>{ const q = p.liked
+      mutate({ local:db=>{ const x=db.posts.find(y=>y.id===p.id); x.liked=!x.liked; x.likes=(x.likes||0)+(x.liked?1:-1) },
+        remote:async()=>{ const r = p.liked
           ? await sb.from('likes').delete().eq('post_id',p.id).eq('user_id',ME.id)
           : await sb.from('likes').insert({post_id:p.id,user_id:ME.id});
-          return q.error }, clears:['posts'] });
+          return r.error }, clears:['posts'] });
     });
   }
 };
@@ -1098,7 +1216,7 @@ S.compose = {
   sub:'Say something',
   view(){
     if(RO) return `<div class="empty"><b>This is someone else's page</b>Open your own to post.</div>`;
-    return `<div class="composer">
+    return `<div class="split"><div class="main composer">
       <div class="ideas">
         <button class="idnav" id="idPrev" aria-label="Previous idea">&#8249;</button>
         <button class="idea" id="idText"></button>
@@ -1111,37 +1229,41 @@ S.compose = {
         <button class="btn" id="cPost" disabled>Post</button>
       </div>
       <div class="ai" id="cAi" hidden></div>
-    </div>`;
+    </div>
+    <aside class="side">
+      <div class="card"><h5>Ideas</h5>
+        ${IDEAS.slice(0,6).map((t,i)=>`<button class="mini-btn" data-idea="${i}" style="text-align:left">${esc(t)}</button>`).join('')}
+      </div>
+      ${D.posts.length?`<div class="card"><h5>Your last posts</h5>
+        ${D.posts.slice(0,3).map(p=>`<div style="font-size:13px;line-height:1.5;color:#39415a">${esc(p.text.slice(0,90))}${p.text.length>90?'…':''}</div>`).join('')}
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
     if(RO) return;
-    const t=$('cText'), c=$('cCount'), b=$('cPost'), tight=$('cTighten'),
-          idea=$('idText'), LIM=1000;
+    const t=$('cText'), c=$('cCount'), b=$('cPost'), tight=$('cTighten'), idea=$('idText'), LIM=1000;
     let i = Math.floor(Math.random()*IDEAS.length), timer;
-
     const paint = ()=>{ idea.textContent = IDEAS[i] };
-    const step  = d => { i = (i + d + IDEAS.length) % IDEAS.length; paint() };
+    const step  = d => { i=(i+d+IDEAS.length)%IDEAS.length; paint() };
     paint();
-    const cycle = ()=>{ timer = setInterval(()=>{ if(!t.value) step(1) }, 7000) };
+    const cycle = ()=>{ timer=setInterval(()=>{ if(!t.value) step(1) },7000) };
     cycle();
-
-    $('idPrev').onclick = ()=>{ clearInterval(timer); step(-1); cycle() };
-    $('idNext').onclick = ()=>{ clearInterval(timer); step(1);  cycle() };
-    idea.onclick = ()=>{ t.focus() };
-
-    const sync = ()=>{
-      const n = t.value.length;
-      c.textContent = LIM - n;
-      c.style.color = n > LIM-60 ? '#c2410c' : '';
-      b.disabled = !t.value.trim();
-      tight.hidden = t.value.trim().length < 120;
+    $('idPrev').onclick=()=>{ clearInterval(timer); step(-1); cycle() };
+    $('idNext').onclick=()=>{ clearInterval(timer); step(1);  cycle() };
+    idea.onclick=()=>t.focus();
+    document.querySelectorAll('[data-idea]').forEach(el=>el.onclick=()=>{
+      clearInterval(timer); i=+el.dataset.idea; paint(); t.focus();
+    });
+    const sync=()=>{
+      const n=t.value.length;
+      c.textContent=LIM-n; c.style.color = n>LIM-60 ? '#c2410c' : '';
+      b.disabled=!t.value.trim();
+      tight.hidden = t.value.trim().length<120;
       document.querySelector('.ideas').style.opacity = t.value ? '.25' : '1';
     };
-    t.oninput = sync; sync(); t.focus();
-
-    tight.onclick = ()=> suggest('cAi', tight, 'tighten', t.value, { apply:o=>{ t.value=o; sync() } });
-
-    b.onclick = async ()=>{
+    t.oninput=sync; sync(); t.focus();
+    tight.onclick=()=>suggest('cAi',tight,'tighten',t.value,{apply:o=>{t.value=o;sync()}});
+    b.onclick=async ()=>{
       if(!await needAuth()) return;
       const text=t.value.trim(); b.disabled=true;
       await mutate({ local:db=>db.posts.unshift({id:uid(),text,created_at:new Date().toISOString(),likes:0,liked:false}),
@@ -1158,7 +1280,12 @@ S.issues = {
   view(){
     const {list, note} = scoped('issues', D.issues, G.issues);
     const own = RO || SC.issues==='mine' || !ONLINE;
-    return `<div class="screen">
+    const tally = issueTally(SC.issues==='near'?'near':'all');
+    const contested = tally.filter(t=>t.s+t.o>2).sort((a,b)=>Math.abs(a.s-a.o)/(a.s+a.o) - Math.abs(b.s-b.o)/(b.s+b.o)).slice(0,4);
+    const common = tally.slice(0,6);
+    const held = new Set(D.issues.map(i=>i.title.trim().toLowerCase()));
+
+    return `<div class="split"><div class="main">
       ${RO?'':`<div class="frow">
         <input class="inp" id="iText" placeholder="Add an issue">
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
@@ -1167,36 +1294,52 @@ S.issues = {
       ${list.length?`<div class="list">${list.map(i=>{
         const a = ONLINE ? agree(i.title) : {s:0,o:0};
         const tot = a.s+a.o;
-        return `<div class="item" data-id="${i.id}"><div class="grow">
+        return `<div class="item" data-id="${i.id}" style="display:block">
           ${!own && i.profiles ? who(i.profiles) : ''}
-          <h3>${esc(i.title)}</h3>
-          ${tot>1?`<small>${a.s} support · ${a.o} oppose across democrat.ai</small>`:''}
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <h3 class="grow">${esc(i.title)}</h3>
+            <span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span>
+          </div>
+          ${tot>1?`<div style="margin-top:9px">${splitbar(a.s,a.o)}</div>`:''}
           <div class="rowacts">
             ${act('share','Share')}
             <button class="iconbtn" data-act="against">The case against</button>
             ${own&&!RO?act('del'):''}
           </div>
           <div class="ai" id="ai-${i.id}" hidden></div>
-        </div><span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span></div>`}).join('')}</div>`
+        </div>`}).join('')}</div>`
         :`<div class="empty"><b>No positions yet</b>${RO?'':'Say where you stand. Positions travel further than opinions.'}</div>`}
-    </div>`;
+    </div>
+    <aside class="side">
+      ${common.length?`<div class="card"><h5>Most held</h5>
+        ${common.map(t=>`<div class="row"><span style="flex:1">${esc(t.title)}</span>
+          ${(!RO && ONLINE && !held.has(t.title.toLowerCase()))
+            ? `<button class="mini-btn" data-adopt="${esc(t.title)}">Take a side</button>`
+            : `<b>${t.s+t.o}</b>`}</div>`).join('')}
+      </div>`:''}
+      ${contested.length?`<div class="card"><h5>Most divided</h5>
+        ${contested.map(t=>`<div><div class="row"><span>${esc(t.title)}</span></div>${splitbar(t.s,t.o)}</div>`).join('')}
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
-    wireTabs();
-    loadGlobal('issues');
+    wireTabs(); loadGlobal('issues');
     const {list} = scoped('issues', D.issues, G.issues);
+    let stance='Support';
     if(!RO){
-      let stance='Support';
       const seg=$('iSeg'), t=$('iText');
-      seg.onclick = e=>{ const b=e.target.closest('button'); if(!b) return;
+      seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
         stance=b.dataset.v; [...seg.children].forEach(x=>x.classList.toggle('on',x===b)) };
-      const add = async ()=>{
-        const title=t.value.trim(); if(!title) return;
+      const add=async (title,st)=>{
+        title=(title||t.value).trim(); if(!title) return;
         if(!await needAuth()) return;
-        mutate({ local:db=>db.issues.unshift({id:uid(),title,stance}),
-          remote:async()=>(await sb.from('issues').insert({author:ME.id,title,stance})).error, clears:['issues'] });
+        mutate({ local:db=>db.issues.unshift({id:uid(),title,stance:st||stance}),
+          remote:async()=>(await sb.from('issues').insert({author:ME.id,title,stance:st||stance})).error, clears:['issues'] });
       };
-      $('iAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
+      $('iAdd').onclick=()=>add(); t.onkeydown=e=>{ if(e.key==='Enter') add() };
+      document.querySelectorAll('[data-adopt]').forEach(b=>b.onclick=()=>{
+        $('iText').value=b.dataset.adopt; $('iText').focus(); toast('Pick Support or Oppose, then Add');
+      });
     }
     rows(list,(i,a,btn)=>{
       if(a==='share') return share(`${i.stance}: ${i.title}`, i.profiles && i.profiles.handle);
@@ -1215,40 +1358,49 @@ S.endorsed = {
   view(){
     const {list, note} = scoped('endorsed', D.ends, G.ends);
     const own = RO || SC.endorsed==='mine' || !ONLINE;
-    /* when looking wider, show who is backed most */
-    let tally = '';
-    if(!own && list.length){
-      const count = {};
-      list.forEach(e=>{ const k=e.name.trim(); count[k]=(count[k]||0)+1 });
-      const top = Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,6).filter(x=>x[1]>1);
-      if(top.length) tally = `<div class="sec"><div class="sechead"><h4>Backed most</h4></div>
-        <div class="chips">${top.map(([n,c])=>`<span class="chip">${esc(n)} · ${c}</span>`).join('')}</div></div>`;
-    }
-    return `<div class="screen">
+    const pool = (SC.endorsed==='near' ? (G.ends||[]).filter(isNear) : (G.ends||[]));
+    const count = {}; pool.forEach(e=>{ const k=e.name.trim(); count[k]=(count[k]||0)+1 });
+    const top = Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const mineSet = new Set(D.ends.map(e=>e.name.trim().toLowerCase()));
+
+    return `<div class="split"><div class="main">
       ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add a candidate, group or measure"><button class="btn" id="eAdd">Add</button></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${tally}
       ${list.length?`<div class="list">${list.map(e=>`
         <div class="item" data-id="${e.id}"><div class="grow">
           ${!own && e.profiles ? who(e.profiles) : ''}
           <h3>${esc(e.name)}</h3>
           <div class="rowacts">${act('share','Share')}${own&&!RO?act('del'):''}</div></div></div>`).join('')}</div>`
         :`<div class="empty"><b>Nothing here yet</b>${RO?'':'Add the candidates, groups and measures you support.'}</div>`}
-    </div>`;
+    </div>
+    <aside class="side">
+      ${top.length?`<div class="card"><h5>Backed most</h5>
+        ${top.map(([n,c])=>`<div class="row"><span style="flex:1">${esc(n)}</span>
+          ${(!RO && ONLINE && !mineSet.has(n.toLowerCase()))
+            ? `<button class="mini-btn" data-back="${esc(n)}">Back</button>` : `<b>${c}</b>`}</div>`).join('')}
+      </div>`:''}
+      ${!RO?`<div class="card"><h5>Your list</h5>
+        <div class="row"><span>Backing</span><b>${D.ends.length}</b></div>
+        <button class="mini-btn" id="eShareAll" style="align-self:flex-start">Share the whole list</button>
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
-    wireTabs();
-    loadGlobal('ends');
+    wireTabs(); loadGlobal('ends');
     const {list} = scoped('endorsed', D.ends, G.ends);
+    const add = async name=>{
+      name=(name||$('eText').value).trim(); if(!name) return;
+      if(!await needAuth()) return;
+      mutate({ local:db=>db.ends.unshift({id:uid(),name}),
+        remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error, clears:['ends'] });
+    };
     if(!RO){
-      const t=$('eText');
-      const add = async ()=>{
-        const name=t.value.trim(); if(!name) return;
-        if(!await needAuth()) return;
-        mutate({ local:db=>db.ends.unshift({id:uid(),name}),
-          remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error, clears:['ends'] });
-      };
-      $('eAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
+      $('eAdd').onclick=()=>add(); $('eText').onkeydown=e=>{ if(e.key==='Enter') add() };
+      document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>add(b.dataset.back));
+      const sa=$('eShareAll');
+      if(sa) sa.onclick=()=>share(D.ends.length
+        ? 'I back ' + D.ends.slice(0,6).map(e=>e.name).join(', ') + (D.ends.length>6?` and ${D.ends.length-6} more`:'')
+        : 'democrat.ai');
     }
     rows(list,(x,a)=>{
       if(a==='share') return share(`I back ${x.name}`, x.profiles && x.profiles.handle);
@@ -1264,46 +1416,106 @@ S.townhall = {
   acts(){ return tabs('townhall',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const mine = RO || !ONLINE || SC.townhall==='mine';
-    const {list, note} = scoped('townhall', D.events, G.events);
-    return `<div class="screen">
-      ${note?`<p class="meta">${note}</p>`:''}
+    let {list, note} = scoped('townhall', D.events, G.events);
+    const today = new Date().toISOString().slice(0,10);
+    const days = new Set(list.map(e=>e.date));
+    if(CAL.pick) list = list.filter(e=>e.date===CAL.pick);
+
+    const [cy,cm] = CAL.month.split('-').map(Number);
+    const first = new Date(cy,cm-1,1), start = first.getDay(), len = new Date(cy,cm,0).getDate();
+    const cells = [];
+    for(let i=0;i<start;i++) cells.push('<button class="dim"></button>');
+    for(let d=1;d<=len;d++){
+      const iso = `${cy}-${String(cm).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      cells.push(`<button data-day="${iso}" class="${days.has(iso)?'has':''}${CAL.pick===iso?' on':''}">${d}</button>`);
+    }
+
+    return `<div class="split"><div class="main">
       ${RO?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
-        <input class="inp" id="tDate" type="date" style="max-width:165px"></div>
-      <div class="frow"><input class="inp" id="tPlace" placeholder="Where"><button class="btn" id="tAdd">Add</button></div>`}
+        <input class="inp" id="tDate" type="date" value="${CAL.pick||''}"></div>
+      <div class="frow"><input class="inp" id="tPlace" placeholder="Where">
+        <button class="linkbtn" id="tInvite" hidden>Write the invite</button>
+        <button class="btn" id="tAdd">Add</button></div>
+      <div class="ai" id="tAi" hidden></div>`}
+      ${note?`<p class="meta">${note}</p>`:''}
+      ${CAL.pick?`<p class="meta">Showing ${dfmt(CAL.pick)} · <button class="linkbtn" id="calClear">clear</button></p>`:''}
       ${list.length?`<div class="list">${list.map(e=>`
-        <div class="item" data-id="${e.id}"><div class="grow">
-          ${!mine && e.profiles ? who(e.profiles) : ''}
-          <h3>${esc(e.title)}</h3>
-          <small>${dfmt(e.date)}${e.place?' · '+esc(e.place):''}${e.going?' · '+e.going+' going':''}</small>
-          <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
-        </div>${ONLINE?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}</div>`).join('')}</div>`
+        <div class="item" data-id="${e.id}">
+          <div class="datechip" style="padding-top:2px">
+            <i>${new Date(e.date+'T00:00').toLocaleDateString(undefined,{month:'short'}).toUpperCase()}</i>
+            <b>${+e.date.split('-')[2]}</b></div>
+          <div class="grow">
+            ${!mine && e.profiles ? who(e.profiles) : ''}
+            <h3>${esc(e.title)}</h3>
+            <small>${dfmt(e.date)}${e.place?' · '+esc(e.place):''}${e.going?' · '+e.going+' going':''}${e.date<today?' · past':''}</small>
+            <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
+          </div>
+          ${ONLINE?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}
+        </div>`).join('')}</div>`
         :`<div class="empty"><b>Nothing coming up</b>${mine?'Add something people can show up to.':'No events posted yet.'}</div>`}
-    </div>`;
+    </div>
+    <aside class="side">
+      <div class="card">
+        <div class="calhead">
+          <button class="idnav" id="calPrev">&#8249;</button>
+          <b>${first.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b>
+          <button class="idnav" id="calNext">&#8250;</button>
+        </div>
+        <div class="cal">
+          ${['S','M','T','W','T','F','S'].map(d=>`<span>${d}</span>`).join('')}
+          ${cells.join('')}
+        </div>
+      </div>
+      ${(D.events||[]).filter(e=>e.rsvped).length?`<div class="card"><h5>You are going to</h5>
+        ${D.events.filter(e=>e.rsvped).slice(0,4).map(e=>`<div class="row"><span>${esc(e.title)}</span><b>${dfmt(e.date).split(',')[1]||''}</b></div>`).join('')}
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
     wireTabs();
     const mine = RO || !ONLINE || SC.townhall==='mine';
-    const {list} = scoped('townhall', D.events, G.events);
+    let {list} = scoped('townhall', D.events, G.events);
+    if(CAL.pick) list = list.filter(e=>e.date===CAL.pick);
+
+    const shift = n => {
+      const [y,m] = CAL.month.split('-').map(Number);
+      const d = new Date(y, m-1+n, 1);
+      CAL.month = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      open_('townhall', true);
+    };
+    $('calPrev').onclick=()=>shift(-1);
+    $('calNext').onclick=()=>shift(1);
+    document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{
+      CAL.pick = CAL.pick===b.dataset.day ? null : b.dataset.day;
+      open_('townhall', true);
+    });
+    const cc=$('calClear'); if(cc) cc.onclick=()=>{ CAL.pick=null; open_('townhall',true) };
+
     if(!RO){
+      const T=$('tTitle'), Dt=$('tDate'), P=$('tPlace'), inv=$('tInvite');
+      const canInvite = ()=>{ inv.hidden = !(T.value.trim() && Dt.value) };
+      [T,Dt,P].forEach(el=>el.addEventListener('input',canInvite)); canInvite();
+      inv.onclick = ()=> suggest('tAi', inv, 'invite',
+        `Event: ${T.value.trim()}\nDate: ${Dt.value}\nPlace: ${P.value.trim()||'not given'}`,
+        { apply:o=>share(o) , note:'Uses only what you typed.' });
       $('tAdd').onclick = async ()=>{
-        const title=$('tTitle').value.trim(), date=$('tDate').value, place=$('tPlace').value.trim();
+        const title=T.value.trim(), date=Dt.value, place=P.value.trim();
         if(!title||!date) return toast('Add a name and a date');
         if(!await needAuth()) return;
         mutate({ local:db=>db.events.push({id:uid(),title,date,place}),
           remote:async()=>(await sb.from('events').insert({author:ME.id,title,date,place})).error, clears:['events'] });
       };
     }
-    document.querySelectorAll('[data-rsvp]').forEach(b=>b.onclick = async ()=>{
+    document.querySelectorAll('[data-rsvp]').forEach(b=>b.onclick=async ()=>{
       if(!await needAuth()) return;
-      const e = list.find(x=>x.id===b.dataset.rsvp); if(!e) return;
+      const e=list.find(x=>x.id===b.dataset.rsvp); if(!e) return;
       mutate({ remote:async()=>{ const q = e.rsvped
         ? await sb.from('rsvps').delete().eq('event_id',e.id).eq('user_id',ME.id)
         : await sb.from('rsvps').insert({event_id:e.id,user_id:ME.id});
         return q.error }, clears:['events'] });
     });
     rows(list,(e,a)=>{
-      if(a==='share') return share(`${e.title} — ${dfmt(e.date)}${e.place?' at '+e.place:''}`,
-                                   e.profiles && e.profiles.handle);
+      if(a==='share') return share(`${e.title} — ${dfmt(e.date)}${e.place?' at '+e.place:''}`, e.profiles && e.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.events=db.events.filter(x=>x.id!==e.id),
         remote:async()=>(await sb.from('events').delete().eq('id',e.id)).error, clears:['events'] });
     });
@@ -1334,15 +1546,14 @@ S.ballot = {
   sub(){ const st=myState(); return st ? `Voting in ${stateName(st)}` : 'Vote without friction' },
   view(){
     const b = (V && V.ballot) || {};
-    const st = myState();
+    const st = myState(), links = ballotLinks();
     const left = b.date ? Math.ceil((new Date(b.date+'T00:00') - Date.now())/864e5) : null;
-    return `<div class="screen">
+    const done = links.filter(x=>b[x[0]]).length, pct = Math.round(done/links.length*100);
+    const C = 2*Math.PI*26, off = C - C*pct/100;
+
+    return `<div class="split"><div class="main">
       ${st ? '' : `<p class="meta">Add where you vote on your profile and this fills in with your state's deadlines and forms.</p>`}
-      <div class="frow">
-        <input class="inp" id="bDate" type="date" value="${b.date||''}" ${RO?'disabled':''}>
-        <span class="meta" style="flex:none">${left!=null?(left>0?left+' days out':(left===0?'Election day':'Passed')):'Your election date'}</span>
-      </div>
-      <div class="list">${ballotLinks().map(x=>`
+      <div class="list">${links.map(x=>`
         <div class="item" style="align-items:center">
           <a class="grow blink" href="${x[2]}" target="_blank" rel="noopener">
             <h3>${esc(x[1])}</h3><span>${ico.share}</span></a>
@@ -1353,36 +1564,61 @@ S.ballot = {
       <div class="divide"></div>
       <div>
         <div class="sect">Make sense of a measure</div>
-        <textarea class="ta" id="bText" style="min-height:110px"
+        <textarea class="ta" id="bText" style="min-height:130px"
           placeholder="Paste the text of a ballot measure and get it in plain English."></textarea>
         <div class="frow" style="justify-content:space-between;margin-top:9px">
-          <button class="btn ghost" id="bShare">Share checklist</button>
+          <span class="meta">Nothing you paste is stored.</span>
           <button class="btn" id="bExplain">Explain it</button>
         </div>
         <div class="ai" id="bAi" hidden></div>
       </div>
-    </div>`;
+    </div>
+    <aside class="side">
+      <div class="card">
+        <h5>Your election</h5>
+        ${RO?`<b style="font-size:15px">${b.date?dfmt(b.date):'Not set'}</b>`
+          :`<input class="inp" id="bDate" type="date" value="${b.date||''}" style="max-width:none">`}
+        <div style="font-size:26px;font-weight:660;letter-spacing:-.02em">
+          ${left!=null?(left>0?left:(left===0?'Today':'Passed')):'—'}
+          <span style="font-size:12.5px;font-weight:500;color:var(--muted)">${left>0?'days away':''}</span></div>
+      </div>
+      <div class="card">
+        <h5>Your checklist</h5>
+        <div class="ring">
+          <svg width="60" height="60" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(10,32,90,.09)" stroke-width="7"/>
+            <circle cx="30" cy="30" r="26" fill="none" stroke="${BLUE}" stroke-width="7" stroke-linecap="round"
+              stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 30 30)"/>
+          </svg>
+          <div><b>${done} of ${links.length}</b><small>steps done</small></div>
+        </div>
+        <button class="mini-btn" id="bShare" style="align-self:flex-start">Share this checklist</button>
+      </div>
+      ${st?`<div class="card"><h5>${stateName(st)}</h5>
+        <a class="mini-btn" style="text-align:left;text-decoration:none;display:block"
+           href="https://www.vote.org/state/${stateSlug(st)}/" target="_blank" rel="noopener">Deadlines, ID rules and forms</a>
+        <a class="mini-btn" style="text-align:left;text-decoration:none;display:block"
+           href="https://www.vote.org/election-reminders/" target="_blank" rel="noopener">Get election reminders</a>
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
     $('bShare').onclick = ()=>{
-      const st = myState();
+      const st=myState();
       share(st ? `Register, check your registration and see what is on your ballot in ${stateName(st)}:`
                : 'Register, check your registration, find your polling place:');
     };
     $('bExplain').onclick = ()=>{
       const t=$('bText').value.trim();
       if(t.length<40) return toast('Paste the measure text first');
-      suggest('bAi', $('bExplain'), 'measure', t, {note:'AI reading of the text you pasted. Verify before you vote.'});
+      suggest('bAi',$('bExplain'),'measure',t,{note:'AI reading of the text you pasted. Verify before you vote.'});
     };
     if(RO) return;
     const put = patch => mutate({
       local:db=>Object.assign(db.profile.ballot,patch),
-      remote:async()=>(await sb.from('profiles')
-        .update({ballot:Object.assign({},V.ballot,patch)}).eq('id',ME.id)).error });
+      remote:async()=>(await sb.from('profiles').update({ballot:Object.assign({},V.ballot,patch)}).eq('id',ME.id)).error });
     $('bDate').onchange = e => put({date:e.target.value});
-    document.querySelectorAll('[data-chk]').forEach(b=>b.onclick = ()=>{
-      const k=b.dataset.chk; put({[k]: !((V.ballot||{})[k])});
-    });
+    document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>put({[b.dataset.chk]: !((V.ballot||{})[b.dataset.chk])}));
   }
 };
 
@@ -1393,14 +1629,11 @@ S.polls = {
   view(){
     const mine = RO || !ONLINE || SC.polls==='mine';
     const {list, note} = scoped('polls', D.polls, G.polls);
-    return `<div class="screen">
+    const answered = list.filter(p=>p.voted).length;
+    const busiest = [...list].sort((a,b)=>(b.total||0)-(a.total||0)).slice(0,3).filter(p=>p.total);
+
+    return `<div class="split"><div class="main">
       ${note?`<p class="meta">${note}</p>`:''}
-      ${RO?'':`<div class="frow"><input class="inp" id="pQ" placeholder="Ask a question"></div>
-      <div class="ai" id="pAi" hidden></div>
-      <div class="frow"><input class="inp" id="pA" placeholder="Option 1"><input class="inp" id="pB" placeholder="Option 2"></div>
-      <div class="frow" style="justify-content:space-between">
-        <button class="linkbtn" id="pCheck" hidden>Check my wording</button>
-        <button class="btn" id="pAdd">Post</button></div>`}
       ${list.length? list.map(p=>{
         const opts=p.poll_options||[];
         return `<div class="item" data-poll="${p.id}" style="display:block">
@@ -1416,33 +1649,54 @@ S.polls = {
           <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
         </div>`}).join('')
         :`<div class="empty"><b>No questions yet</b>${mine?'One good question travels further than ten posts.':'Nobody has asked anything yet.'}</div>`}
-    </div>`;
+    </div>
+    <aside class="side">
+      ${RO?'':`<div class="card">
+        <h5>Ask a question</h5>
+        <input class="inp" id="pQ" placeholder="Your question">
+        <div class="ai" id="pAi" hidden></div>
+        <input class="inp" id="pA" placeholder="Option 1">
+        <input class="inp" id="pB" placeholder="Option 2">
+        <input class="inp" id="pC" placeholder="Option 3 (optional)">
+        <input class="inp" id="pD" placeholder="Option 4 (optional)">
+        <div class="row">
+          <button class="linkbtn" id="pCheck" hidden>Check my wording</button>
+          <button class="btn" id="pAdd" style="margin-left:auto">Post</button>
+        </div>
+      </div>`}
+      ${busiest.length?`<div class="card"><h5>Most answered</h5>
+        ${busiest.map(p=>`<div class="row"><span style="flex:1">${esc(p.question)}</span><b>${p.total}</b></div>`).join('')}
+      </div>`:''}
+      ${!RO&&list.length?`<div class="card"><h5>You</h5>
+        <div class="row"><span>Answered</span><b>${answered} of ${list.length}</b></div>
+        <div class="row"><span>Asked</span><b>${D.polls.length}</b></div>
+      </div>`:''}
+    </aside></div>`;
   },
   init(){
     wireTabs();
-    const mine = RO || !ONLINE || SC.polls==='mine';
     const {list} = scoped('polls', D.polls, G.polls);
     if(!RO){
       const Q=$('pQ'), chk=$('pCheck');
-      Q.oninput = ()=>{ chk.hidden = Q.value.trim().length < 12 };
-      chk.onclick = ()=> suggest('pAi', chk, 'neutral', Q.value, { apply:o=>{ Q.value=o } });
-      $('pAdd').onclick = async ()=>{
-        const q=Q.value.trim(), a=$('pA').value.trim(), b=$('pB').value.trim();
-        if(!q||!a||!b) return toast('Add a question and two options');
+      Q.oninput=()=>{ chk.hidden = Q.value.trim().length<12 };
+      chk.onclick=()=>suggest('pAi',chk,'neutral',Q.value,{apply:o=>{Q.value=o}});
+      $('pAdd').onclick=async ()=>{
+        const q=Q.value.trim();
+        const opts=[$('pA'),$('pB'),$('pC'),$('pD')].map(el=>el.value.trim()).filter(Boolean);
+        if(!q||opts.length<2) return toast('Add a question and at least two options');
         if(!await needAuth()) return;
         mutate({
           local:db=>db.polls.unshift({id:uid(),question:q,total:0,voted:null,
-            poll_options:[{id:uid(),text:a,v:0,ord:0},{id:uid(),text:b,v:0,ord:1}]}),
+            poll_options:opts.map((t,i)=>({id:uid(),text:t,v:0,ord:i}))}),
           remote:async()=>{
-            const ins = await sb.from('polls').insert({author:ME.id,question:q}).select().single();
+            const ins=await sb.from('polls').insert({author:ME.id,question:q}).select().single();
             if(ins.error) return ins.error;
-            return (await sb.from('poll_options').insert([
-              {poll_id:ins.data.id,text:a,ord:0},{poll_id:ins.data.id,text:b,ord:1}])).error;
+            return (await sb.from('poll_options').insert(opts.map((t,i)=>({poll_id:ins.data.id,text:t,ord:i})))).error;
           }, clears:['polls'] });
       };
     }
     document.querySelectorAll('[data-poll]').forEach(el=>{
-      const p = list.find(x=>x.id===el.dataset.poll); if(!p) return;
+      const p=list.find(x=>x.id===el.dataset.poll); if(!p) return;
       el.addEventListener('click', async e=>{
         const o=e.target.closest('[data-opt]'), b=e.target.closest('[data-act]');
         if(b && b.dataset.act==='share') return share(p.question, p.profiles && p.profiles.handle);
@@ -1465,33 +1719,46 @@ S.polls = {
 S.fundraise = {
   sub(){ return RO ? `What @${V.handle} is raising for` : 'Put money behind it' },
   view(){
-    const raised = D.gifts.reduce((s,g)=>s+Number(g.amount),0),
+    const gifts = [...D.gifts].sort((a,b)=> (b.created_at||'').localeCompare(a.created_at||''));
+    const raised = gifts.reduce((s,g)=>s+Number(g.amount),0),
           goal = Number(V&&V.goal||0), pct = goal?Math.min(100,raised/goal*100):0,
           link = (V&&V.donate_link||'').trim(),
-          href = link && !/^https?:/i.test(link) ? 'https://'+link : link;
+          href = link && !/^https?:/i.test(link) ? 'https://'+link : link,
+          avg = gifts.length ? raised/gifts.length : 0;
     if(RO) return `<div class="screen">${href
-      ? `<a class="btn" style="text-align:center;padding:14px" href="${esc(href)}" target="_blank" rel="noopener">Chip in</a>
-         <p class="hint">Goes to a page @${esc(V.handle)} chose. Check it before you give.</p>`
+      ? `<a class="btn" style="text-align:center;padding:14px;max-width:320px" href="${esc(href)}" target="_blank" rel="noopener">Chip in</a>
+         <p class="hint" style="text-align:left">Goes to a page @${esc(V.handle)} chose. Check it before you give.</p>`
       : `<div class="empty"><b>No link yet</b>@${esc(V.handle)} is not collecting anything.</div>`}</div>`;
-    return `<div class="screen">
+
+    return `<div class="split"><div class="main">
       <div class="stats">
         <div><b>${money(raised)}</b><span>Given</span></div>
-        <div><b>${D.gifts.length}</b><span>Gifts</span></div>
-        <div><b>${D.gifts.length?money(raised/D.gifts.length):'$0'}</b><span>Average</span></div>
+        <div><b>${gifts.length}</b><span>Gifts</span></div>
+        <div><b>${money(avg)}</b><span>Average</span></div>
         <div><b>${goal?Math.round(pct)+'%':'—'}</b><span>Of goal</span></div>
       </div>
-      ${goal?`<div class="bar" style="height:9px"><i style="width:${pct}%"></i></div>`:''}
-      <div class="frow">
-        <input class="inp" id="fGoal" type="number" min="0" placeholder="Goal for the year" value="${goal||''}">
-        <input class="inp" id="fLink" placeholder="Link others can give through" value="${esc(V&&V.donate_link)}">
+      ${goal?`<div><div class="bar" style="height:10px"><i style="width:${pct}%"></i></div>
+        <div class="legend"><span>${money(raised)} given</span><span>${money(goal)} goal</span></div></div>`:''}
+      ${gifts.length?`<div><div class="sect">What you have given</div>
+        ${gifts.slice(0,20).map(g=>`<div class="gift"><span>${g.created_at?ago(g.created_at):'logged'}</span>
+          <b>${money(g.amount)}</b></div>`).join('')}</div>`
+        :`<div class="empty"><b>Nothing logged yet</b>Keep your own record of what you gave and to whom.</div>`}
+    </div>
+    <aside class="side">
+      <div class="card"><h5>Log a gift</h5>
+        <div class="frow"><input class="inp" id="fGift" type="number" min="1" placeholder="Amount">
+          <button class="btn" id="fAdd">Add</button></div>
+        <span class="ainote">Private to you. Nobody else can see this.</span>
       </div>
-      <div class="frow">
-        <input class="inp" id="fGift" type="number" min="1" placeholder="Log what you gave">
-        <button class="btn ghost" id="fAdd">Add</button>
-        <button class="btn" id="fShare">Share link</button>
+      <div class="card"><h5>Your goal for the year</h5>
+        <input class="inp" id="fGoal" type="number" min="0" placeholder="0" value="${goal||''}" style="max-width:none">
       </div>
-      <p class="hint">What you log is private to you. The link is public.</p>
-    </div>`;
+      <div class="card"><h5>Where others can give</h5>
+        <input class="inp" id="fLink" placeholder="Paste a link" value="${esc(V&&V.donate_link)}" style="max-width:none">
+        <button class="mini-btn" id="fShare" style="align-self:flex-start">Share it</button>
+        <span class="ainote">This one is public, on your page.</span>
+      </div>
+    </aside></div>`;
   },
   init(){
     if(RO) return;
@@ -1506,10 +1773,10 @@ S.fundraise = {
     $('fAdd').onclick = async ()=>{
       const amount=Number($('fGift').value); if(!amount) return;
       if(!await needAuth()) return;
-      mutate({ local:db=>db.gifts.push({id:uid(),amount}),
+      mutate({ local:db=>db.gifts.push({id:uid(),amount,created_at:new Date().toISOString()}),
         remote:async()=>(await sb.from('gifts').insert({author:ME.id,amount})).error });
     };
-    $('fShare').onclick = ()=>share((V.donate_link||'Chip in:'));
+    $('fShare').onclick = ()=>share(V.donate_link || 'Chip in:');
   }
 };
 
@@ -1522,24 +1789,55 @@ S.reach = {
           going = D.events.reduce((s,e)=>s+(e.going||0),0),
           top   = [...D.posts].sort((a,b)=>(b.likes||0)-(a.likes||0))[0],
           poll  = [...D.polls].sort((a,b)=>(b.total||0)-(a.total||0))[0];
+
+    /* real activity: your posts per day over the last fortnight */
+    const days = [...Array(14)].map((_,i)=>{
+      const d = new Date(); d.setDate(d.getDate()-(13-i));
+      const iso = d.toISOString().slice(0,10);
+      return {iso, n: D.posts.filter(p=>(p.created_at||'').slice(0,10)===iso).length,
+              label: d.toLocaleDateString(undefined,{month:'short',day:'numeric'})};
+    });
+    const peak = Math.max(1, ...days.map(d=>d.n));
     const nothing = !D.posts.length && !D.polls.length && !D.events.length;
-    return `<div class="screen">
+
+    return `<div class="split"><div class="main">
       <div class="stats">
         <div><b>${D.shares}</b><span>Shares</span></div>
         <div><b>${D.followers}</b><span>Followers</span></div>
         <div><b>${likes}</b><span>Likes</span></div>
         <div><b>${votes}</b><span>Votes cast</span></div>
       </div>
-      <div class="stats">
-        <div><b>${D.posts.length}</b><span>Posts</span></div>
-        <div><b>${D.issues.length}</b><span>Positions</span></div>
-        <div><b>${going}</b><span>RSVPs</span></div>
-        <div><b>${D.ends.length}</b><span>Backing</span></div>
+      <div class="card">
+        <h5>Your posting, last 14 days</h5>
+        <div class="spark">${days.map(d=>`<i class="${d.n?'on':''}" style="height:${d.n/peak*100}%" title="${d.label}: ${d.n}"></i>`).join('')}</div>
+        <div class="legend"><span>${days[0].label}</span><span>${D.posts.filter(p=>(p.created_at||'')>=days[0].iso).length} posts</span><span>${days[13].label}</span></div>
       </div>
-      ${nothing ? `<div class="empty"><b>Nothing to measure yet</b>Post something, then come back.</div>` : `
-        ${top&&top.likes?`<div class="item"><div class="grow"><small>Most liked post</small><p>${esc(top.text)}</p></div></div>`:''}
-        ${poll&&poll.total?`<div class="item"><div class="grow"><small>Most answered question</small><p>${esc(poll.question)}</p></div></div>`:''}`}
-    </div>`;
+      ${nothing?`<div class="empty"><b>Nothing to measure yet</b>Post something, then come back.</div>`:`
+        ${top&&top.likes?`<div class="item"><div class="grow"><small>Most liked post</small><p>${esc(top.text)}</p>
+          <div class="rowacts"><span class="iconbtn" style="pointer-events:none">${top.likes} likes</span></div></div></div>`:''}
+        ${poll&&poll.total?`<div class="item"><div class="grow"><small>Most answered question</small><p>${esc(poll.question)}</p>
+          <div class="rowacts"><span class="iconbtn" style="pointer-events:none">${poll.total} votes</span></div></div></div>`:''}`}
+    </div>
+    <aside class="side">
+      <div class="card"><h5>What you have built</h5>
+        <div class="row"><span>Posts</span><b>${D.posts.length}</b></div>
+        <div class="row"><span>Positions</span><b>${D.issues.length}</b></div>
+        <div class="row"><span>Questions asked</span><b>${D.polls.length}</b></div>
+        <div class="row"><span>Events</span><b>${D.events.length}</b></div>
+        <div class="row"><span>Backing</span><b>${D.ends.length}</b></div>
+        <div class="row"><span>RSVPs received</span><b>${going}</b></div>
+      </div>
+      ${!RO?`<div class="card"><h5>Reach further</h5>
+        <button class="mini-btn" id="rShare" style="text-align:left">Share your page</button>
+        <button class="mini-btn" data-go="polls" style="text-align:left">Ask a question</button>
+        <button class="mini-btn" data-go="issues" style="text-align:left">Take a position</button>
+        <span class="ainote">Shares are counted whether or not the person signs up.</span>
+      </div>`:''}
+    </aside></div>`;
+  },
+  init(){
+    const r=$('rShare');
+    if(r) r.onclick=()=>share(V.name?`${V.name} on democrat.ai`:'democrat.ai');
   }
 };
 

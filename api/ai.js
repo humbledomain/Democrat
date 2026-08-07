@@ -28,6 +28,14 @@ const TASKS = {
       'subject and the same decision being asked about. If it is already neutral, return it unchanged. ' +
       'Return only the question.'
   },
+  invite: {
+    max: 300,
+    system:
+      'The user gives the name, date and place of an event they are organising. Write a short invitation ' +
+      'they can send, under 40 words. Use only the details given — invent no speakers, no agenda, no cause, ' +
+      'no claims about who will be there. If the place is missing, do not mention a place. Plain and direct. ' +
+      'Return only the invitation.'
+  },
   measure: {
     max: 700,
     system:
