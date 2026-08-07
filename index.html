@@ -428,13 +428,15 @@ button.tag{cursor:pointer}
 .joinbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:15px 18px;border-radius:16px;
   background:rgba(10,63,214,.05);border:1px solid rgba(10,63,214,.14)}
 .joinbar span{flex:1;font-size:14px;color:#25304a;min-width:180px}
-.joinbar .btn{flex:none}
-.mecol{display:flex;flex-direction:column;align-items:flex-end;max-width:min(80%,480px)}
-.mact{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.msg.me .mact{justify-content:flex-end}
-.mact button{border:1px solid var(--line);background:#fff;color:#4a5470;border-radius:99px;
-  padding:5px 11px;font-size:12px;font-weight:540;cursor:pointer;transition:.14s;white-space:nowrap}
-.mact button:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.joinbar .btn{flex:none}.topics{display:flex;flex-wrap:wrap;gap:6px}
+.topic{border:1px solid var(--line);background:#fff;color:#39415a;border-radius:99px;padding:6px 12px;
+  font-size:12.5px;font-weight:540;cursor:pointer;transition:.14s}
+.topic:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}
+.mact{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.mact button{border:1px solid var(--line);background:#fff;color:#7b849b;border-radius:7px;
+  padding:2px 8px;font-size:11px;font-weight:560;line-height:1.7;cursor:pointer;transition:.14s;white-space:nowrap}
+.mact button.sym{min-width:24px;padding:2px 0;font-size:13px;text-align:center}
+.mact button:hover{border-color:rgba(10,63,214,.4);color:var(--blue);background:rgba(10,63,214,.05)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
 .cmt{display:flex;gap:10px;align-items:flex-start}
 .whoav.sm{width:28px;height:28px;font-size:11px;text-decoration:none}
 .cmt b{font-size:13px;font-weight:640;margin-right:6px}
@@ -1961,22 +1963,11 @@ S.feed = {
 };
 
 /* ------------------------------------------------------------------ compose */
-const IDEAS = [
-  'Something that changed on your street this month',
-  'A decision your city or county just made, and what you think of it',
-  'What you saw at a meeting other people did not go to',
-  'A question you want your representative to answer',
-  'Why you hold one of your positions — the honest reason',
-  'Something local that is working, and who made it work',
-  'A cost that went up where you live, and by how much',
-  'What you learned knocking doors or talking to neighbours',
-  'A piece of news everyone got wrong about your area',
-  'Something you changed your mind about'
-];
 /* every message can be pushed further — for, against, deeper, plainer */
 const MSG_ACTIONS = {
-  assistant: [['for','The case for'], ['against','The case against'], ['deeper','Go deeper'], ['simple','Put it simply']],
-  user:      [['for','Make the case'], ['against','Argue the other side'], ['deeper','Go deeper']]
+  assistant: [['for','+','The case for'], ['against','\u2212','The case against'],
+              ['deeper','Deep','Go deeper'], ['simple','Simple','Put it simply']],
+  user:      []
 };
 function actPrompt(kind, role, text){
   const q = (text||'').length > 240 ? text.slice(0,240) + '…' : (text||'');
@@ -1986,9 +1977,28 @@ function actPrompt(kind, role, text){
   if(kind === 'deeper')  return `Go deeper on ${it}: the mechanics, who actually decides, what it costs, and where this usually goes wrong in practice.`;
   return `Put that more simply — as if explaining it to someone hearing about it for the first time.`;
 }
-const actionRow = (i, role) => `<div class="mact">${
-  (MSG_ACTIONS[role]||[]).map(([k,label]) =>
-    `<button data-mact="${k}" data-mi="${i}">${label}</button>`).join('')}</div>`;
+const actionRow = (i, role) => {
+  const set = MSG_ACTIONS[role] || [];
+  if(!set.length) return '';
+  return `<div class="mact">${set.map(([k,label,title]) =>
+    `<button data-mact="${k}" data-mi="${i}" title="${title}" aria-label="${title}"
+      class="${k==='for'||k==='against'?'sym':''}">${label}</button>`).join('')}</div>`;
+};
+
+/* Clicking one of these does not paste the label into the box — it opens the
+   conversation with a specific question worth answering. */
+const TOPICS = [
+  ['Rent',        'Break down what actually sets rent where I live — land, zoning, interest rates, who owns the buildings — and which of those a city council can genuinely change.'],
+  ['Your ballot', 'Explain who actually runs an election in my county, which offices on the ballot decide things people feel day to day, and which ones nobody pays attention to but should.'],
+  ['Wages',       'Why did wages stop tracking productivity, and which policies would actually reverse it rather than just sounding good?'],
+  ['Hospital bills','Walk me through why an American hospital bill looks the way it does — who takes a cut at each step, and where the money would go instead under a different system.'],
+  ['Climate',     'Which climate policies actually move emissions at the scale that matters, and which are mostly there to make us feel like something is happening?'],
+  ['Local money', 'How does money actually reach a local race — who gives it, through what, and what does it buy that a voter would notice?'],
+  ['Schools',     'Where does school funding actually come from where I live, and why does that formula produce the gaps it does?'],
+  ['Guns',        'What do the strongest gun laws in the country actually do, what do they not touch, and what does the evidence say about which ones matter?'],
+  ['Immigration', 'Separate what is federal from what is local in immigration, and tell me honestly where the Democratic position is strong and where it is unsettled.'],
+  ['Courts',      'Explain how much of what I care about is decided by courts rather than legislatures now, and what follows from that.']
+];
 
 const STARTERS = [
   'What are people on here taking positions on?',
@@ -2031,7 +2041,7 @@ S.compose = {
       <button class="btn" data-go="profile">Create an account</button>
     </div>`;
     const bubbles = CHAT.map((m,i) => m.role==='user'
-      ? `<div class="msg me" data-i="${i}"><div class="mecol"><div class="bubble">${esc(m.content)}</div>${actionRow(i,'user')}</div></div>`
+      ? `<div class="msg me" data-i="${i}"><div class="bubble">${esc(m.content)}</div></div>`
       : `<div class="msg ai" data-i="${i}"><div class="say">${md(m.content)}${
            m.used && m.used.length
              ? `<div class="lookedat">Read ${[...new Set(m.used)].map(u=>TOOLNAME[u]||u).join(', ')} on this site</div>`
@@ -2059,8 +2069,9 @@ S.compose = {
       </div>
     </div>
     <aside class="side">
-      <div class="card"><h5>Things to think about</h5>
-        ${IDEAS.slice(0,6).map((t,i)=>`<button class="mini-btn" data-idea="${i}" style="text-align:left">${esc(t)}</button>`).join('')}
+      <div class="card"><h5>Talk about</h5>
+        <div class="topics">${TOPICS.map((t,i)=>
+          `<button class="topic" data-topic="${i}" title="${esc(t[1])}">${esc(t[0])}</button>`).join('')}</div>
       </div>
       ${D.posts.length?`<div class="card"><h5>Your last posts</h5>
         ${D.posts.slice(0,3).map(p=>`<div style="font-size:13px;line-height:1.5;color:#39415a">${esc(p.text.slice(0,90))}${p.text.length>90?'…':''}</div>`).join('')}
@@ -2088,7 +2099,7 @@ S.compose = {
       div.className = 'msg ' + (role==='user'?'me':'ai');
       div.dataset.i = i;
       div.innerHTML = role==='user'
-        ? `<div class="mecol"><div class="bubble">${esc(text)}</div>${actionRow(i,'user')}</div>`
+        ? `<div class="bubble">${esc(text)}</div>`
         : `<div class="say">${md(text)}${actionRow(i,'assistant')}</div>`;
       const intro = box.querySelector('.chatintro'); if(intro) intro.remove();
       box.appendChild(div); bottom();
@@ -2143,7 +2154,7 @@ S.compose = {
     send.onclick = ()=>ask(t.value);
     t.onkeydown = e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); ask(t.value) } };
     document.querySelectorAll('[data-starter]').forEach(b=>b.onclick=()=>ask(STARTERS[+b.dataset.starter]));
-    document.querySelectorAll('[data-idea]').forEach(b=>b.onclick=()=>ask('Help me think about this: ' + IDEAS[+b.dataset.idea]));
+    document.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>ask(TOPICS[+b.dataset.topic][1]));
     const nw=$('chNew');
     if(nw) nw.onclick=()=>{ CHAT=[]; chatSave(); open_('compose') };
   }
