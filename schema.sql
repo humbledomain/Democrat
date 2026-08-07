@@ -24,7 +24,7 @@ create table if not exists profiles (
 create table if not exists posts (
   id         uuid primary key default gen_random_uuid(),
   author     uuid not null references profiles on delete cascade,
-  text       text not null check (char_length(text) between 1 and 280),
+  text       text not null check (char_length(text) between 1 and 1000),
   created_at timestamptz not null default now()
 );
 create index if not exists posts_author_idx on posts(author, created_at desc);

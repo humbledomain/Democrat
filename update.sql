@@ -14,3 +14,21 @@ create policy profiles_insert on profiles for insert with check (auth.uid() = id
 insert into profiles (id)
 select id from auth.users
 on conflict (id) do nothing;
+
+-- 4. posts can be longer now
+alter table posts drop constraint if exists posts_text_check;
+alter table posts add constraint posts_text_check check (char_length(text) between 1 and 1000);
+
+-- 5. turn on live updates so everyone sees new posts, votes and events as they happen
+do $$
+declare t text;
+begin
+  foreach t in array array['posts','likes','follows','issues','endorsements','events','rsvps',
+                           'polls','poll_options','poll_votes','profiles','shares']
+  loop
+    begin
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    exception when duplicate_object then null;
+    end;
+  end loop;
+end $$;

@@ -74,7 +74,7 @@ button,input,textarea{font:inherit;color:inherit}
   color:#4c5570;font-size:14px;display:none;place-items:center}
 .pbody{padding:clamp(18px,3vh,30px) 20px;overflow:auto;flex:1;min-height:0;animation:fade .3s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.screen{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.screen{max-width:640px;margin:0;display:flex;flex-direction:column;gap:16px}
 
 .btn{border:0;border-radius:11px;padding:9px 15px;font-size:13.5px;font-weight:590;background:var(--blue);
   color:#fff;cursor:pointer;transition:opacity .15s;white-space:nowrap}
@@ -91,7 +91,8 @@ button,input,textarea{font:inherit;color:inherit}
 .inp::placeholder,.ta::placeholder{color:#9aa3b8}
 .inp:focus,.ta:focus{outline:none;border-color:rgba(10,63,214,.5)}
 .ta{resize:none;min-height:96px}
-.frow{display:flex;gap:8px;align-items:center}
+.frow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.frow .inp[type=date],.frow .inp[type=number]{max-width:190px;flex:0 1 190px}
 .frow .inp{flex:1}
 .seg{display:flex;background:var(--soft);border-radius:11px;padding:3px;flex:none}
 .seg button{border:0;background:none;cursor:pointer;font-size:13px;font-weight:560;color:var(--muted);
@@ -99,7 +100,7 @@ button,input,textarea{font:inherit;color:inherit}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(8,26,72,.12)}
 
 .list{display:flex;flex-direction:column}
-.item{padding:15px 0;border-top:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.item{padding:14px 0;border-top:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .item:first-child{border-top:0}
 .item .grow{flex:1;min-width:0}
 .item h3{font-size:14.5px;font-weight:600;letter-spacing:-.012em}
@@ -210,6 +211,33 @@ button.tag{cursor:pointer}
   .pcolL{position:static}
   .photo{max-width:260px;margin:0 auto}
 }
+
+/* header tabs */
+.acts .tabs{margin-right:2px}
+.acts .seg button{padding:6px 11px;font-size:12.5px}
+@media (max-width:700px){
+  .phead{flex-wrap:wrap}
+  .acts{width:100%;margin-left:0;overflow-x:auto;padding-bottom:2px}
+}
+/* compose */
+.pbody.composebody{display:flex;flex-direction:column}
+.composer{display:flex;flex-direction:column;gap:12px;height:100%;min-height:min(58vh,420px);max-width:720px}
+.ideas{display:flex;align-items:center;gap:4px;transition:opacity .3s}
+.idea{flex:1;border:0;background:none;text-align:left;cursor:text;font-size:13.5px;color:var(--muted);
+  padding:6px 4px;line-height:1.4}
+.idnav{border:0;background:var(--soft);color:#4c5570;width:26px;height:26px;border-radius:50%;cursor:pointer;
+  font-size:15px;line-height:1;flex:none;display:grid;place-items:center}
+.idnav:hover{background:rgba(10,63,214,.1);color:var(--blue)}
+.canvas{flex:1;width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;
+  font-size:16px;line-height:1.6;resize:none;min-height:200px}
+.canvas:focus{outline:none;border-color:rgba(10,63,214,.45)}
+.cbar{display:flex;align-items:center;gap:12px}
+.cbar .meta{margin-left:auto}
+
+.blink{display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.blink span{color:var(--muted);display:inline-flex;opacity:0;transition:opacity .15s}
+.blink:hover h3{color:var(--blue)}
+.blink:hover span{opacity:1}
 
 /* social + AI */
 .tahead{position:relative}
@@ -1017,11 +1045,11 @@ function authInit(){
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
-  acts(){ return RO?'':`<button class="btn" data-go="compose">Post</button>` },
+  acts(){ return `${tabs('feed',[['all','Everyone'],['mine','Yours']])}${RO?'':`<button class="btn" data-go="compose">Post</button>`}` },
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
     const {list, note} = scoped('feed', D.posts, G.posts);
-    return `<div class="screen">${tabs('feed',[['all','Everyone'],['mine','Yours']])}
+    return `<div class="screen">
       ${note?`<p class="meta">${note}</p>`:''}
       ${list.length ? `<div class="list">${list.map(p=>`
         <article class="item" data-id="${p.id}"><div class="grow">
@@ -1054,28 +1082,65 @@ S.feed = {
 };
 
 /* ------------------------------------------------------------------ compose */
+const IDEAS = [
+  'Something that changed on your street this month',
+  'A decision your city or county just made, and what you think of it',
+  'What you saw at a meeting other people did not go to',
+  'A question you want your representative to answer',
+  'Why you hold one of your positions — the honest reason',
+  'Something local that is working, and who made it work',
+  'A cost that went up where you live, and by how much',
+  'What you learned knocking doors or talking to neighbours',
+  'A piece of news everyone got wrong about your area',
+  'Something you changed your mind about'
+];
 S.compose = {
   sub:'Say something',
   view(){
     if(RO) return `<div class="empty"><b>This is someone else's page</b>Open your own to post.</div>`;
-    return `<div class="screen">
-      <textarea class="ta" id="cText" maxlength="280" placeholder="What is happening where you live?"></textarea>
-      <div class="frow" style="justify-content:space-between">
+    return `<div class="composer">
+      <div class="ideas">
+        <button class="idnav" id="idPrev" aria-label="Previous idea">&#8249;</button>
+        <button class="idea" id="idText"></button>
+        <button class="idnav" id="idNext" aria-label="Next idea">&#8250;</button>
+      </div>
+      <textarea class="canvas" id="cText" maxlength="1000"></textarea>
+      <div class="cbar">
         <button class="linkbtn" id="cTighten" hidden>Tighten this</button>
-        <span class="meta" id="cCount">280</span>
+        <span class="meta" id="cCount">1000</span>
+        <button class="btn" id="cPost" disabled>Post</button>
       </div>
       <div class="ai" id="cAi" hidden></div>
-      <div class="frow" style="justify-content:flex-end"><button class="btn" id="cPost" disabled>Post</button></div>
     </div>`;
   },
   init(){
     if(RO) return;
-    const t=$('cText'), c=$('cCount'), b=$('cPost'), tight=$('cTighten');
-    t.focus();
-    const sync = ()=>{ c.textContent=280-t.value.length; b.disabled=!t.value.trim();
-                       tight.hidden = t.value.trim().length < 80; };
-    t.oninput = sync; sync();
+    const t=$('cText'), c=$('cCount'), b=$('cPost'), tight=$('cTighten'),
+          idea=$('idText'), LIM=1000;
+    let i = Math.floor(Math.random()*IDEAS.length), timer;
+
+    const paint = ()=>{ idea.textContent = IDEAS[i] };
+    const step  = d => { i = (i + d + IDEAS.length) % IDEAS.length; paint() };
+    paint();
+    const cycle = ()=>{ timer = setInterval(()=>{ if(!t.value) step(1) }, 7000) };
+    cycle();
+
+    $('idPrev').onclick = ()=>{ clearInterval(timer); step(-1); cycle() };
+    $('idNext').onclick = ()=>{ clearInterval(timer); step(1);  cycle() };
+    idea.onclick = ()=>{ t.focus() };
+
+    const sync = ()=>{
+      const n = t.value.length;
+      c.textContent = LIM - n;
+      c.style.color = n > LIM-60 ? '#c2410c' : '';
+      b.disabled = !t.value.trim();
+      tight.hidden = t.value.trim().length < 120;
+      document.querySelector('.ideas').style.opacity = t.value ? '.25' : '1';
+    };
+    t.oninput = sync; sync(); t.focus();
+
     tight.onclick = ()=> suggest('cAi', tight, 'tighten', t.value, { apply:o=>{ t.value=o; sync() } });
+
     b.onclick = async ()=>{
       if(!await needAuth()) return;
       const text=t.value.trim(); b.disabled=true;
@@ -1089,10 +1154,11 @@ S.compose = {
 /* ------------------------------------------------------------------- issues */
 S.issues = {
   sub(){ return RO ? `Where @${V.handle} stands` : 'Where you stand' },
+  acts(){ return tabs('issues',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const {list, note} = scoped('issues', D.issues, G.issues);
     const own = RO || SC.issues==='mine' || !ONLINE;
-    return `<div class="screen">${tabs('issues',[['all','Everyone'],['mine','Yours']])}
+    return `<div class="screen">
       ${RO?'':`<div class="frow">
         <input class="inp" id="iText" placeholder="Add an issue">
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
@@ -1145,6 +1211,7 @@ S.issues = {
 /* ----------------------------------------------------------------- endorsed */
 S.endorsed = {
   sub(){ return RO ? `Who @${V.handle} backs` : 'Who you back' },
+  acts(){ return tabs('endorsed',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const {list, note} = scoped('endorsed', D.ends, G.ends);
     const own = RO || SC.endorsed==='mine' || !ONLINE;
@@ -1157,7 +1224,7 @@ S.endorsed = {
       if(top.length) tally = `<div class="sec"><div class="sechead"><h4>Backed most</h4></div>
         <div class="chips">${top.map(([n,c])=>`<span class="chip">${esc(n)} · ${c}</span>`).join('')}</div></div>`;
     }
-    return `<div class="screen">${tabs('endorsed',[['all','Everyone'],['mine','Yours']])}
+    return `<div class="screen">
       ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add a candidate, group or measure"><button class="btn" id="eAdd">Add</button></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
       ${tally}
@@ -1194,10 +1261,11 @@ S.endorsed = {
 /* ---------------------------------------------------------------- town hall */
 S.townhall = {
   sub(){ return RO ? `Events from @${V.handle}` : 'Show up in person' },
+  acts(){ return tabs('townhall',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const mine = RO || !ONLINE || SC.townhall==='mine';
     const {list, note} = scoped('townhall', D.events, G.events);
-    return `<div class="screen">${tabs('townhall',[['all','Everyone'],['mine','Yours']])}
+    return `<div class="screen">
       ${note?`<p class="meta">${note}</p>`:''}
       ${RO?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
         <input class="inp" id="tDate" type="date" style="max-width:165px"></div>
@@ -1275,8 +1343,9 @@ S.ballot = {
         <span class="meta" style="flex:none">${left!=null?(left>0?left+' days out':(left===0?'Election day':'Passed')):'Your election date'}</span>
       </div>
       <div class="list">${ballotLinks().map(x=>`
-        <div class="item"><div class="grow"><h3>${esc(x[1])}</h3>
-          <div class="rowacts"><a class="iconbtn" href="${x[2]}" target="_blank" rel="noopener">Open ${ico.share}</a></div></div>
+        <div class="item" style="align-items:center">
+          <a class="grow blink" href="${x[2]}" target="_blank" rel="noopener">
+            <h3>${esc(x[1])}</h3><span>${ico.share}</span></a>
           ${RO?'':`<button class="tag ${b[x[0]]?'b':''}" data-chk="${x[0]}">${b[x[0]]?'Done':'Mark done'}</button>`}
         </div>`).join('')}</div>
       <p class="hint" style="text-align:left">Links go to Vote.org, a nonpartisan nonprofit.</p>
@@ -1320,10 +1389,11 @@ S.ballot = {
 /* -------------------------------------------------------------------- polls */
 S.polls = {
   sub(){ return RO ? `Questions from @${V.handle}` : 'Ask, then listen' },
+  acts(){ return tabs('polls',[['all','Everyone'],['mine','Yours']]) },
   view(){
     const mine = RO || !ONLINE || SC.polls==='mine';
     const {list, note} = scoped('polls', D.polls, G.polls);
-    return `<div class="screen">${tabs('polls',[['all','Everyone'],['mine','Yours']])}
+    return `<div class="screen">
       ${note?`<p class="meta">${note}</p>`:''}
       ${RO?'':`<div class="frow"><input class="inp" id="pQ" placeholder="Ask a question"></div>
       <div class="ai" id="pAi" hidden></div>
@@ -1507,6 +1577,7 @@ function open_(id, quiet){
       <div class="acts">${s.acts?s.acts():''}<button class="pclose" id="pclose">&#10005;</button></div>
     </header>
     <div class="pbody">${s.view()}</div>`;
+  if(id==='compose') panel.querySelector('.pbody').classList.add('composebody');
   if(s.init) s.init();
   document.body.classList.add('open');
   panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
@@ -1523,6 +1594,30 @@ function open_(id, quiet){
 
 rail.addEventListener('click', e=>{ const b=e.target.closest('.app'); if(b) open_(b.dataset.id) });
 
+/* ---------------- live: the database tells us when anything changes -------- */
+const TABLE_KIND = {posts:'posts', likes:'posts', polls:'polls', poll_options:'polls', poll_votes:'polls',
+                    events:'events', rsvps:'events', issues:'issues', endorsements:'ends', profiles:null};
+let liveTimer;
+function goLive(){
+  if(!ONLINE || !sb.channel) return;
+  sb.channel('everything')
+    .on('postgres_changes', {event:'*', schema:'public'}, payload => {
+      const kind = TABLE_KIND[payload.table];
+      if(kind !== undefined) G[kind] = null;
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(refreshLive, 500);
+    })
+    .subscribe();
+}
+async function refreshLive(){
+  const typing = ['INPUT','TEXTAREA'].includes((document.activeElement||{}).tagName);
+  await load();
+  const kind = {feed:'posts', polls:'polls', townhall:'events', issues:'issues', endorsed:'ends'}[current];
+  if(kind) await loadGlobal(kind);
+  if(!typing) render();              // never yank the page out from under someone mid-sentence
+  else renderRail();
+}
+
 /* --------------------------------------------------------------------- boot */
 (async function boot(){
   renderRail();
@@ -1533,6 +1628,7 @@ rail.addEventListener('click', e=>{ const b=e.target.closest('.app'); if(b) open
     });
   } else { const m=$('mode'); m.hidden=false; m.textContent='Local mode'; }
   await load();
+  goLive();
   if(ONLINE){
     if(myState()) ['feed','polls','townhall','issues','endorsed'].forEach(k=>SC[k]='near');
     await loadGlobal('issues');
