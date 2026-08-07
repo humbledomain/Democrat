@@ -434,7 +434,34 @@ button.tag{cursor:pointer}
 .msg.me .mact{justify-content:flex-end}
 .mact button{border:1px solid var(--line);background:#fff;color:#4a5470;border-radius:99px;
   padding:5px 11px;font-size:12px;font-weight:540;cursor:pointer;transition:.14s;white-space:nowrap}
-.mact button:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}
+.mact button:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.cmt{display:flex;gap:10px;align-items:flex-start}
+.whoav.sm{width:28px;height:28px;font-size:11px;text-decoration:none}
+.cmt b{font-size:13px;font-weight:640;margin-right:6px}
+.cmt span{font-size:13.5px;line-height:1.5;color:#242b3d}
+.cmt small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+.cmt .cdel{font-size:11.5px;padding:0;margin:0;color:var(--muted)}
+.cbox{display:flex;gap:8px}
+.cbox .inp{flex:1;padding:9px 13px;font-size:14px;border-radius:11px}
+.prow2{display:flex;gap:6px;width:100%;margin-top:4px}
+.prow2 .btn{flex:1;padding:8px 6px;font-size:12.5px}
+.dmrow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;cursor:pointer;
+  padding:8px 0;border-top:1px solid var(--line);text-align:left}
+.dmrow:first-of-type{border-top:0}
+.dmrow b{display:block;font-size:13.5px;font-weight:600}
+.dmrow small{font-size:12px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot-new{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none}
+.sheetbox.dm{max-width:460px;height:min(72vh,640px);height:min(72dvh,640px)}
+.dmhead{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.dmhead b{font-size:15px;font-weight:640;display:block}
+.dmhead small{font-size:12.5px;color:var(--muted)}
+.dmthread{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px}
+.dmmsg{display:flex;flex-direction:column;align-items:flex-start;max-width:82%}
+.dmmsg.mine{align-self:flex-end;align-items:flex-end}
+.dmbubble{padding:10px 14px;border-radius:16px 16px 16px 5px;background:rgba(10,32,90,.06);font-size:14px;
+  line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.dmmsg.mine .dmbubble{background:var(--blue);color:#fff;border-radius:16px 16px 5px 16px}
+.dmwhen{font-size:11px;color:var(--muted);margin-top:3px}
 .lookedat{margin-top:9px;font-size:11.5px;color:#93a0bd;letter-spacing:.01em}
 .briefout{font-size:13px;line-height:1.55;color:#39415a}
 .briefout p{margin:0 0 8px}
@@ -810,7 +837,8 @@ let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
-const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null};   // everyone's content
+const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null};
+let DMS = [], DMUNREAD = 0, OPENPOST = null;   /* conversations, unread count, expanded post */   // everyone's content
 const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
 let PSEARCH = '';            // per-screen scope
@@ -897,6 +925,8 @@ async function load(){
   D.events = events.data||[]; D.polls  = polls.data||[];  D.gifts = gifts.data||[];
   D.followers = followers.count||0; D.following = following.count||0; D.shares = shares.count||0;
   await decorate(D.posts, D.polls, D.events);
+  await attachComments(D.posts);
+  await loadDMs();
 
   if(ME && RO){
     const { data:f } = await sb.from('follows').select('follower')
@@ -947,7 +977,7 @@ async function loadGlobalInner(kind){
     const { data } = await sb.from('posts')
       .select('*, profiles!posts_author_fkey(handle,name,photo_url,location)')
       .order('created_at',{ascending:false}).limit(60);
-    G.posts = data||[]; await decorate(G.posts);
+    G.posts = data||[]; await decorate(G.posts); await attachComments(G.posts);
   }
   if(kind==='polls'){
     const { data } = await sb.from('polls')
@@ -1115,7 +1145,9 @@ const ico = {
   like :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.5S3.5 14.6 3.5 9.4A5 5 0 0 1 12 6.3a5 5 0 0 1 8.5 3.1c0 5.2-8.5 11.1-8.5 11.1Z"/></svg>',
   liked:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5S3.5 14.6 3.5 9.4A5 5 0 0 1 12 6.3a5 5 0 0 1 8.5 3.1c0 5.2-8.5 11.1-8.5 11.1Z"/></svg>',
   share:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg>',
-  del  :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M10 7V5h4v2M8 7l.8 12.1a1 1 0 0 0 1 .9h4.4a1 1 0 0 0 1-.9L16 7"/></svg>'
+  del  :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M10 7V5h4v2M8 7l.8 12.1a1 1 0 0 0 1 .9h4.4a1 1 0 0 0 1-.9L16 7"/></svg>',
+  talk :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"/></svg>',
+  spark:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.6"/></svg>'
 };
 const act = (k,label,on) => `<button class="iconbtn${on?' on':''}" data-act="${k}">${ico[k]||''}${label!==undefined&&label!==''?`<span>${label}</span>`:''}</button>`;
 
@@ -1171,7 +1203,8 @@ S.profile = {
   acts(){
     if(!V) return '';
     if(RO) return `<button class="btn ghost" id="pfShare">Share</button>` +
-      (ME ? `<button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
+      (ME ? `<button class="btn ghost" id="pfDM">Message</button>
+             <button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
           : `<a class="btn" href="/">Sign in</a>`);
     return `${ONLINE?`<button class="btn ghost" id="pfOut">Sign out</button>`:''}
       <button class="btn ghost" id="pfShare">Share</button>
@@ -1261,6 +1294,7 @@ S.profile = {
     $('pfShare') && ($('pfShare').onclick = ()=>share(shareLine()));
 
     if(RO){
+      if($('pfDM')) $('pfDM').onclick = ()=> dmSheet({id:V.id, handle:V.handle, name:V.name, photo_url:V.photo_url});
       if(!$('pfFollow')) return;
       $('pfFollow').onclick = async ()=>{
         if(!await needAuth()) return;
@@ -1664,6 +1698,110 @@ async function standSheet(){
   go.onclick = nextQuestion;
 }
 
+/* comments hang off posts; fetch them for whatever set of posts is on screen */
+async function attachComments(posts){
+  if(!ONLINE || !posts || !posts.length) return;
+  const ids = posts.map(p=>p.id);
+  try{
+    const { data } = await sb.from('comments')
+      .select('*, profiles!comments_author_fkey(handle,name,photo_url)')
+      .in('post_id', ids).order('created_at');
+    posts.forEach(p => p.comments = (data||[]).filter(c => c.post_id === p.id));
+  }catch(e){ posts.forEach(p => p.comments = p.comments || []) }
+}
+
+/* every message you are part of — row level security means only yours come back */
+async function loadDMs(){
+  if(!ONLINE || !ME){ DMS = []; DMUNREAD = 0; return }
+  try{
+    const { data } = await sb.from('messages')
+      .select('*, sender_p:profiles!messages_sender_fkey(id,handle,name,photo_url),' +
+              ' recipient_p:profiles!messages_recipient_fkey(id,handle,name,photo_url)')
+      .order('created_at', {ascending:false}).limit(300);
+    DMS = data || [];
+    DMUNREAD = DMS.filter(m => m.recipient === ME.id && !m.read_at).length;
+  }catch(e){ DMS = []; DMUNREAD = 0 }
+}
+/* one entry per person, newest first */
+function threads(){
+  const map = new Map();
+  DMS.forEach(m => {
+    const mine = m.sender === ME.id;
+    const other = mine ? m.recipient_p : m.sender_p;
+    if(!other) return;
+    const key = other.id;
+    if(!map.has(key)) map.set(key, { who:other, last:m, unread:0, msgs:[] });
+    const t = map.get(key);
+    t.msgs.push(m);
+    if(!mine && !m.read_at) t.unread++;
+  });
+  return [...map.values()].map(t => ({...t, msgs:t.msgs.slice().reverse()}));
+}
+
+/* a conversation, as a sheet */
+async function dmSheet(who){
+  if(!await needAuth()) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox dm">
+    <div class="dmhead">
+      <span class="whoav">${who.photo_url?`<img src="${who.photo_url}" alt="">`:esc(initials(who))}</span>
+      <div class="grow"><b>${esc(who.name||who.handle)}</b><small>@${esc(who.handle)}</small></div>
+      <button class="pclose" id="dmClose" style="display:grid">&#10005;</button>
+    </div>
+    <div class="dmthread" id="dmThread"></div>
+    <div class="chatbar" style="margin-top:2px">
+      <textarea id="dmText" rows="1" maxlength="2000" placeholder="Write to @${esc(who.handle)}"></textarea>
+      <button class="sendbtn" id="dmSend" aria-label="Send" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+      </button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  $('dmClose').onclick = close;
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+
+  const paint = ()=>{
+    const t = threads().find(x => x.who.id === who.id);
+    const msgs = t ? t.msgs : [];
+    const box = $('dmThread');
+    box.innerHTML = msgs.length
+      ? msgs.map(m => `<div class="dmmsg ${m.sender===ME.id?'mine':''}">
+          <div class="dmbubble">${esc(m.text)}</div>
+          <span class="dmwhen">${ago(m.created_at)}</span></div>`).join('')
+      : `<p class="hint" style="margin:auto">No messages yet. Say something.</p>`;
+    box.scrollTop = box.scrollHeight;
+  };
+  paint();
+
+  /* mark what they sent you as read */
+  const unread = DMS.filter(m => m.sender === who.id && m.recipient === ME.id && !m.read_at);
+  if(unread.length){
+    await sb.from('messages').update({ read_at:new Date().toISOString() })
+      .eq('sender', who.id).eq('recipient', ME.id).is('read_at', null);
+    unread.forEach(m => m.read_at = new Date().toISOString());
+    DMUNREAD = DMS.filter(m => m.recipient === ME.id && !m.read_at).length;
+    renderRail();
+  }
+
+  const t = $('dmText'), send = $('dmSend');
+  t.focus();
+  const grow = ()=>{ t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,140)+'px';
+                     send.disabled = !t.value.trim() };
+  t.oninput = grow;
+  const fire = async ()=>{
+    const text = t.value.trim(); if(!text) return;
+    send.disabled = true;
+    const { error } = await sb.from('messages').insert({ sender:ME.id, recipient:who.id, text });
+    if(error){ send.disabled=false; return toast(friendly(error)) }
+    t.value=''; grow();
+    await loadDMs(); paint();
+  };
+  send.onclick = fire;
+  t.onkeydown = e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); fire() } };
+}
+
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
@@ -1684,22 +1822,39 @@ S.feed = {
         <textarea id="qText" rows="1" maxlength="1000" placeholder="Say something"></textarea>
         <button class="btn" id="qPost" disabled>Post</button>
       </div>
-      <div class="frow" id="qHelp" hidden>
-        <button class="linkbtn" id="qTighten">Tighten it</button>
-        <button class="linkbtn" id="qClaims">What needs a source?</button>
-      </div>
-      <div class="ai" id="qAi" hidden></div>`}
+`}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map(p=>`
+      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map(p=>{
+        const cs = p.comments || [];
+        const open = OPENPOST === p.id;
+        return `
         <article class="item" data-id="${p.id}"><div class="grow">
           ${!mine && p.profiles ? who(p.profiles) : ''}
           <p>${esc(p.text)}</p>
           <div class="rowacts">
             ${act(p.liked?'liked':'like', p.likes||'', p.liked)}
+            <button class="iconbtn${open?' on':''}" data-act="talk">${ico.talk}${cs.length?`<span>${cs.length}</span>`:''}</button>
             ${act('share','Share')}
+            <button class="iconbtn" data-act="analyse">${ico.spark}<span>Analyse</span></button>
             ${(mine && !RO) ? act('del') : ''}
             <span class="iconbtn" style="pointer-events:none">${ago(p.created_at)}</span>
-          </div></div></article>`).join('')}</div>`
+          </div>
+          <div class="ai" id="an-${p.id}" hidden></div>
+          ${open ? `<div class="thread">
+            ${cs.map(c=>`<div class="cmt" data-cid="${c.id}">
+                <a class="whoav sm" href="/${esc(c.profiles&&c.profiles.handle||'')}">${
+                  c.profiles&&c.profiles.photo_url?`<img src="${c.profiles.photo_url}" alt="">`:esc(initials(c.profiles||{}))}</a>
+                <div class="grow"><b>${esc((c.profiles&&(c.profiles.name||c.profiles.handle))||'someone')}</b>
+                  <span>${esc(c.text)}</span>
+                  <small>${ago(c.created_at)}${(ME&&c.author===ME.id)?` · <button class="linkbtn cdel" data-cdel="${c.id}">delete</button>`:''}</small></div>
+              </div>`).join('')}
+            ${GUEST()?`<p class="hint" style="text-align:left">Sign in to reply.</p>`:`
+              <div class="cbox">
+                <input class="inp" id="c-${p.id}" placeholder="Write a reply" maxlength="500">
+                <button class="btn" data-csend="${p.id}">Reply</button>
+              </div>`}
+          </div>` : ''}
+        </div></article>`}).join('')}</div>`
         : `<div class="empty"><b>${mine?'Nothing posted yet':'No posts yet'}</b>${mine?'Write your first post.':'Be the first to say something.'}</div>`}
     </div>
     <aside class="side">
@@ -1726,14 +1881,8 @@ S.feed = {
     const q=$('qText');
     if(q){
       const b=$('qPost');
-      const help=$('qHelp');
       q.oninput=()=>{ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px';
-        b.disabled=!q.value.trim();
-        if(help) help.hidden = q.value.trim().length < 90; };
-      if($('qTighten')) $('qTighten').onclick = ()=> suggest('qAi', $('qTighten'), 'tighten', q.value,
-        { apply:o=>{ q.value=o; q.dispatchEvent(new Event('input')) } });
-      if($('qClaims')) $('qClaims').onclick = ()=> suggest('qAi', $('qClaims'), 'claims', q.value,
-        { note:'Checked by AI before you post. It cannot verify anything itself.' });
+        b.disabled=!q.value.trim(); };
       b.onclick=async ()=>{
         if(!await needAuth()) return;
         const text=q.value.trim(); b.disabled=true;
@@ -1774,7 +1923,30 @@ S.feed = {
     };
 
     const {list} = scoped('feed', D.posts, G.posts);
-    rows(list, async (p,a)=>{
+
+    /* replies */
+    document.querySelectorAll('[data-csend]').forEach(b=>b.onclick = async ()=>{
+      const id = b.dataset.csend, box = $('c-'+id), text = box && box.value.trim();
+      if(!text) return;
+      if(!await needAuth()) return;
+      b.disabled = true;
+      const { error } = await sb.from('comments').insert({ post_id:id, author:ME.id, text });
+      if(error){ b.disabled=false; return toast(friendly(error)) }
+      G.posts = null; await load(); await loadGlobal('posts'); open_('feed', true);
+    });
+    document.querySelectorAll('[data-cdel]').forEach(b=>b.onclick = async ()=>{
+      const { error } = await sb.from('comments').delete().eq('id', b.dataset.cdel);
+      if(error) return toast(friendly(error));
+      G.posts = null; await load(); await loadGlobal('posts'); open_('feed', true);
+    });
+    const ci = document.querySelector('.cbox .inp');
+    if(ci){ ci.focus(); ci.onkeydown = e=>{ if(e.key==='Enter'){
+      const btn = ci.parentNode.querySelector('[data-csend]'); if(btn) btn.click() } }; }
+
+    rows(list, async (p,a,btn)=>{
+      if(a==='talk'){ OPENPOST = OPENPOST===p.id ? null : p.id; return open_('feed', true) }
+      if(a==='analyse') return suggest('an-'+p.id, btn, 'analyse', p.text,
+        { note:'A reading of the post, not a fact check.' });
       if(a==='share') return share(p.text, p.profiles && p.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
         remote:async()=>(await sb.from('posts').delete().eq('id',p.id)).error, clears:['posts'] });
@@ -2100,12 +2272,25 @@ S.endorsed = {
           ${x.role?`<p class="prole">${esc(x.role)}</p>`:''}
           ${x.location?`<span class="ploc">${esc(x.location)}</span>`:''}
           <div class="pstats">${c.stands} position${c.stands===1?'':'s'} · ${c.posts} post${c.posts===1?'':'s'}</div>
-          ${ME ? `<button class="btn ${following?'ghost':''} pfollow" data-follow="${x.id}">${following?'Following':'Follow'}</button>`
+          ${ME ? `<div class="prow2">
+                    <button class="btn ${following?'ghost':''}" data-follow="${x.id}">${following?'Following':'Follow'}</button>
+                    <button class="btn ghost" data-dm="${x.id}">Message</button>
+                  </div>`
                : `<a class="btn ghost pfollow" href="/">Sign in to follow</a>`}
         </div>`}).join('')}</div>`
         : `<div class="empty"><b>${PSEARCH?'Nobody by that name':'Nobody here yet'}</b>${PSEARCH?'Try another search.':'Share your page and this fills up.'}</div>`}
     </div>
     <aside class="side">
+      ${ME ? (()=>{ const th = threads();
+        return `<div class="card"><h5>Messages${DMUNREAD?` · ${DMUNREAD} new`:''}</h5>
+          ${th.length ? th.slice(0,6).map(t=>`
+            <button class="dmrow" data-dm="${t.who.id}">
+              <span class="whoav sm">${t.who.photo_url?`<img src="${t.who.photo_url}" alt="">`:esc(initials(t.who))}</span>
+              <span class="grow"><b>${esc(t.who.name||t.who.handle)}</b><small>${esc(t.last.text.slice(0,42))}</small></span>
+              ${t.unread?`<span class="dot-new"></span>`:''}
+            </button>`).join('')
+          : '<span class="ainote">No messages yet. Say hello to someone.</span>'}
+        </div>` })() : ''}
       <div class="card"><h5>The network</h5>
         <div class="row"><span>People</span><b>${(all||[]).length}</b></div>
         <div class="row"><span>In ${stateName(myState())||'your state'}</span><b>${nearCount}</b></div>
@@ -2132,6 +2317,11 @@ S.endorsed = {
       q.oninput=()=>{ clearTimeout(t); t=setTimeout(()=>{ PSEARCH=q.value.trim(); open_('endorsed',true);
         const el=$('pSearch'); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length) } },250) };
     }
+    document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{
+      const id = b.dataset.dm;
+      const p = (G.people||[]).find(x=>x.id===id) || (threads().find(t=>t.who.id===id)||{}).who;
+      if(p) dmSheet(p);
+    });
     document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ()=>{
       if(!await needAuth()) return;
       const id=b.dataset.follow, following=MYFOLLOWS.has(id);
@@ -2602,7 +2792,7 @@ const rail = $('rail'), panel = $('panel');
 let railPainted = false;
 function renderRail(){
   rail.innerHTML = APPS.map((a,i)=>{
-    const n = a.id==='feed' ? D.posts.length : 0;
+    const n = a.id==='feed' ? D.posts.length : a.id==='endorsed' ? DMUNREAD : 0;
     return `<button class="app${a.id===current?' on':''}" data-id="${a.id}" style="animation-delay:${(i*.045+.05).toFixed(2)}s">
       <span class="tile">${icon(a)}${n?`<span class="badge">${n}</span>`:''}</span>
       <span class="label">${a.name}</span></button>`;
@@ -2647,8 +2837,9 @@ rail.addEventListener('click', e=>{
 });
 
 /* ---------------- live: the database tells us when anything changes -------- */
-const TABLE_KIND = {posts:'posts', likes:'posts', polls:'polls', poll_options:'polls', poll_votes:'polls',
-                    events:'events', rsvps:'events', issues:'issues', endorsements:'ends', profiles:null};
+const TABLE_KIND = {posts:'posts', likes:'posts', comments:'posts', polls:'polls', poll_options:'polls',
+                    poll_votes:'polls', events:'events', rsvps:'events', issues:'issues',
+                    endorsements:'ends', profiles:null, messages:null};
 let liveTimer;
 function goLive(){
   if(!ONLINE || !sb.channel) return;
