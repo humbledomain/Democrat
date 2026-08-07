@@ -31,14 +31,40 @@ module.exports = async (req, res) => {
   }
   handle = String(handle).toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,20);
 
-  /* fetch the real app shell — static files win over rewrites, so this is the raw file */
-  let html;
+  /* Read the app shell. Straight off the disk first — fetching it over HTTP can land on
+     Vercel's own login page when deployment protection is on, and we would then serve
+     that to the visitor. Anything we serve has to look like our app or we do not serve it. */
+  const looksRight = t => typeof t === 'string' && t.includes('id="rail"') && t.includes('</html>');
+  let html = null;
+
   try{
-    const r = await fetch(`${site}/index.html`, { headers:{ 'user-agent':'democrat-preview' } });
-    if(!r.ok) throw new Error('shell ' + r.status);
-    html = await r.text();
-  }catch(e){
-    res.setHeader('location', `${site}/?u=${handle}`);
+    const fs = require('fs');
+    const path = require('path');
+    for(const guess of [
+      path.join(process.cwd(), 'index.html'),
+      path.join(__dirname, '..', 'index.html'),
+      path.join(process.cwd(), 'public', 'index.html')
+    ]){
+      try{
+        const t = fs.readFileSync(guess, 'utf8');
+        if(looksRight(t)){ html = t; break }
+      }catch(e){ /* try the next one */ }
+    }
+  }catch(e){ /* no filesystem access — fall through */ }
+
+  if(!html){
+    try{
+      const r = await fetch(`${site}/index.html`, { headers:{ 'user-agent':'democrat-preview' } });
+      if(r.ok){
+        const t = await r.text();
+        if(looksRight(t)) html = t;
+      }
+    }catch(e){ /* fall through */ }
+  }
+
+  /* Never serve something that is not our app. The query form always works. */
+  if(!html){
+    res.setHeader('location', `${site}/?u=${encodeURIComponent(handle || '')}`);
     return res.status(302).end();
   }
 

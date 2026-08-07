@@ -282,18 +282,27 @@ module.exports = async (req, res) => {
     try{
       const convo = [...turns];
       const used = [];
+      let stop = null;
+
       for(let i = 0; i < MAX_TURNS; i++){
-        const r = await call({ model:CHAT_MODEL, max_tokens:1000, system, tools:TOOLS, messages:convo });
+        const r = await call({ model:CHAT_MODEL, max_tokens:1600, system, tools:TOOLS, messages:convo });
         if(!r.ok){
           const detail = await r.text();
           return res.status(502).json({ error:'upstream', detail: detail.slice(0,300) });
         }
         const data = await r.json();
-        if(data.stop_reason !== 'tool_use'){
-          return res.status(200).json({ text: textOf(data), used });
+        stop = data.stop_reason;
+        const said = textOf(data);
+
+        if(stop !== 'tool_use'){
+          if(said) return res.status(200).json({ text:said, used, stop });
+          break;                      /* ran out of room mid-thought — finish it below */
         }
+
         convo.push({ role:'assistant', content:data.content });
         const calls = data.content.filter(b => b.type === 'tool_use');
+        if(!calls.length) break;
+
         const results = [];
         for(const c of calls){
           used.push(c.name);
@@ -304,9 +313,23 @@ module.exports = async (req, res) => {
         }
         convo.push({ role:'user', content:results });
       }
-      return res.status(200).json({ text:'That needed more digging than I can do in one go — try asking it more narrowly.', used });
+
+      /* Whatever happened above, answer the person. No tools this time, so there is
+         nothing left to spend tokens on except the reply itself. */
+      const last = await call({
+        model: CHAT_MODEL, max_tokens: 1200, system,
+        messages: [...convo, { role:'user', content:
+          'Answer now, in your own words, using anything you already looked up. Do not call any more tools.' }]
+      });
+      if(last.ok){
+        const text = textOf(await last.json());
+        if(text) return res.status(200).json({ text, used, stop:'wrapped' });
+      }
+      return res.status(200).json({
+        text: 'I lost the thread on that one — ask it again, or narrow it a little.',
+        used, stop: stop || 'empty' });
     }catch(e){
-      return res.status(500).json({ error:'request failed' });
+      return res.status(500).json({ error:'request failed', detail:String(e && e.message).slice(0,200) });
     }
   }
 

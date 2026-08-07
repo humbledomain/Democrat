@@ -300,7 +300,8 @@ button.tag{cursor:pointer}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:12px}
 .person{border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;
-  align-items:center;text-align:center;gap:7px;background:#fff;transition:border-color .15s,transform .15s}
+  align-items:center;text-align:center;gap:7px;background:#fff;height:100%;
+  transition:border-color .15s,transform .15s}
 .person:hover{border-color:rgba(10,63,214,.3);transform:translateY(-2px)}
 .pface{width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;
   font-size:19px;font-weight:650;overflow:hidden;text-decoration:none;flex:none}
@@ -312,7 +313,7 @@ button.tag{cursor:pointer}
 .prole{font-size:13px;line-height:1.4;color:#39415a}
 .ploc{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--soft);color:#4c5570}
 .pstats{font-size:11.5px;color:var(--muted)}
-.pfollow{width:100%;margin-top:4px;text-align:center;text-decoration:none;display:block}
+.pfollow{width:100%;margin-top:auto;padding-top:8px;text-align:center;text-decoration:none;display:block}
 
 
 /* the first thing anyone sees */
@@ -445,7 +446,7 @@ button.tag{cursor:pointer}
 .cmt .cdel{font-size:11.5px;padding:0;margin:0;color:var(--muted)}
 .cbox{display:flex;gap:8px}
 .cbox .inp{flex:1;padding:9px 13px;font-size:14px;border-radius:11px}
-.prow2{display:flex;gap:6px;width:100%;margin-top:4px}
+.prow2{display:flex;gap:6px;width:100%;margin-top:auto;padding-top:8px}
 .prow2 .btn{flex:1;padding:8px 6px;font-size:12.5px}
 .dmrow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;cursor:pointer;
   padding:8px 0;border-top:1px solid var(--line);text-align:left}
@@ -2121,6 +2122,12 @@ S.compose = {
       try{
         const { text:reply, used } = await aiChat(CHAT);
         wait.remove();
+        if(!reply){
+          toast('That came back empty — try asking it again');
+          CHAT.pop();
+          const orphan = box.querySelector('.msg.me:last-of-type'); if(orphan) orphan.remove();
+          t.value = text; grow();
+        }
         if(reply){
           CHAT.push({role:'assistant', content:reply, used});
           const el = bubble('assistant', reply);
@@ -2132,7 +2139,7 @@ S.compose = {
             el.querySelector('.say').appendChild(note);
           }
         }
-        else toast('No answer came back');
+
       }catch(e){
         wait.remove();
         toast(e.message || 'That did not go through');
@@ -2142,7 +2149,9 @@ S.compose = {
       }
       chatSave();
       busy = false; grow();
-      if(CHAT.length === 2) open_('compose', true);   // reveal the New chat button
+      /* reveal the New chat button once — but never while there is text in the box,
+         or the repaint throws away what the person is holding */
+      if(CHAT.length && !$('chNew') && !t.value.trim()) open_('compose', true);
     }
 
     box.addEventListener('click', e=>{

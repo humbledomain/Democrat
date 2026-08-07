@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "api/preview.js": { "includeFiles": "index.html" }
+  },
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/:handle", "destination": "/api/preview?h=:handle" },
