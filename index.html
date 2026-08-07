@@ -304,21 +304,47 @@ button.tag{cursor:pointer}
 .pstats{font-size:11.5px;color:var(--muted)}
 .pfollow{width:100%;margin-top:4px;text-align:center;text-decoration:none;display:block}
 
+
 /* the first thing anyone sees */
-.gate{min-height:min(64vh,540px);display:grid;place-items:center;padding:20px 0}
-.gatecard{width:100%;max-width:380px;display:flex;flex-direction:column;gap:13px;align-items:stretch;
-  text-align:center;padding:clamp(26px,4vw,38px) clamp(22px,3.4vw,34px);border:1px solid var(--line);
-  border-radius:26px;background:#fff;box-shadow:0 24px 60px -30px rgba(8,26,72,.35)}
-.gatedot{width:34px;height:34px;border-radius:50%;background:var(--blue);margin:0 auto 2px;position:relative}
+.gate{position:relative;isolation:isolate;overflow:hidden;display:grid;place-items:center;
+  min-height:min(70vh,600px);margin:-12px 0}
+.halo{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.halo i{position:absolute;left:0;top:0;width:min(46vmin,420px);aspect-ratio:1;border-radius:50%;
+  border:1px solid rgba(10,63,214,.30);transform:translate(-50%,-50%) scale(.25);opacity:0;
+  animation:ripple 16s cubic-bezier(.25,.5,.4,1) infinite}
+@keyframes ripple{
+  0%{transform:translate(-50%,-50%) scale(.22);opacity:0}
+  12%{opacity:.32}
+  100%{transform:translate(-50%,-50%) scale(2.6);opacity:0}
+}
+.aurora{position:absolute;inset:-20%;pointer-events:none;
+  background:radial-gradient(34% 34% at 30% 34%,rgba(10,63,214,.10),transparent 70%),
+             radial-gradient(30% 30% at 72% 66%,rgba(10,63,214,.07),transparent 70%);
+  filter:blur(26px);animation:swim 30s ease-in-out infinite alternate}
+@keyframes swim{0%{transform:translate3d(-2%,-1%,0) scale(1)}100%{transform:translate3d(3%,2%,0) scale(1.1)}}
+
+.gatecard{position:relative;z-index:1;width:100%;max-width:392px;display:flex;flex-direction:column;
+  gap:12px;text-align:center;padding:clamp(30px,4.4vw,44px) clamp(24px,3.6vw,38px) clamp(22px,3vw,30px);
+  border:0;border-radius:30px;background:rgba(255,255,255,.78);
+  backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);
+  box-shadow:0 1px 2px rgba(8,26,72,.04), 0 40px 90px -40px rgba(8,26,72,.45);
+  animation:rise .7s cubic-bezier(.2,.9,.25,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.gatedot{width:38px;height:38px;border-radius:50%;background:var(--blue);margin:0 auto 6px;position:relative;
+  box-shadow:0 6px 18px -6px rgba(10,63,214,.7)}
 .gatedot::after{content:"";position:absolute;inset:0;border-radius:50%;
   animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
-.gatecard h2{font-size:clamp(21px,2.6vw,26px);font-weight:660;letter-spacing:-.03em;margin-bottom:2px}
-.gtabs{align-self:center;margin-bottom:4px}
-.gtabs button{padding:8px 20px;font-size:13.5px}
-.inp.big{padding:14px 16px;font-size:15.5px;border-radius:14px;text-align:left}
-.btn.big{padding:14px;font-size:15px;border-radius:14px;margin-top:2px}
-.gatecard .linkbtn{margin:0 auto;font-weight:520;color:var(--muted)}
+.gatecard h2{font-size:clamp(26px,3.2vw,34px);font-weight:620;letter-spacing:-.035em;margin-bottom:6px}
+.gtabs{align-self:center;margin-bottom:8px;background:rgba(10,32,90,.06)}
+.gtabs button{padding:9px 22px;font-size:13.5px}
+.inp.big{padding:15px 17px;font-size:15.5px;border-radius:15px;text-align:left;background:rgba(255,255,255,.9)}
+.btn.big{padding:15px;font-size:15px;border-radius:15px;margin-top:4px;
+  box-shadow:0 10px 24px -12px rgba(10,63,214,.9);transition:transform .18s,box-shadow .18s,opacity .15s}
+.btn.big:hover{transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(10,63,214,.95)}
+.btn.big:active{transform:translateY(0)}
+.gatecard .linkbtn{margin:2px auto 0;font-weight:520;color:var(--muted)}
 .gatecard .linkbtn:hover{color:var(--blue);background:none}
+@media (prefers-reduced-motion:reduce){ .halo i,.aurora,.gatecard{animation:none} .halo i{opacity:.12} }
 
 /* social + AI */
 .tahead{position:relative}
@@ -414,6 +440,10 @@ button.tag{cursor:pointer}
    Paste your Supabase URL and publishable key below to run on a real backend.
    Leave them blank and the site runs locally in this browser.
    =========================================================================== */
+/* Turn this on once you have your own email sender (Resend, SES, Postmark...).
+   With Supabase's built-in sender it only reaches your own address, so it stays off. */
+const MAGIC_LINK = false;
+
 const CFG = {
   url: 'https://bzolcreyjtbvvrsvikrq.supabase.co',
   key: 'sb_publishable_XL4shp-CI0dcSffUONTA5g_rGbG3Fs_'
@@ -669,6 +699,10 @@ async function decorate(posts, polls, events){
 /* everyone's content, loaded the first time a screen asks for it */
 async function loadGlobal(kind){
   if(!ONLINE || G[kind]) return;
+  try{ await loadGlobalInner(kind) }
+  catch(e){ console.error(kind,e); G[kind]=[]; LOADFAIL[kind]=(e&&e.message)||'could not load'; }
+}
+async function loadGlobalInner(kind){
   if(kind==='posts'){
     const { data } = await sb.from('posts')
       .select('*, profiles!posts_author_fkey(handle,name,photo_url,location)')
@@ -1086,9 +1120,14 @@ let AUTHMODE = 'in';
 function authView(){
   const up = AUTHMODE==='up';
   return `<div class="gate">
+    <div class="halo" aria-hidden="true">
+      <i style="animation-delay:0s"></i><i style="animation-delay:4s"></i>
+      <i style="animation-delay:8s"></i><i style="animation-delay:12s"></i>
+    </div>
+    <div class="aurora" aria-hidden="true"></div>
     <div class="gatecard">
       <span class="gatedot"></span>
-      <h2>${up ? 'Create your page' : 'Welcome back'}</h2>
+      <h2>Welcome</h2>
       <div class="seg gtabs" id="auTabs">
         <button class="${up?'':'on'}" data-m="in">Sign in</button>
         <button class="${up?'on':''}" data-m="up">Sign up</button>
@@ -1097,7 +1136,7 @@ function authView(){
       <input class="inp big" id="auPw" type="password" placeholder="Password"
              autocomplete="${up?'new-password':'current-password'}">
       <button class="btn big" id="auGo">${up ? 'Create account' : 'Sign in'}</button>
-      <button class="linkbtn" id="auLink">Email me a sign-in link</button>
+      ${MAGIC_LINK?`<button class="linkbtn" id="auLink">Email me a sign-in link</button>`:''}
     </div>
   </div>`;
 }
@@ -1136,7 +1175,7 @@ function authInit(){
   $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
   $('auEmail').focus();
 
-  $('auLink').onclick = async ()=>{
+  if($('auLink')) $('auLink').onclick = async ()=>{
     const email = $('auEmail').value.trim();
     if(!email) return toast('Enter your email first');
     $('auLink').disabled = true;
@@ -1145,6 +1184,53 @@ function authInit(){
     $('auLink').disabled = false;
     toast(error ? error.message : 'Check your email');
   };
+}
+
+/* ---------------- shared: people, caches, tallies ---------------- */
+const LOADFAIL = {};
+
+async function loadPeople(){
+  if(!ONLINE || G.people) return;
+  const { data, error } = await sb.from('profiles')
+    .select('id,handle,name,photo_url,location,role')
+    .not('handle','is',null).order('created_at',{ascending:false}).limit(60);
+  if(error) throw error;
+  G.people = data || [];
+}
+
+/* load a cache once, repaint once, and never spin forever */
+function ensure(kind, screen){
+  if(!ONLINE || G[kind]) return;
+  const done = ()=>{ if(G[kind]===null) G[kind]=[]; if(current===screen) open_(screen, true) };
+  const fail = e => { console.error(kind, e); LOADFAIL[kind] = (e && e.message) || 'could not load'; done() };
+  try{ (kind==='people' ? loadPeople() : loadGlobal(kind)).then(done, fail) }
+  catch(e){ fail(e) }
+  setTimeout(()=>{ if(G[kind]===null){ LOADFAIL[kind]='the request timed out'; done() } }, 8000);
+}
+
+function personRow(p, extra){
+  return `<div class="who-row">
+    <a class="whoav" href="?u=${esc(p.handle)}">${p.photo_url?`<img src="${p.photo_url}" alt="">`:esc(initials(p))}</a>
+    <a class="grow" href="?u=${esc(p.handle)}" style="text-decoration:none;color:inherit">
+      <b>${esc(p.name||p.handle)}</b><small>${esc(p.role||p.location||'@'+p.handle)}</small></a>
+    ${extra||''}</div>`;
+}
+
+/* the most held positions, and how they split */
+function issueTally(scope){
+  const src = (G.issues||[]).filter(i => scope==='near' ? isNear(i) : true);
+  const m = {};
+  src.forEach(i=>{
+    const k = (i.title||'').trim().toLowerCase(); if(!k) return;
+    m[k] = m[k] || {title:i.title.trim(), s:0, o:0};
+    m[k][i.stance==='Support'?'s':'o']++;
+  });
+  return Object.values(m).sort((a,b)=>(b.s+b.o)-(a.s+a.o));
+}
+function splitbar(s0,o0){
+  const t=s0+o0||1;
+  return `<div class="splitbar"><i class="s" style="width:${s0/t*100}%"></i><i class="o" style="width:${o0/t*100}%"></i></div>
+    <div class="legend"><span>${s0} support</span><span>${o0} oppose</span></div>`;
 }
 
 /* --------------------------------------------------------------------- feed */
@@ -1383,7 +1469,7 @@ S.endorsed = {
   view(){
     if(!ONLINE) return `<div class="empty"><b>People show up once you are online</b>Connect the backend and everyone who joins appears here.</div>`;
     const all = G.people;
-    if(all === null) return `<div class="spin"></div>`;
+    const failed = LOADFAIL.people;
 
     const mineId = ME && ME.id;
     let people = (all||[]).filter(x=>x.id!==mineId);
@@ -1403,7 +1489,10 @@ S.endorsed = {
     return `<div class="split"><div class="main">
       <div class="frow"><input class="inp" id="pSearch" placeholder="Search people" value="${esc(PSEARCH)}"></div>
       ${sc==='near' && !nearCount ? `<p class="meta">Nobody in ${stateName(myState())||'your state'} yet — these are everyone.</p>` : ''}
-      ${people.length ? `<div class="grid">${people.map(x=>{
+      ${all === null ? '<div class="spin"></div>'
+        : failed ? `<div class="empty"><b>Could not load people</b>${esc(failed)}
+            <div style="margin-top:14px"><button class="btn" id="pRetry">Try again</button></div></div>`
+        : people.length ? `<div class="grid">${people.map(x=>{
         const c = counts(x.id), following = MYFOLLOWS.has(x.id);
         return `<div class="person">
           <a class="pface" href="?u=${esc(x.handle)}">${x.photo_url?`<img src="${x.photo_url}" alt="">`:esc(initials(x))}</a>
@@ -1437,6 +1526,8 @@ S.endorsed = {
   },
   init(){
     wireTabs(); ensure('people','endorsed'); ensure('posts','endorsed'); ensure('issues','endorsed');
+    const retry=$('pRetry');
+    if(retry) retry.onclick=()=>{ delete LOADFAIL.people; G.people=null; ensure('people','endorsed'); open_('endorsed',true) };
     const q=$('pSearch');
     if(q){
       let t;
