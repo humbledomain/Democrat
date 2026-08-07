@@ -420,6 +420,7 @@ async function load(){
   const h = qHandle();
   V = h ? (await sb.from('profiles').select('*').eq('handle',h).maybeSingle()).data : ME;
   RO = !!(V && ME && V.id !== ME.id) || !!(V && !ME);
+  if(V && ME && V.id === ME.id){ RO = false; V = ME; }
   D = blank();
   if(!V) return;
 
@@ -530,7 +531,10 @@ function friendly(e){
 }
 async function needAuth(){
   if(ME || !ONLINE) return true;
-  toast('Sign in first'); open_('profile'); return false;
+  toast('Sign in first');
+  if(RO) location.href = location.pathname;   // drop ?u= so the sign-in form is reachable
+  else open_('profile');
+  return false;
 }
 
 /* ------------------------------------------------------------------- share */
@@ -603,8 +607,9 @@ S.profile = {
   },
   acts(){
     if(!V) return '';
-    if(RO) return `<button class="btn ghost" id="pfShare">Share</button>
-                   <button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`;
+    if(RO) return `<button class="btn ghost" id="pfShare">Share</button>` +
+      (ME ? `<button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
+          : `<a class="btn" href="${location.pathname}">Sign in</a>`);
     return `<button class="btn ghost" id="pfShare">Share</button><button class="btn" id="pfEdit">Edit</button>`;
   },
   view(){
@@ -657,6 +662,7 @@ S.profile = {
     $('pfShare') && ($('pfShare').onclick = ()=>share(shareLine()));
 
     if(RO){
+      if(!$('pfFollow')) return;
       $('pfFollow').onclick = async ()=>{
         if(!await needAuth()) return;
         mutate({ remote: async ()=>{
@@ -1231,6 +1237,7 @@ function open_(id, quiet){
   const a = APPS.find(x=>x.id===id), s = S[id]; if(!a||!s) return;
   const first = current!==id;
   current = id;
+  delete panel.dataset.edit;
   document.querySelectorAll('.app').forEach(el=>el.classList.toggle('on', el.dataset.id===id));
   const sub = typeof s.sub==='function' ? s.sub() : s.sub;
   panel.innerHTML = `<header class="phead">
