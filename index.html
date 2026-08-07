@@ -5,28 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>democrat.ai</title>
 <meta name="description" content="A political presence, in one place.">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<!-- The icon is embedded here so it works even before the icon files deploy. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='47' fill='%230A3FD6'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD70lEQVR42s2Xz29UVRTHv+fcd9/0DXagY6ArFiwQGIK6YGWoBV2IRhYSRuOOFX+BO9JMBtOdfwH/QZ2GjcYfCxUs0Q0sVChSEjHpqhA7YcY6vPfuvV8Xb6bUphaEduQms3m5cz7fe859532P4HGrQcU8BC3xq8/qjJM/FncbPNwJAB4jD3ov7r2PlmRr9hjUQDQlbBZeNoXXaQbg0sSv+9REp4ThDcDXILIbDDuKKLoC8j5g5in6bfDus3Tu4N31Mf6DAPafC3ecuHk40H4kwAcSvZCAHgwZQAewfzhRQCKIxoAY0P3ZIzCjkn+y8t3hm2vjrSfpBjnXYqOwPLkwRY5cV1M+C/qEWdsx73iENICOAIsfHRHSwLzjmbUd6BM15bPkyPXy5MLUIF4Re9MMNBRohvGXv97Rqe77VKPRd5i3AdJBYAARPNEiQXiIRGLHEFz3i8ry3feXfn5rZcDYQAAFDcj4Dz8l3Tz5XKLKcebLOYDoycEbCAGc2Kql61wetb13l157pYcmOCiHrsLrUDQldNJ4VqLKcWbLOSD26eFA8V+xzJZziSrHO2k8i6YE1KGDe1EIqEPREl+euDGlcfUks+UcIhZbtaQQoXH1ZHnixhRa4gsRgKBBRRMcPXZrv7f2JoIXwOuznfzfymEC1NDk+eHu1UN30IAUTQZCZ8J50SQCPbce3i8HPUWTyJlwHhBivg8am/hlb6r2DsAY4OMb1DOkoQgtWSnk+9tzRxYVADKjp8VWSmDw2wgvDsbgxVZKmdHTq5eQxJugxzbD14jwBROA4tw1S+IQQz40AQw5SBzCuWtWk9uVcQj2IOSADEGAQPqsPcntyriqy3cKJAHC0CoABAgkUZfvVPzPS0NkHxDsFfeRQ0ASgIJgL0T2gfYOdJZA3INagENQQLDPutc70FlSXDyai+CWqMWwUiBqIYJbuHg0136T/AZihiYAYgrmoBHFPlxi3kkharZZBCFqmHfS2IdLhYA6TXvuyCLhZiQaFZB++/D0Eo0K4Wbac0cWUadR1ECAEnmdZug5iJG+k9lyOsQIQ89FXqcBCmqgDhxK92ptAS69IHaXAeG2IflO7C4Dl17oXq0tDByY/MOStcQnr89/qfHY1roiMpe4akPW/qr3fe3tYlZAAIS66tdbCGhQK6XsDF3nssRVCzB/tnKQQAGn61yulLIzaFAHcAAwjzY3gSuQld8+zKqVU7MPS+VX1e46iPBQ+rZcnsKWG7FVU9jy399b+vHYCq5AgBPcZDJ65NvLkwtTEHNeTKlE1wUYXPE9Eylcraxpr0KQ7L9qkUSjoE9T0E//deWlj9fHfm5Gs+d1OB3eeP43n3FAapFkao4AAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
 <link rel="shortcut icon" href="/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0A3FD6">
 <meta name="apple-mobile-web-app-title" content="democrat.ai">
 
-<meta property="og:url" content="https://democrat.si/">
+<meta property="og:url" content="https://www.democrat.si/">
+<meta property="og:site_name" content="democrat.si">
 <meta property="og:type" content="website">
 <meta property="og:title" content="democrat.ai">
 <meta property="og:description" content="A political presence, in one place.">
-<meta property="og:image" content="https://democrat.si/icons/og.png">
+<meta property="og:image" content="https://www.democrat.si/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="democrat.ai">
 <meta name="twitter:description" content="A political presence, in one place.">
-<meta name="twitter:image" content="https://democrat.si/icons/og.png">
+<meta name="twitter:image" content="https://www.democrat.si/og.png">
 <style>
 :root{
   --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
@@ -536,7 +538,7 @@ const BLUE = '#0A3FD6';
 /* Where shared links point. Leave it blank until the custom domain is actually serving
    the site — blank means "use whatever address this page was opened from", so links
    always work. Put 'https://democrat.si' back once that domain loads the app. */
-const SITE_DOMAIN = '';
+const SITE_DOMAIN = 'https://www.democrat.si';
 const SITE = SITE_DOMAIN || location.origin;
 const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
 const APPS = [
