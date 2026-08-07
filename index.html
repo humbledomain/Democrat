@@ -431,6 +431,20 @@ button.tag{cursor:pointer}
 .joinbar span{flex:1;font-size:14px;color:#25304a;min-width:180px}
 .joinbar .btn{flex:none}
 
+.lookedat{margin-top:9px;font-size:11.5px;color:#93a0bd;letter-spacing:.01em}
+.briefout{font-size:13px;line-height:1.55;color:#39415a}
+.briefout p{margin:0 0 8px}
+.briefout ul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:6px}
+.sheetbox.stand{max-width:480px}
+.stq{font-size:16px;line-height:1.45;font-weight:590;letter-spacing:-.015em;margin-bottom:12px}
+.standlist{display:flex;flex-direction:column;gap:2px;max-height:44vh;overflow-y:auto}
+.standrow{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:1px solid var(--line);
+  cursor:pointer;text-align:left}
+.standrow:first-child{border-top:0}
+.standrow input{width:17px;height:17px;accent-color:var(--blue);flex:none}
+.standrow b{display:block;font-size:14px;font-weight:600}
+.standrow small{font-size:12.5px;color:var(--muted)}
+
 /* social + AI */
 .tahead{position:relative}
 .talist{position:absolute;left:-9px;right:-9px;top:calc(100% + 5px);background:#fff;border:1px solid var(--line);
@@ -671,14 +685,31 @@ function md(t){
   return out || '<p></p>';
 }
 
+/* a short, factual description of the person asking — no invention, just their own rows */
+function meContext(){
+  if(!V) return '';
+  const bits = [];
+  bits.push(`Handle: @${V.handle||'not set'}${V.name?` (${V.name})`:''}`);
+  if(V.location) bits.push(`Votes in: ${V.location}`);
+  if(V.role) bits.push(`Cares most about: ${V.role}`);
+  if(V.ballot && V.ballot.date) bits.push(`Their next election: ${V.ballot.date}`);
+  if(D.issues.length) bits.push('Positions they hold: ' + D.issues.slice(0,10)
+    .map(i=>`${i.stance} ${i.title}`).join('; '));
+  if(D.posts.length) bits.push(`They have written ${D.posts.length} post${D.posts.length===1?'':'s'}. Most recent: "${D.posts[0].text.slice(0,140)}"`);
+  bits.push('Use this to make answers concrete. Never repeat it back to them as a summary.');
+  return bits.join('\n');
+}
+
 async function aiChat(messages){
   const r = await fetch('/api/ai', { method:'POST', headers:{'content-type':'application/json'},
-    body: JSON.stringify({task:'chat', messages}) });
+    body: JSON.stringify({task:'chat', messages, context: meContext()}) });
   if(r.status===404 || r.status===501){ AI_OK=false; throw new Error('Chat is not switched on yet') }
   const d = await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(d.error==='upstream' ? 'The model is busy — try again' : 'That did not go through');
-  return (d.text||'').trim();
+  return { text:(d.text||'').trim(), used:d.used||[] };
 }
+const TOOLNAME = { site_numbers:'the numbers here', find_people:'who is here', positions:'positions people hold',
+                   recent_posts:'recent posts', upcoming_events:'upcoming events', open_questions:'open questions' };
 
 /* one shared pattern: ask, show, let the person accept or ignore. Never overwrite silently. */
 async function suggest(boxId, btn, task, input, opts){
@@ -1337,10 +1368,15 @@ function placeahead(input, onPick){
 }
 
 function shareLine(){
-  const bits = [V.name || 'democrat.ai'];
-  if(V.role) bits.push(V.role);
-  if(V.location) bits.push(V.location);
-  return bits.join(' · ');
+  const who  = V.name || (V.handle ? '@'+V.handle : 'I');
+  const what = [V.role, V.location].filter(Boolean).join(' · ');
+  const mine = V.issues || D.issues;
+  const n    = (D.issues||[]).length;
+  const bits = [];
+  bits.push(what ? `${who} — ${what}` : `${who} on democrat.si`);
+  if(n) bits.push(`${n} position${n===1?'':'s'} on the record.`);
+  bits.push('Positions, posts, events and ballot in one place.');
+  return bits.join(' ');
 }
 function nextStep(steps){
   const labels = ['add a photo','add your name','pick a handle','write a bio','say what you care about'];
@@ -1463,6 +1499,99 @@ function splitbar(s0,o0){
     <div class="legend"><span>${s0} support</span><span>${o0} oppose</span></div>`;
 }
 
+/* ---------------- guided position builder ----------------
+   Claude asks; you answer; it turns YOUR answers into positions you approve.
+   It never invents a position you did not express.                          */
+async function standSheet(){
+  const asked = [], said = [];
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox stand">
+    <h3>Where do you stand?</h3>
+    <p class="sheetmsg" id="stStep">A few questions about real trade-offs. Answer in your own words — there are no right answers, and nothing is published.</p>
+    <div id="stBody"></div>
+    <div class="sheetfoot">
+      <button class="btn ghost" id="stClose">Close</button>
+      <button class="btn" id="stGo">Start</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const body = $('stBody'), step = $('stStep'), go = $('stGo');
+  const close = ()=>wrap.remove();
+  $('stClose').onclick = close;
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+
+  const TOTAL = 5;
+  let picked = [];
+
+  async function nextQuestion(){
+    go.disabled = true; go.textContent = 'Thinking…';
+    const q = await ai('interview',
+      `Ask question ${asked.length+1} of ${TOTAL}.` +
+      (V && V.location ? ` They vote in ${V.location}.` : '') +
+      (asked.length ? ` Do not repeat these: ${asked.join(' | ')}` : ''));
+    go.disabled = false;
+    if(!q){ close(); return; }
+    asked.push(q);
+    step.textContent = `Question ${asked.length} of ${TOTAL}`;
+    body.innerHTML = `<p class="stq">${esc(q)}</p>
+      <textarea class="inp msgbox" id="stAns" rows="3" placeholder="In your own words. Or skip it."></textarea>`;
+    go.textContent = asked.length === TOTAL ? 'Done' : 'Next';
+    $('stAns').focus();
+    go.onclick = onAnswer;
+  }
+
+  async function onAnswer(){
+    const a = ($('stAns') && $('stAns').value.trim()) || '';
+    said.push({ q: asked[asked.length-1], a });
+    if(asked.length < TOTAL) return nextQuestion();
+    await distil();
+  }
+
+  async function distil(){
+    const answered = said.filter(x => x.a.length > 1);
+    if(!answered.length){ toast('Nothing to work with yet'); return close(); }
+    step.textContent = 'Reading your answers';
+    body.innerHTML = '<div class="spin"></div>';
+    go.disabled = true; go.textContent = 'Working…';
+    const raw = await ai('distil', answered.map(x => `Q: ${x.q}\nThey said: ${x.a}`).join('\n\n'));
+    go.disabled = false;
+    let out = [];
+    try{ out = (JSON.parse(raw.replace(/^```json|```$/g,'').trim()).positions || []) }catch(e){ out = [] }
+    if(!out.length){
+      step.textContent = 'Nothing clear enough yet';
+      body.innerHTML = `<p class="sheetmsg">Your answers did not land on a firm position — which is a fine answer. Try again another time, or add one by hand.</p>`;
+      go.textContent = 'Close'; go.onclick = close; return;
+    }
+    picked = out.map((p,i) => ({...p, on:true, i}));
+    step.textContent = 'From what you said. Untick anything that is not you.';
+    body.innerHTML = `<div class="standlist">${picked.map(p=>`
+      <label class="standrow">
+        <input type="checkbox" data-p="${p.i}" checked>
+        <span class="grow"><b>${esc(p.title)}</b><small>${esc(p.because||'')}</small></span>
+        <span class="tag ${p.stance==='Support'?'b':''}">${esc(p.stance)}</span>
+      </label>`).join('')}</div>`;
+    body.querySelectorAll('[data-p]').forEach(cb=>cb.onchange=()=>{ picked[+cb.dataset.p].on = cb.checked });
+    go.textContent = 'Add these'; go.onclick = save;
+  }
+
+  async function save(){
+    const keep = picked.filter(p => p.on);
+    if(!keep.length) return close();
+    go.disabled = true; go.textContent = 'Saving…';
+    for(const p of keep){
+      const stance = p.stance === 'Oppose' ? 'Oppose' : 'Support';
+      if(!ONLINE){ const db = localDB(); db.issues.unshift({id:uid(), title:p.title, stance}); localSave(db); }
+      else { const { error } = await sb.from('issues').insert({author:ME.id, title:p.title, stance});
+             if(error){ toast(friendly(error)); break } }
+    }
+    G.issues = null; await load(); await loadGlobal('issues');
+    close(); toast(`Added ${keep.length} position${keep.length===1?'':'s'}`); open_('issues');
+  }
+
+  go.onclick = nextQuestion;
+}
+
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
@@ -1482,7 +1611,12 @@ S.feed = {
         <span class="whoav" style="width:34px;height:34px">${V&&V.photo_url?`<img src="${V.photo_url}" alt="">`:esc(initials(V||{}))}</span>
         <textarea id="qText" rows="1" maxlength="1000" placeholder="Say something"></textarea>
         <button class="btn" id="qPost" disabled>Post</button>
-      </div>`}
+      </div>
+      <div class="frow" id="qHelp" hidden>
+        <button class="linkbtn" id="qTighten">Tighten it</button>
+        <button class="linkbtn" id="qClaims">What needs a source?</button>
+      </div>
+      <div class="ai" id="qAi" hidden></div>`}
       ${note?`<p class="meta">${note}</p>`:''}
       ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map(p=>`
         <article class="item" data-id="${p.id}"><div class="grow">
@@ -1500,6 +1634,11 @@ S.feed = {
       ${people.length?`<div class="card"><h5>People to follow</h5>
         ${people.map(x=>personRow(x, ME&&!RO?`<button class="mini-btn" data-follow="${x.id}">Follow</button>`:'')).join('')}
       </div>`:''}
+      ${(!RO && !GUEST() && ONLINE)?`<div class="card">
+        <h5>What is happening ${myState()?'in '+stateName(myState()):'here'}</h5>
+        <div id="briefOut" class="briefout">Ask for a short read on the last few days.</div>
+        <button class="mini-btn" id="briefGo" style="align-self:flex-start">Write the brief</button>
+      </div>`:''}
       ${hot.length?`<div class="card"><h5>What people are taking positions on</h5>
         ${hot.map(h=>`<div><div class="row"><span>${esc(h.title)}</span><b>${h.s+h.o}</b></div>${splitbar(h.s,h.o)}</div>`).join('')}
         <button class="mini-btn" data-go="issues" style="align-self:flex-start">Open Issues</button>
@@ -1515,7 +1654,14 @@ S.feed = {
     const q=$('qText');
     if(q){
       const b=$('qPost');
-      q.oninput=()=>{ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px'; b.disabled=!q.value.trim() };
+      const help=$('qHelp');
+      q.oninput=()=>{ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px';
+        b.disabled=!q.value.trim();
+        if(help) help.hidden = q.value.trim().length < 90; };
+      if($('qTighten')) $('qTighten').onclick = ()=> suggest('qAi', $('qTighten'), 'tighten', q.value,
+        { apply:o=>{ q.value=o; q.dispatchEvent(new Event('input')) } });
+      if($('qClaims')) $('qClaims').onclick = ()=> suggest('qAi', $('qClaims'), 'claims', q.value,
+        { note:'Checked by AI before you post. It cannot verify anything itself.' });
       b.onclick=async ()=>{
         if(!await needAuth()) return;
         const text=q.value.trim(); b.disabled=true;
@@ -1534,6 +1680,27 @@ S.feed = {
       b.textContent='Following';
       setTimeout(()=>{ if(current==='feed') open_('feed',true) }, 700);
     });
+    const bgo = $('briefGo');
+    if(bgo) bgo.onclick = async ()=>{
+      const st = myState();
+      const near = r => !st || stateOf(r && r.profiles && r.profiles.location) === st;
+      const posts  = (G.posts ||[]).filter(near).slice(0,12);
+      const polls  = (G.polls ||[]).filter(near).slice(0,6);
+      const events = (G.events||[]).filter(near).slice(0,6);
+      if(!posts.length && !polls.length && !events.length)
+        return toast('Nothing has happened here yet');
+      const feedText = [
+        posts.map(p=>`POST by @${p.profiles&&p.profiles.handle} (${ago(p.created_at)}): ${p.text}`).join('\n'),
+        polls.map(p=>`QUESTION by @${p.profiles&&p.profiles.handle}: ${p.question} — ${p.total||0} votes`).join('\n'),
+        events.map(e=>`EVENT by @${e.profiles&&e.profiles.handle}: ${e.title} on ${e.date}${e.place?' at '+e.place:''}`).join('\n')
+      ].filter(Boolean).join('\n');
+      const out = $('briefOut');
+      bgo.disabled = true; bgo.textContent = 'Reading…';
+      const brief = await ai('brief', feedText);
+      bgo.disabled = false; bgo.textContent = 'Write it again';
+      if(brief) out.innerHTML = md(brief);
+    };
+
     const {list} = scoped('feed', D.posts, G.posts);
     rows(list, async (p,a)=>{
       if(a==='share') return share(p.text, p.profiles && p.profiles.handle);
@@ -1563,10 +1730,10 @@ const IDEAS = [
   'Something you changed your mind about'
 ];
 const STARTERS = [
-  'Help me think through a housing trade-off in my city',
+  'What are people on here taking positions on?',
+  'Who else is in my state, and what do they care about?',
   'What should I ask my council member at the next meeting?',
-  'I want to write about transit — help me sharpen the argument',
-  'How do local elections actually decide things?'
+  'Help me sharpen an argument I keep losing'
 ];
 let CHAT = [], CHATKEY = null;
 const chatKey = ()=> 'dai.chat.' + ((ME && ME.id) || 'signed-out');
@@ -1604,7 +1771,10 @@ S.compose = {
     </div>`;
     const bubbles = CHAT.map(m => m.role==='user'
       ? `<div class="msg me"><div class="bubble">${esc(m.content)}</div></div>`
-      : `<div class="msg ai"><span class="mavatar"></span><div class="say">${md(m.content)}</div></div>`
+      : `<div class="msg ai"><span class="mavatar"></span><div class="say">${md(m.content)}${
+           m.used && m.used.length
+             ? `<div class="lookedat">Read ${[...new Set(m.used)].map(u=>TOOLNAME[u]||u).join(', ')} on this site</div>`
+             : ''}</div></div>`
     ).join('');
 
     return `<div class="split"><div class="main chat">
@@ -1676,9 +1846,19 @@ S.compose = {
       box.appendChild(wait); bottom();
 
       try{
-        const reply = await aiChat(CHAT);
+        const { text:reply, used } = await aiChat(CHAT);
         wait.remove();
-        if(reply){ CHAT.push({role:'assistant', content:reply}); bubble('assistant', reply); }
+        if(reply){
+          CHAT.push({role:'assistant', content:reply, used});
+          const el = bubble('assistant', reply);
+          if(used && used.length){
+            const seen = [...new Set(used)].map(u=>TOOLNAME[u]||u);
+            const note = document.createElement('div');
+            note.className = 'lookedat';
+            note.textContent = 'Read ' + seen.join(', ') + ' on this site';
+            el.querySelector('.say').appendChild(note);
+          }
+        }
         else toast('No answer came back');
       }catch(e){
         wait.remove();
@@ -1715,7 +1895,9 @@ S.issues = {
 
     return `<div class="split"><div class="main">
       ${GUEST() ? joinBar('Sign in to take a position.') : ''}
-      ${(RO||GUEST())?'':`<div class="frow">
+      ${(RO||GUEST())?'':`<div class="frow" style="justify-content:space-between">
+        <button class="linkbtn" id="iStand">Not sure where you stand? Work it out →</button></div>
+      <div class="frow">
         <input class="inp" id="iText" placeholder="Add an issue">
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
         <button class="btn" id="iAdd">Add</button></div>`}
@@ -1766,6 +1948,7 @@ S.issues = {
           remote:async()=>(await sb.from('issues').insert({author:ME.id,title,stance:st||stance})).error, clears:['issues'] });
       };
       $('iAdd').onclick=()=>add(); t.onkeydown=e=>{ if(e.key==='Enter') add() };
+      if($('iStand')) $('iStand').onclick = standSheet;
       document.querySelectorAll('[data-adopt]').forEach(b=>b.onclick=()=>{
         $('iText').value=b.dataset.adopt; $('iText').focus(); toast('Pick Support or Oppose, then Add');
       });
