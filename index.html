@@ -361,7 +361,7 @@ button.tag{cursor:pointer}
 .pbody.chatbody{overflow:hidden;display:flex;flex-direction:column}
 .pbody.chatbody .split{flex:1;min-height:0}
 .chat{display:flex;flex-direction:column;height:100%;min-height:0;gap:14px}
-.msgs{flex:1;min-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:22px;
+.msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:22px;
   padding:8px 8px 10px 2px;scroll-behavior:smooth}
 .msg{display:flex;gap:11px;animation:rise .3s ease both;max-width:100%}
 .msg.me{justify-content:flex-end}
@@ -492,6 +492,17 @@ button.tag{cursor:pointer}
   animation:sp .7s linear infinite;margin:60px auto}
 @keyframes sp{to{transform:rotate(360deg)}}
 
+@media (min-width:901px){
+  html,body{height:100%;overflow:hidden}
+  .stage{height:100svh;min-height:0}
+  .panel{height:100%;min-height:0}
+  .pbody{overflow-y:auto;overscroll-behavior:contain}
+  .rail{align-content:center}
+  .split{max-height:100%}
+  .split>.side{max-height:100%;overflow-y:auto;overscroll-behavior:contain;
+    scrollbar-width:none}
+  .split>.side::-webkit-scrollbar{display:none}
+}
 @media (max-width:900px){
   :root{--tile:clamp(58px,16vw,78px)}
   .stage{grid-template-columns:1fr;padding-top:92px}

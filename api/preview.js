@@ -67,8 +67,9 @@ module.exports = async (req, res) => {
   const desc  = p.bio
     || [p.role, p.location].filter(Boolean).join(' · ')
     || TAGLINE;
-  const image = p.photo_url || `${site}/og.png`;
-  const card  = p.photo_url ? 'summary' : 'summary_large_image';
+  /* the composed card: their photo above, white band with the mark below */
+  const image = `${site}/api/card?h=${encodeURIComponent(p.handle)}`;
+  const card  = 'summary_large_image';
   const url   = `${site}/${p.handle}`;
 
   /* swap only the tags that describe this page */
@@ -85,10 +86,5 @@ module.exports = async (req, res) => {
   out = set(out, /<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${esc(desc)}">`);
   out = set(out, /<meta name="twitter:image"[^>]*>/, `<meta name="twitter:image" content="${esc(image)}">`);
 
-  /* a photo is square; the width and height tags describe the wide card, so drop them */
-  if(p.photo_url){
-    out = out.replace(/<meta property="og:image:width"[^>]*>\s*/, '')
-             .replace(/<meta property="og:image:height"[^>]*>\s*/, '');
-  }
   return serve(out);
 };
