@@ -533,8 +533,11 @@ const CFG = {
 };
 
 const BLUE = '#0A3FD6';
-/* every link we hand out points here, whatever address the app is being viewed at */
-const SITE = 'https://democrat.si';
+/* Where shared links point. Leave it blank until the custom domain is actually serving
+   the site — blank means "use whatever address this page was opened from", so links
+   always work. Put 'https://democrat.si' back once that domain loads the app. */
+const SITE_DOMAIN = '';
+const SITE = SITE_DOMAIN || location.origin;
 const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
 const APPS = [
 {id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
