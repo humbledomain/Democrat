@@ -212,6 +212,15 @@ button.tag{cursor:pointer}
 }
 
 /* social + AI */
+.tahead{position:relative}
+.talist{position:absolute;left:-9px;right:-9px;top:calc(100% + 5px);background:#fff;border:1px solid var(--line);
+  border-radius:13px;box-shadow:0 14px 32px -14px rgba(8,26,72,.35);z-index:40;overflow:hidden;max-height:250px;
+  overflow-y:auto;animation:fade .16s ease}
+.talist button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 13px;
+  font-size:13.5px;cursor:pointer;color:var(--ink)}
+.talist button:hover,.talist button.on{background:rgba(10,63,214,.08)}
+.talist small{display:block;padding:7px 13px;color:var(--muted);font-size:10.5px;border-top:1px solid var(--line)}
+
 .tabs{align-self:flex-start}
 .who{display:flex;align-items:center;gap:8px;margin-bottom:8px;text-decoration:none;color:inherit}
 .whoav{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:650;
@@ -431,8 +440,8 @@ let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
-const G  = {posts:null, polls:null, events:null, issues:null};   // everyone's content
-const SC = {feed:'all', polls:'all', townhall:'all'};            // per-screen scope
+const G  = {posts:null, polls:null, events:null, issues:null, ends:null};   // everyone's content
+const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'mine'};            // per-screen scope
 
 function blank(){
   return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
@@ -545,26 +554,34 @@ async function loadGlobal(kind){
   if(!ONLINE || G[kind]) return;
   if(kind==='posts'){
     const { data } = await sb.from('posts')
-      .select('*, profiles!posts_author_fkey(handle,name,photo_url)')
+      .select('*, profiles!posts_author_fkey(handle,name,photo_url,location)')
       .order('created_at',{ascending:false}).limit(60);
     G.posts = data||[]; await decorate(G.posts);
   }
   if(kind==='polls'){
     const { data } = await sb.from('polls')
-      .select('*, poll_options(*), profiles!polls_author_fkey(handle,name,photo_url)')
+      .select('*, poll_options(*), profiles!polls_author_fkey(handle,name,photo_url,location)')
       .order('created_at',{ascending:false}).limit(40);
     G.polls = data||[]; await decorate(null,G.polls);
   }
   if(kind==='events'){
     const today = new Date().toISOString().slice(0,10);
     const { data } = await sb.from('events')
-      .select('*, profiles!events_author_fkey(handle,name,photo_url)')
+      .select('*, profiles!events_author_fkey(handle,name,photo_url,location)')
       .gte('date',today).order('date').limit(40);
     G.events = data||[]; await decorate(null,null,G.events);
   }
   if(kind==='issues'){
-    const { data } = await sb.from('issues').select('title,stance').limit(2000);
+    const { data } = await sb.from('issues')
+      .select('*, profiles!issues_author_fkey(handle,name,photo_url,location)')
+      .order('created_at',{ascending:false}).limit(400);
     G.issues = data||[];
+  }
+  if(kind==='ends'){
+    const { data } = await sb.from('endorsements')
+      .select('*, profiles!endorsements_author_fkey(handle,name,photo_url,location)')
+      .order('created_at',{ascending:false}).limit(200);
+    G.ends = data||[];
   }
 }
 function agree(title){
@@ -640,7 +657,8 @@ function who(p){
 }
 function tabs(key, labels){
   if(!ONLINE || RO) return '';
-  return `<div class="seg tabs" data-tabs="${key}">${labels.map(([v,l])=>
+  const opts = myState() ? [['near','Near you'], ...labels] : labels;
+  return `<div class="seg tabs" data-tabs="${key}">${opts.map(([v,l])=>
     `<button class="${SC[key]===v?'on':''}" data-v="${v}">${l}</button>`).join('')}</div>`;
 }
 function wireTabs(){
@@ -648,8 +666,8 @@ function wireTabs(){
     el.onclick = async e=>{
       const b=e.target.closest('button'); if(!b) return;
       SC[el.dataset.tabs]=b.dataset.v;
-      const kind = {feed:'posts',polls:'polls',townhall:'events'}[el.dataset.tabs];
-      if(b.dataset.v==='all') await loadGlobal(kind);
+      const kind = {feed:'posts',polls:'polls',townhall:'events',issues:'issues',endorsed:'ends'}[el.dataset.tabs];
+      if(b.dataset.v!=='mine' && kind) await loadGlobal(kind);
       open_(current, true);
     };
   });
@@ -671,7 +689,9 @@ S.profile = {
     if(RO) return `<button class="btn ghost" id="pfShare">Share</button>` +
       (ME ? `<button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
           : `<a class="btn" href="${location.pathname}">Sign in</a>`);
-    return `<button class="btn ghost" id="pfShare">Share</button><button class="btn" id="pfEdit">Edit</button>`;
+    return `${ONLINE?`<button class="btn ghost" id="pfOut">Sign out</button>`:''}
+      <button class="btn ghost" id="pfShare">Share</button>
+      <button class="btn" id="pfEdit">Edit</button>`;
   },
   view(){
     if(!V) return authView();
@@ -712,22 +732,16 @@ S.profile = {
 
         <div>
           <input id="pfRole" class="pfield role" placeholder="What you care about most" value="${esc(V.role)}" ${RO?'readonly':''}>
-          <input id="pfLoc"  class="pfield loc"  placeholder="Where you vote" value="${esc(V.location)}" ${RO?'readonly':''}>
+          <div class="tahead"><input id="pfLoc" class="pfield loc" placeholder="Where you vote"
+            value="${esc(V.location)}" ${RO?'readonly':''} autocomplete="off"></div>
         </div>
 
         <textarea id="pfBio" class="pfield bio" rows="4" placeholder="Write a short bio." ${RO?'readonly':''}>${esc(V.bio)}</textarea>
         ${RO?'':`<button class="linkbtn" id="pfTighten" hidden style="align-self:flex-start">Tighten this</button>
                  <div class="ai" id="pfAi" hidden></div>`}
 
-        ${RO ? (href?`<a class="pflink" href="${esc(href)}" target="_blank" rel="noopener">${esc(link.replace(/^https?:\/\//,''))}</a>`:'')
-             : `<input id="pfLink" class="pfield link" placeholder="Add a link" value="${esc(V.link)}">`}
-
-        ${RO?'':`<div class="prow">
-            <button class="btn ghost" id="pfCopy">Copy link</button>
-            <button class="btn ghost" id="pfQR">QR code</button></div>
-          ${done<5?`<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
-            <span>${done} of 5 done — ${nextStep(steps)}</span></div>`:''}
-          ${ONLINE?`<button class="signout" id="pfOut" style="align-self:flex-start">Sign out</button>`:''}`}
+        ${RO?'':`${done<5?`<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
+            <span>${done} of 5 done — ${nextStep(steps)}</span></div>`:''}`}
       </aside>
 
       <div class="pcolR">
@@ -776,7 +790,7 @@ S.profile = {
       };
       return;
     }
-    const fields = {pfName:'name', pfHandle:'handle', pfRole:'role', pfLoc:'location', pfBio:'bio', pfLink:'link'};
+    const fields = {pfName:'name', pfHandle:'handle', pfRole:'role', pfLoc:'location', pfBio:'bio'};
     const els = Object.keys(fields).map($).filter(Boolean);
     const edit = $('pfEdit'), tight = $('pfTighten');
 
@@ -817,13 +831,9 @@ S.profile = {
       Object.assign(V,patch); Object.assign(ME,patch);
     }
 
-    $('pfCopy').onclick = async ()=>{
-      if(!V.handle) return toast('Pick a handle first');
-      try{ await navigator.clipboard.writeText(publicUrl(V.handle)); toast('Link copied') }
-      catch(e){ toast(publicUrl(V.handle)) }
-    };
-    $('pfQR').onclick = ()=>{ if(!V.handle) return toast('Pick a handle first'); qrSheet(publicUrl(V.handle)) };
     $('pfOut') && ($('pfOut').onclick = async ()=>{ await sb.auth.signOut(); location.href = location.pathname });
+    placeahead($('pfLoc'), ()=>{ if(ONLINE && myState())
+      ['feed','polls','townhall','issues','endorsed'].forEach(k=>SC[k]='near'); });
 
     $('pfAv').onclick = ()=>$('pfFile').click();
     $('pfFile').onchange = e => {
@@ -843,6 +853,108 @@ S.profile = {
     };
   }
 };
+
+
+/* type a place, get real places back (OpenStreetMap) */
+const ST = {Alabama:'AL',Alaska:'AK',Arizona:'AZ',Arkansas:'AR',California:'CA',Colorado:'CO',Connecticut:'CT',
+ Delaware:'DE','District of Columbia':'DC',Florida:'FL',Georgia:'GA',Hawaii:'HI',Idaho:'ID',Illinois:'IL',
+ Indiana:'IN',Iowa:'IA',Kansas:'KS',Kentucky:'KY',Louisiana:'LA',Maine:'ME',Maryland:'MD',Massachusetts:'MA',
+ Michigan:'MI',Minnesota:'MN',Mississippi:'MS',Missouri:'MO',Montana:'MT',Nebraska:'NE',Nevada:'NV',
+ 'New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND',
+ Ohio:'OH',Oklahoma:'OK',Oregon:'OR',Pennsylvania:'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',
+ Tennessee:'TN',Texas:'TX',Utah:'UT',Vermont:'VT',Virginia:'VA',Washington:'WA','West Virginia':'WV',
+ Wisconsin:'WI',Wyoming:'WY'};
+
+/* ---- where you vote drives what you see ---- */
+const ABBR = Object.fromEntries(Object.entries(ST).map(([n,a])=>[a,n]));
+function stateOf(loc){
+  if(!loc) return null;
+  const part = String(loc).split(',').pop().trim();
+  if(ST[part]) return ST[part];
+  const up = part.toUpperCase();
+  return ABBR[up] ? up : null;
+}
+const stateName = code => ABBR[code] || '';
+const stateSlug = code => (ABBR[code]||'').toLowerCase().replace(/\s+/g,'-');
+const myState   = () => stateOf(V && V.location);
+const isNear    = row => {
+  const m = myState(); if(!m) return false;
+  return stateOf(row && row.profiles && row.profiles.location) === m;
+};
+/* pick the list a screen should show, and say so plainly when we fall back */
+function scoped(key, mine, all){
+  if(RO || !ONLINE) return {list:mine, note:''};
+  const sc = SC[key] || 'all';
+  if(sc==='mine') return {list:mine, note:''};
+  const everyone = all || [];
+  if(sc==='near'){
+    const n = everyone.filter(isNear);
+    if(n.length) return {list:n, note:''};
+    return {list:everyone, note:`Nobody in ${stateName(myState())} yet — showing everyone.`};
+  }
+  return {list:everyone, note:''};
+}
+
+function placeahead(input, onPick){
+  if(!input || input.readOnly && !input.closest('.panel')) return;
+  let box=null, timer=null, cursor=-1, items=[], skip=false;
+
+  const close = ()=>{ if(box){ box.remove(); box=null; cursor=-1 } };
+  const pick  = v => { input.value=v; close(); skip=true; input.dispatchEvent(new Event('input'));
+                       if(onPick) setTimeout(onPick,50); };
+
+  const show = ()=>{
+    close();
+    if(!items.length) return;
+    box = document.createElement('div');
+    box.className = 'talist';
+    box.innerHTML = items.map((t,i)=>`<button type="button" data-i="${i}">${esc(t)}</button>`).join('')
+      + '<small>Places from OpenStreetMap</small>';
+    box.addEventListener('mousedown', e=>{
+      const b = e.target.closest('button'); if(b) { e.preventDefault(); pick(items[+b.dataset.i]); }
+    });
+    input.parentNode.appendChild(box);
+  };
+
+  const label = o => {
+    const a = o.address || {};
+    const city = a.city || a.town || a.village || a.hamlet || a.municipality || a.county;
+    const st = a.state ? (ST[a.state] || a.state) : '';
+    if(city && st) return `${city}, ${st}`;
+    if(st) return st;
+    return (o.display_name||'').split(',').slice(0,2).join(',').trim() || null;
+  };
+
+  input.addEventListener('input', ()=>{
+    if(input.readOnly) return;
+    clearTimeout(timer);
+    if(skip){ skip=false; return close(); }        // just picked one, do not re-open
+    const q = input.value.trim();
+    if(q.length < 2) return close();
+    timer = setTimeout(async ()=>{
+      try{
+        const r = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1'
+          + '&countrycodes=us&limit=6&q=' + encodeURIComponent(q));
+        if(!r.ok) return close();
+        const data = await r.json();
+        items = [...new Set(data.map(label).filter(Boolean))].slice(0,6);
+        if(input.value.trim().length >= 2) show();
+      }catch(e){ close() }
+    }, 320);
+  });
+
+  input.addEventListener('keydown', e=>{
+    if(!box) return;
+    const btns = [...box.querySelectorAll('button')];
+    if(e.key==='ArrowDown' || e.key==='ArrowUp'){
+      e.preventDefault();
+      cursor = (cursor + (e.key==='ArrowDown'?1:-1) + btns.length) % btns.length;
+      btns.forEach((b,i)=>b.classList.toggle('on', i===cursor));
+    } else if(e.key==='Enter' && cursor>=0){ e.preventDefault(); pick(items[cursor]); }
+    else if(e.key==='Escape') close();
+  });
+  input.addEventListener('blur', ()=>setTimeout(close,120));
+}
 
 function shareLine(){
   const bits = [V.name || 'democrat.ai'];
@@ -902,42 +1014,15 @@ function authInit(){
   $('auEmail').onkeydown = e => { if(e.key==='Enter') $('auPw').focus() };
   $('auPw').onkeydown    = e => { if(e.key==='Enter') go() };
 }
-function qrSheet(url){
-  const wrap = document.createElement('div');
-  wrap.className='sheet';
-  wrap.innerHTML = `<div class="sheetbox">
-      <h3>Your page</h3><div class="qrbox" id="qrBox"></div>
-      <code>${url.replace(/^https?:\/\//,'')}</code>
-      <div class="pfacts" style="width:100%">
-        <button class="btn ghost" id="qrClose">Close</button>
-        <button class="btn" id="qrSave">Save image</button></div></div>`;
-  document.body.appendChild(wrap);
-  wrap.onclick = e=>{ if(e.target===wrap) wrap.remove() };
-  $('qrClose').onclick = ()=>wrap.remove();
-  const draw = ()=>{
-    const c = document.createElement('canvas');
-    window.QRCode.toCanvas(c, url, {width:400,margin:1,color:{dark:'#0A3FD6',light:'#FFFFFF'}}, err=>{
-      if(err) return toast('Could not build the code');
-      const box=$('qrBox'); box.innerHTML=''; c.style.width=c.style.height='200px'; box.appendChild(c);
-      $('qrSave').onclick=()=>{ const a=document.createElement('a');
-        a.download=(V.handle||'page')+'-qr.png'; a.href=c.toDataURL('image/png'); a.click(); };
-    });
-  };
-  if(window.QRCode) return draw();
-  const sc=document.createElement('script');
-  sc.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-  sc.onload=draw; sc.onerror=()=>toast('Could not load the QR library');
-  document.head.appendChild(sc);
-}
-
 /* --------------------------------------------------------------------- feed */
 S.feed = {
   sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
   acts(){ return RO?'':`<button class="btn" data-go="compose">Post</button>` },
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
-    const list = mine ? D.posts : (G.posts||[]);
+    const {list, note} = scoped('feed', D.posts, G.posts);
     return `<div class="screen">${tabs('feed',[['all','Everyone'],['mine','Yours']])}
+      ${note?`<p class="meta">${note}</p>`:''}
       ${list.length ? `<div class="list">${list.map(p=>`
         <article class="item" data-id="${p.id}"><div class="grow">
           ${!mine && p.profiles ? who(p.profiles) : ''}
@@ -953,7 +1038,7 @@ S.feed = {
   },
   init(){
     wireTabs();
-    const list = (RO||!ONLINE||SC.feed==='mine') ? D.posts : (G.posts||[]);
+    const {list} = scoped('feed', D.posts, G.posts);
     rows(list, async (p,a)=>{
       if(a==='share') return share(p.text, p.profiles && p.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
@@ -1005,21 +1090,25 @@ S.compose = {
 S.issues = {
   sub(){ return RO ? `Where @${V.handle} stands` : 'Where you stand' },
   view(){
-    return `<div class="screen">
+    const {list, note} = scoped('issues', D.issues, G.issues);
+    const own = RO || SC.issues==='mine' || !ONLINE;
+    return `<div class="screen">${tabs('issues',[['all','Everyone'],['mine','Yours']])}
       ${RO?'':`<div class="frow">
         <input class="inp" id="iText" placeholder="Add an issue">
         <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
         <button class="btn" id="iAdd">Add</button></div>`}
-      ${D.issues.length?`<div class="list">${D.issues.map(i=>{
+      ${note?`<p class="meta">${note}</p>`:''}
+      ${list.length?`<div class="list">${list.map(i=>{
         const a = ONLINE ? agree(i.title) : {s:0,o:0};
         const tot = a.s+a.o;
         return `<div class="item" data-id="${i.id}"><div class="grow">
+          ${!own && i.profiles ? who(i.profiles) : ''}
           <h3>${esc(i.title)}</h3>
           ${tot>1?`<small>${a.s} support · ${a.o} oppose across democrat.ai</small>`:''}
           <div class="rowacts">
             ${act('share','Share')}
             <button class="iconbtn" data-act="against">The case against</button>
-            ${RO?'':act('del')}
+            ${own&&!RO?act('del'):''}
           </div>
           <div class="ai" id="ai-${i.id}" hidden></div>
         </div><span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span></div>`}).join('')}</div>`
@@ -1027,7 +1116,9 @@ S.issues = {
     </div>`;
   },
   init(){
-    loadGlobal('issues').then(()=>{ if(current==='issues' && ONLINE && !G.issues) return; });
+    wireTabs();
+    loadGlobal('issues');
+    const {list} = scoped('issues', D.issues, G.issues);
     if(!RO){
       let stance='Support';
       const seg=$('iSeg'), t=$('iText');
@@ -1041,8 +1132,8 @@ S.issues = {
       };
       $('iAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
     }
-    rows(D.issues,(i,a,btn)=>{
-      if(a==='share') return share(`${i.stance}: ${i.title}`);
+    rows(list,(i,a,btn)=>{
+      if(a==='share') return share(`${i.stance}: ${i.title}`, i.profiles && i.profiles.handle);
       if(a==='against') return suggest('ai-'+i.id, btn, 'against', `${i.stance} — ${i.title}`,
         { note:'Written by AI. Judge it for yourself.' });
       if(a==='del') return mutate({ local:db=>db.issues=db.issues.filter(x=>x.id!==i.id),
@@ -1055,29 +1146,47 @@ S.issues = {
 S.endorsed = {
   sub(){ return RO ? `Who @${V.handle} backs` : 'Who you back' },
   view(){
-    return `<div class="screen">
+    const {list, note} = scoped('endorsed', D.ends, G.ends);
+    const own = RO || SC.endorsed==='mine' || !ONLINE;
+    /* when looking wider, show who is backed most */
+    let tally = '';
+    if(!own && list.length){
+      const count = {};
+      list.forEach(e=>{ const k=e.name.trim(); count[k]=(count[k]||0)+1 });
+      const top = Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,6).filter(x=>x[1]>1);
+      if(top.length) tally = `<div class="sec"><div class="sechead"><h4>Backed most</h4></div>
+        <div class="chips">${top.map(([n,c])=>`<span class="chip">${esc(n)} · ${c}</span>`).join('')}</div></div>`;
+    }
+    return `<div class="screen">${tabs('endorsed',[['all','Everyone'],['mine','Yours']])}
       ${RO?'':`<div class="frow"><input class="inp" id="eText" placeholder="Add a candidate, group or measure"><button class="btn" id="eAdd">Add</button></div>`}
-      ${D.ends.length?`<div class="list">${D.ends.map(e=>`
-        <div class="item" data-id="${e.id}"><div class="grow"><h3>${esc(e.name)}</h3>
-          <div class="rowacts">${act('share','Share')}${RO?'':act('del')}</div></div></div>`).join('')}</div>`
+      ${note?`<p class="meta">${note}</p>`:''}
+      ${tally}
+      ${list.length?`<div class="list">${list.map(e=>`
+        <div class="item" data-id="${e.id}"><div class="grow">
+          ${!own && e.profiles ? who(e.profiles) : ''}
+          <h3>${esc(e.name)}</h3>
+          <div class="rowacts">${act('share','Share')}${own&&!RO?act('del'):''}</div></div></div>`).join('')}</div>`
         :`<div class="empty"><b>Nothing here yet</b>${RO?'':'Add the candidates, groups and measures you support.'}</div>`}
     </div>`;
   },
   init(){
+    wireTabs();
+    loadGlobal('ends');
+    const {list} = scoped('endorsed', D.ends, G.ends);
     if(!RO){
       const t=$('eText');
       const add = async ()=>{
         const name=t.value.trim(); if(!name) return;
         if(!await needAuth()) return;
         mutate({ local:db=>db.ends.unshift({id:uid(),name}),
-          remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error });
+          remote:async()=>(await sb.from('endorsements').insert({author:ME.id,name})).error, clears:['ends'] });
       };
       $('eAdd').onclick=add; t.onkeydown=e=>{ if(e.key==='Enter') add() };
     }
-    rows(D.ends,(x,a)=>{
-      if(a==='share') return share(`I back ${x.name}`);
+    rows(list,(x,a)=>{
+      if(a==='share') return share(`I back ${x.name}`, x.profiles && x.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.ends=db.ends.filter(y=>y.id!==x.id),
-        remote:async()=>(await sb.from('endorsements').delete().eq('id',x.id)).error });
+        remote:async()=>(await sb.from('endorsements').delete().eq('id',x.id)).error, clears:['ends'] });
     });
   }
 };
@@ -1087,8 +1196,9 @@ S.townhall = {
   sub(){ return RO ? `Events from @${V.handle}` : 'Show up in person' },
   view(){
     const mine = RO || !ONLINE || SC.townhall==='mine';
-    const list = mine ? D.events : (G.events||[]);
+    const {list, note} = scoped('townhall', D.events, G.events);
     return `<div class="screen">${tabs('townhall',[['all','Everyone'],['mine','Yours']])}
+      ${note?`<p class="meta">${note}</p>`:''}
       ${RO?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
         <input class="inp" id="tDate" type="date" style="max-width:165px"></div>
       <div class="frow"><input class="inp" id="tPlace" placeholder="Where"><button class="btn" id="tAdd">Add</button></div>`}
@@ -1105,7 +1215,7 @@ S.townhall = {
   init(){
     wireTabs();
     const mine = RO || !ONLINE || SC.townhall==='mine';
-    const list = mine ? D.events : (G.events||[]);
+    const {list} = scoped('townhall', D.events, G.events);
     if(!RO){
       $('tAdd').onclick = async ()=>{
         const title=$('tTitle').value.trim(), date=$('tDate').value, place=$('tPlace').value.trim();
@@ -1133,26 +1243,43 @@ S.townhall = {
 };
 
 /* ------------------------------------------------------------------- ballot */
-const BALLOT = [
-  ['reg','Register to vote','https://vote.gov'],
-  ['chk','Check your registration','https://www.nass.org/can-i-vote'],
-  ['off','Find your election office','https://www.usa.gov/election-office']
+const BALLOT_GENERIC = [
+  ['reg','Register to vote','https://www.vote.org/register-to-vote/'],
+  ['chk','Check your registration','https://www.vote.org/am-i-registered-to-vote/'],
+  ['bal','See what is on your ballot','https://www.vote.org/ballot-information/'],
+  ['pol','Find your polling place','https://www.vote.org/polling-place-locator/']
 ];
+function ballotLinks(){
+  const st = myState();
+  if(!st) return BALLOT_GENERIC;
+  const slug = stateSlug(st);
+  return [
+    ['reg','Register to vote in '+stateName(st), `https://www.vote.org/register-to-vote/${slug}/`],
+    ['chk','Check your registration',            'https://www.vote.org/am-i-registered-to-vote/'],
+    ['mail','Vote by mail in '+stateName(st),    `https://www.vote.org/absentee-ballot/${slug}/`],
+    ['bal','See what is on your ballot',         'https://www.vote.org/ballot-information/'],
+    ['pol','Find your polling place',            'https://www.vote.org/polling-place-locator/'],
+    ['ded',stateName(st)+' deadlines and ID rules', `https://www.vote.org/state/${slug}/`]
+  ];
+}
 S.ballot = {
-  sub:'Vote without friction',
+  sub(){ const st=myState(); return st ? `Voting in ${stateName(st)}` : 'Vote without friction' },
   view(){
     const b = (V && V.ballot) || {};
+    const st = myState();
     const left = b.date ? Math.ceil((new Date(b.date+'T00:00') - Date.now())/864e5) : null;
     return `<div class="screen">
+      ${st ? '' : `<p class="meta">Add where you vote on your profile and this fills in with your state's deadlines and forms.</p>`}
       <div class="frow">
         <input class="inp" id="bDate" type="date" value="${b.date||''}" ${RO?'disabled':''}>
         <span class="meta" style="flex:none">${left!=null?(left>0?left+' days out':(left===0?'Election day':'Passed')):'Your election date'}</span>
       </div>
-      <div class="list">${BALLOT.map(x=>`
-        <div class="item"><div class="grow"><h3>${x[1]}</h3>
+      <div class="list">${ballotLinks().map(x=>`
+        <div class="item"><div class="grow"><h3>${esc(x[1])}</h3>
           <div class="rowacts"><a class="iconbtn" href="${x[2]}" target="_blank" rel="noopener">Open ${ico.share}</a></div></div>
           ${RO?'':`<button class="tag ${b[x[0]]?'b':''}" data-chk="${x[0]}">${b[x[0]]?'Done':'Mark done'}</button>`}
         </div>`).join('')}</div>
+      <p class="hint" style="text-align:left">Links go to Vote.org, a nonpartisan nonprofit.</p>
 
       <div class="divide"></div>
       <div>
@@ -1168,7 +1295,11 @@ S.ballot = {
     </div>`;
   },
   init(){
-    $('bShare').onclick = ()=>share('Register, check your registration, find your polling place:');
+    $('bShare').onclick = ()=>{
+      const st = myState();
+      share(st ? `Register, check your registration and see what is on your ballot in ${stateName(st)}:`
+               : 'Register, check your registration, find your polling place:');
+    };
     $('bExplain').onclick = ()=>{
       const t=$('bText').value.trim();
       if(t.length<40) return toast('Paste the measure text first');
@@ -1191,8 +1322,9 @@ S.polls = {
   sub(){ return RO ? `Questions from @${V.handle}` : 'Ask, then listen' },
   view(){
     const mine = RO || !ONLINE || SC.polls==='mine';
-    const list = mine ? D.polls : (G.polls||[]);
+    const {list, note} = scoped('polls', D.polls, G.polls);
     return `<div class="screen">${tabs('polls',[['all','Everyone'],['mine','Yours']])}
+      ${note?`<p class="meta">${note}</p>`:''}
       ${RO?'':`<div class="frow"><input class="inp" id="pQ" placeholder="Ask a question"></div>
       <div class="ai" id="pAi" hidden></div>
       <div class="frow"><input class="inp" id="pA" placeholder="Option 1"><input class="inp" id="pB" placeholder="Option 2"></div>
@@ -1219,7 +1351,7 @@ S.polls = {
   init(){
     wireTabs();
     const mine = RO || !ONLINE || SC.polls==='mine';
-    const list = mine ? D.polls : (G.polls||[]);
+    const {list} = scoped('polls', D.polls, G.polls);
     if(!RO){
       const Q=$('pQ'), chk=$('pCheck');
       Q.oninput = ()=>{ chk.hidden = Q.value.trim().length < 12 };
@@ -1401,7 +1533,10 @@ rail.addEventListener('click', e=>{ const b=e.target.closest('.app'); if(b) open
     });
   } else { const m=$('mode'); m.hidden=false; m.textContent='Local mode'; }
   await load();
-  if(ONLINE) await loadGlobal('issues');
+  if(ONLINE){
+    if(myState()) ['feed','polls','townhall','issues','endorsed'].forEach(k=>SC[k]='near');
+    await loadGlobal('issues');
+  }
   render();
 })();
 
