@@ -5,7 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>democrat.ai</title>
 <meta name="description" content="A political presence, in one place.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%230a3fd6'/></svg>">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0A3FD6">
+<meta name="apple-mobile-web-app-title" content="democrat.ai">
+
+<!-- Share card. Swap these two for your absolute URL once the domain is final,
+     e.g. https://democrat.si/icons/og.png — some scrapers insist on absolute. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="democrat.ai">
+<meta property="og:description" content="A political presence, in one place.">
+<meta property="og:image" content="/icons/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="democrat.ai">
+<meta name="twitter:description" content="A political presence, in one place.">
+<meta name="twitter:image" content="/icons/og.png">
 <style>
 :root{
   --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
@@ -333,41 +352,52 @@ button.tag{cursor:pointer}
 .gatecard .linkbtn:hover{color:var(--blue);background:none}
 @media (prefers-reduced-motion:reduce){ .halo i,.aurora,.gatecard{animation:none} .halo i{opacity:.12} }
 
+
 /* chat */
-.chat{display:flex;flex-direction:column;height:100%;min-height:min(64vh,560px);gap:10px}
-.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:6px 2px 8px;scroll-behavior:smooth}
-.msg{display:flex;gap:9px;max-width:min(86%,620px);align-items:flex-end;animation:rise .3s ease both}
-.msg.me{align-self:flex-end}
-.msg.ai{align-self:flex-start}
-.mavatar{width:26px;height:26px;border-radius:50%;flex:none;background:var(--blue);margin-bottom:2px}
-.bubble{padding:12px 16px;border-radius:20px;font-size:14.5px;line-height:1.6;white-space:pre-wrap;
-  word-wrap:break-word}
-.msg.me .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:7px}
-.msg.ai .bubble{background:rgba(10,32,90,.055);color:var(--ink);border-bottom-left-radius:7px}
-.typing{display:flex;gap:5px;align-items:center;padding:15px 17px}
-.typing i{width:6px;height:6px;border-radius:50%;background:#93a0bd;animation:blink 1.3s infinite}
+.pbody.chatbody{overflow:hidden;display:flex;flex-direction:column}
+.pbody.chatbody .split{flex:1;min-height:0}
+.chat{display:flex;flex-direction:column;height:100%;min-height:0;gap:14px}
+.msgs{flex:1;min-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:22px;
+  padding:8px 8px 10px 2px;scroll-behavior:smooth}
+.msg{display:flex;gap:11px;animation:rise .3s ease both;max-width:100%}
+.msg.me{justify-content:flex-end}
+.msg.me .bubble{background:var(--blue);color:#fff;padding:12px 17px;border-radius:20px 20px 6px 20px;
+  font-size:15px;line-height:1.55;max-width:min(78%,520px);white-space:pre-wrap;word-wrap:break-word}
+.mavatar{width:24px;height:24px;border-radius:50%;flex:none;background:var(--blue);margin-top:3px}
+.say{flex:1;min-width:0;font-size:15px;line-height:1.68;color:#1b2233;max-width:640px}
+.say p{margin:0 0 12px}
+.say p:last-child{margin-bottom:0}
+.say ul,.say ol{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+.say li{line-height:1.6}
+.say li::marker{color:#93a0bd}
+.say strong{font-weight:640}
+.say code{background:rgba(10,32,90,.07);padding:2px 6px;border-radius:6px;font-size:13.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.typing{display:flex;gap:5px;align-items:center;padding:9px 0}
+.typing i{width:6px;height:6px;border-radius:50%;background:#a3aec7;animation:blink 1.3s infinite}
 .typing i:nth-child(2){animation-delay:.18s}
 .typing i:nth-child(3){animation-delay:.36s}
-@keyframes blink{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
-.chatbar{display:flex;gap:9px;align-items:flex-end;border:1px solid var(--line);border-radius:20px;
-  padding:8px 8px 8px 16px;background:#fff;transition:border-color .18s}
-.chatbar:focus-within{border-color:rgba(10,63,214,.45)}
-.chatbar textarea{flex:1;border:0;resize:none;font-size:15px;line-height:1.55;padding:8px 0;max-height:180px}
+@keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.chatbar{display:flex;gap:9px;align-items:flex-end;border:1px solid var(--line);border-radius:22px;
+  padding:7px 7px 7px 18px;background:#fff;transition:border-color .18s,box-shadow .18s;flex:none}
+.chatbar:focus-within{border-color:rgba(10,63,214,.4);box-shadow:0 0 0 4px rgba(10,63,214,.07)}
+.chatbar textarea{flex:1;border:0;resize:none;font-size:15px;line-height:1.55;padding:9px 0;max-height:170px;
+  background:none}
 .chatbar textarea:focus{outline:none}
-.sendbtn{width:38px;height:38px;flex:none;border:0;border-radius:50%;background:var(--blue);color:#fff;
+.sendbtn{width:36px;height:36px;flex:none;border:0;border-radius:50%;background:var(--blue);color:#fff;
   cursor:pointer;display:grid;place-items:center;transition:opacity .15s,transform .15s}
-.sendbtn svg{width:18px;height:18px}
-.sendbtn:disabled{opacity:.25;cursor:default}
+.sendbtn svg{width:17px;height:17px}
+.sendbtn:disabled{opacity:.22;cursor:default}
 .sendbtn:not(:disabled):hover{transform:translateY(-1px)}
-.chatintro{margin:auto;text-align:center;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:9px;
-  padding:30px 10px}
+.chatintro{margin:auto;text-align:center;max-width:540px;display:flex;flex-direction:column;align-items:center;
+  gap:9px;padding:24px 10px}
 .introdot{width:32px;height:32px;border-radius:50%;background:var(--blue);position:relative;margin-bottom:4px}
 .introdot::after{content:"";position:absolute;inset:0;border-radius:50%;
   animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
-.chatintro h3{font-size:20px;font-weight:640;letter-spacing:-.025em}
-.chatintro p{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:8px}
-.starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;width:100%}
-.starter{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 15px;text-align:left;
+.chatintro h3{font-size:21px;font-weight:640;letter-spacing:-.028em}
+.chatintro p{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+.starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px;width:100%}
+.starter{border:1px solid var(--line);background:#fff;border-radius:15px;padding:14px 16px;text-align:left;
   font-size:13.5px;line-height:1.45;color:#28304a;cursor:pointer;transition:.15s}
 .starter:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03);color:var(--blue)}
 
@@ -578,6 +608,34 @@ async function ai(task, input){
     return (d.text||'').trim() || null;
   }catch(e){ AI_OK=false; toast('AI is not reachable here'); return null; }
 }
+/* the model writes plain prose with the odd list — render that properly, escape everything first */
+function md(t){
+  let x = esc(t);
+  x = x.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  x = x.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  const lines = x.split('\n');
+  let out = '', list = null, para = [];
+  const flushP = ()=>{ if(para.length){ out += '<p>'+para.join('<br>')+'</p>'; para=[] } };
+  const flushL = ()=>{ if(list){ out += `<${list.tag}>${list.items.map(i=>'<li>'+i+'</li>').join('')}</${list.tag}>`; list=null } };
+  for(const raw of lines){
+    const line = raw.trimEnd();
+    const bullet = line.match(/^\s*[-*•]\s+(.*)$/);
+    const number = line.match(/^\s*\d+[.)]\s+(.*)$/);
+    if(bullet || number){
+      flushP();
+      const tag = bullet ? 'ul' : 'ol';
+      if(!list || list.tag !== tag){ flushL(); list = {tag, items:[]} }
+      list.items.push((bullet||number)[1]);
+    } else if(!line.trim()){
+      flushP(); flushL();
+    } else {
+      flushL(); para.push(line);
+    }
+  }
+  flushP(); flushL();
+  return out || '<p></p>';
+}
+
 async function aiChat(messages){
   const r = await fetch('/api/ai', { method:'POST', headers:{'content-type':'application/json'},
     body: JSON.stringify({task:'chat', messages}) });
@@ -615,7 +673,7 @@ let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
 const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null};   // everyone's content
-const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'mine'};
+const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
 let PSEARCH = '';            // per-screen scope
 
@@ -823,8 +881,8 @@ const act = (k,label,on) => `<button class="iconbtn${on?' on':''}" data-act="${k
 const icon = a => `<svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="${BLUE}"/>
-    ${a.id==='profile' && V && V.photo_url
-      ? `<image href="${V.photo_url}" width="120" height="120" preserveAspectRatio="xMidYMid slice"/>`
+    ${a.id==='profile' && ME && ME.photo_url
+      ? `<image href="${ME.photo_url}" width="120" height="120" preserveAspectRatio="xMidYMid slice"/>`
       : a.art}
     <rect width="120" height="120" fill="url(#lift)"/>
     <rect width="120" height="120" fill="url(#sheen)"/>
@@ -950,7 +1008,7 @@ S.profile = {
                <button data-go="ballot"><b>Sort your ballot</b><small>Registration and your election date.</small></button>
              </div></section>`) : ''}
 
-        ${RO ? `<p class="hint"><a href="?" style="color:var(--blue);font-weight:590">Make your own page</a></p>`
+        ${RO ? `<p class="hint"><a href="${location.pathname}" style="color:var(--blue);font-weight:590">${ME?'Back to your page':'Make your own page'}</a></p>`
              : `<p class="hint" style="text-align:left">${V.handle?`Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`:'Pick a handle to get your link'}</p>`}
       </div>
       <input type="file" id="pfFile" accept="image/*" hidden>
@@ -1014,9 +1072,9 @@ S.profile = {
       Object.assign(V,patch); Object.assign(ME,patch);
     }
 
-    $('pfOut') && ($('pfOut').onclick = async ()=>{ await sb.auth.signOut(); location.href = location.pathname });
+    $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut(); location.href = location.pathname });
     placeahead($('pfLoc'), ()=>{ if(ONLINE && myState())
-      ['feed','polls','townhall','issues','endorsed'].forEach(k=>SC[k]='near'); });
+      ['feed','polls','townhall'].forEach(k=>SC[k]='near'); });
 
     $('pfAv').onclick = ()=>$('pfFile').click();
     $('pfFile').onchange = e => {
@@ -1274,7 +1332,10 @@ S.feed = {
   view(){
     const mine = RO || !ONLINE || SC.feed==='mine';
     const {list, note, loading} = scoped('feed', D.posts, G.posts);
-    const people = (G.people||[]).filter(x=>!ME||x.id!==ME.id).filter(x=>SC.feed==='near'?isNear({profiles:x}):true).slice(0,6);
+    const people = (G.people||[])
+      .filter(x=>!ME || x.id!==ME.id)
+      .filter(x=>!MYFOLLOWS.has(x.id))                       /* already following? nothing to suggest */
+      .filter(x=>SC.feed==='near'?isNear({profiles:x}):true).slice(0,6);
     const hot = issueTally(SC.feed==='near'?'near':'all').slice(0,4);
 
     return `<div class="split"><div class="main">
@@ -1327,9 +1388,12 @@ S.feed = {
     document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ()=>{
       if(!await needAuth()) return;
       const id=b.dataset.follow;
+      b.disabled=true;
       const { error } = await sb.from('follows').insert({follower:ME.id, followee:id});
-      if(error) return toast(friendly(error));
-      b.textContent='Following'; b.disabled=true;
+      if(error){ b.disabled=false; return toast(friendly(error)) }
+      MYFOLLOWS.add(id);
+      b.textContent='Following';
+      setTimeout(()=>{ if(current==='feed') open_('feed',true) }, 700);
     });
     const {list} = scoped('feed', D.posts, G.posts);
     rows(list, async (p,a)=>{
@@ -1365,19 +1429,38 @@ const STARTERS = [
   'I want to write about transit — help me sharpen the argument',
   'How do local elections actually decide things?'
 ];
-let CHAT = [];
-try{ CHAT = JSON.parse(sessionStorage.getItem('dai.chat')||'[]') }catch(e){ CHAT = [] }
-const chatSave = ()=>{ try{ sessionStorage.setItem('dai.chat', JSON.stringify(CHAT.slice(-40))) }catch(e){} };
+let CHAT = [], CHATKEY = null;
+const chatKey = ()=> 'dai.chat.' + ((ME && ME.id) || 'signed-out');
+/* load the conversation belonging to whoever is signed in right now */
+function chatLoad(){
+  const k = chatKey();
+  if(CHATKEY === k) return;
+  CHATKEY = k;
+  try{ CHAT = JSON.parse(sessionStorage.getItem(k) || '[]') }catch(e){ CHAT = [] }
+}
+const chatSave = ()=>{ try{ sessionStorage.setItem(chatKey(), JSON.stringify(CHAT.slice(-40))) }catch(e){} };
+/* signing in or out drops the conversation and forgets every stored one */
+function chatReset(wipeAll){
+  CHAT = []; CHATKEY = null;
+  if(wipeAll){
+    try{
+      for(let i = sessionStorage.length - 1; i >= 0; i--){
+        const k = sessionStorage.key(i);
+        if(k && k.startsWith('dai.chat.')) sessionStorage.removeItem(k);
+      }
+    }catch(e){}
+  }
+}
 
 S.compose = {
   sub:'Think it through',
-  acts(){ return CHAT.length ? `<button class="btn ghost" id="chNew">New chat</button>` : '' },
+  acts(){ chatLoad(); return CHAT.length ? `<button class="btn ghost" id="chNew">New chat</button>` : '' },
   view(){
-    const bubbles = CHAT.map(m=>`
-      <div class="msg ${m.role==='user'?'me':'ai'}">
-        ${m.role==='user' ? '' : '<span class="mavatar"></span>'}
-        <div class="bubble">${esc(m.content)}</div>
-      </div>`).join('');
+    chatLoad();
+    const bubbles = CHAT.map(m => m.role==='user'
+      ? `<div class="msg me"><div class="bubble">${esc(m.content)}</div></div>`
+      : `<div class="msg ai"><span class="mavatar"></span><div class="say">${md(m.content)}</div></div>`
+    ).join('');
 
     return `<div class="split"><div class="main chat">
       <div class="msgs" id="chMsgs">
@@ -1413,6 +1496,7 @@ S.compose = {
     </aside></div>`;
   },
   init(){
+    chatLoad();
     const box=$('chMsgs'), t=$('chText'), send=$('chSend');
     let busy = false;
     const bottom = ()=>{ box.scrollTop = box.scrollHeight };
@@ -1425,7 +1509,9 @@ S.compose = {
     const bubble = (role, text) => {
       const div = document.createElement('div');
       div.className = 'msg ' + (role==='user'?'me':'ai');
-      div.innerHTML = (role==='user'?'':'<span class="mavatar"></span>') + `<div class="bubble">${esc(text)}</div>`;
+      div.innerHTML = role==='user'
+        ? `<div class="bubble">${esc(text)}</div>`
+        : `<span class="mavatar"></span><div class="say">${md(text)}</div>`;
       const intro = box.querySelector('.chatintro'); if(intro) intro.remove();
       box.appendChild(div); bottom();
       return div;
@@ -1440,7 +1526,7 @@ S.compose = {
 
       const wait = document.createElement('div');
       wait.className = 'msg ai';
-      wait.innerHTML = '<span class="mavatar"></span><div class="bubble typing"><i></i><i></i><i></i></div>';
+      wait.innerHTML = '<span class="mavatar"></span><div class="typing"><i></i><i></i><i></i></div>';
       box.appendChild(wait); bottom();
 
       try{
@@ -1631,6 +1717,7 @@ S.endorsed = {
       following ? MYFOLLOWS.delete(id) : MYFOLLOWS.add(id);
       b.textContent = following ? 'Follow' : 'Following';
       b.classList.toggle('ghost', !following);
+      setTimeout(()=>{ if(current==='endorsed') open_('endorsed',true) }, 600);
     });
     const inv=$('pInvite');
     if(inv) inv.onclick=()=>share(V&&V.name?`${V.name} is on democrat.ai`:'democrat.ai');
@@ -2104,6 +2191,7 @@ function open_(id, quiet){
       <div class="acts">${s.acts?s.acts():''}<button class="pclose" id="pclose">&#10005;</button></div>
     </header>
     <div class="pbody">${s.view()}</div>`;
+  if(id==='compose') panel.querySelector('.pbody').classList.add('chatbody');
   if(s.init) s.init();
   document.body.classList.add('open');
   panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
@@ -2118,7 +2206,11 @@ function open_(id, quiet){
   }
 }
 
-rail.addEventListener('click', e=>{ const b=e.target.closest('.app'); if(b) open_(b.dataset.id) });
+rail.addEventListener('click', e=>{
+  const b = e.target.closest('.app'); if(!b) return;
+  if(b.dataset.id==='profile' && RO){ location.href = location.pathname; return; }  /* back to your own page */
+  open_(b.dataset.id);
+});
 
 /* ---------------- live: the database tells us when anything changes -------- */
 const TABLE_KIND = {posts:'posts', likes:'posts', polls:'polls', poll_options:'polls', poll_votes:'polls',
@@ -2150,13 +2242,18 @@ async function refreshLive(){
   panel.innerHTML = '<div class="spin"></div>';
   if(ONLINE){
     sb.auth.onAuthStateChange(async evt=>{
-      if(evt==='SIGNED_IN'||evt==='SIGNED_OUT'){ Object.keys(G).forEach(k=>G[k]=null); await load(); render(); }
+      if(evt==='SIGNED_IN'||evt==='SIGNED_OUT'){
+        chatReset(evt==='SIGNED_OUT');          /* never carry a conversation across accounts */
+        Object.keys(G).forEach(k=>G[k]=null);
+        MYFOLLOWS = new Set();
+        await load(); render();
+      }
     });
   } else { const m=$('mode'); m.hidden=false; m.textContent='Local mode'; }
   await load();
   goLive();
   if(ONLINE){
-    if(myState()) ['feed','polls','townhall','issues','endorsed'].forEach(k=>SC[k]='near');
+    if(myState()) ['feed','polls','townhall'].forEach(k=>SC[k]='near');   /* People stays on Everyone */
     await loadGlobal('issues');
   }
   render();
