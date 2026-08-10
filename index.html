@@ -1016,6 +1016,104 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 }
 
 
+
+/* ---------------------------------------------------------------- messages */
+.navmsg{display:flex;align-items:center;gap:9px;width:100%;border:0;border-radius:14px;
+  padding:11px 14px;font-family:inherit;font-size:14.5px;font-weight:620;background:var(--soft);
+  color:var(--ink);cursor:pointer;position:relative;transition:background .16s,color .16s}
+.navmsg:hover{background:rgba(10,63,214,.10);color:var(--blue)}
+.navmsg svg{width:18px;height:18px;flex:none}
+.navmsg span{flex:1;text-align:left}
+.navdot{font-style:normal;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--blue);
+  color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;flex:none}
+
+.hub{position:fixed;inset:0;z-index:92;background:rgba(8,20,45,.44);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:4vh 4vw;
+  animation:fade .18s ease}
+.hubbox{width:100%;max-width:1080px;height:100%;max-height:860px;background:var(--card);
+  border-radius:22px;overflow:hidden;display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1fr);
+  box-shadow:0 50px 110px -35px rgba(8,26,72,.6);animation:rise .3s cubic-bezier(.2,.9,.25,1) both}
+.hubside{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line)}
+.hubhead{display:flex;align-items:center;gap:9px;padding:16px 14px 12px 18px;flex:none}
+.hubhead h2{font-size:19px;font-weight:680;letter-spacing:-.025em;flex:none}
+.hubcount{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--blue);flex:1;min-width:0}
+.hubfind{padding:0 14px 10px 18px;flex:none}
+.hubfind .inp{padding:9px 13px;font-size:14px;border-radius:11px}
+.hublist{flex:1;min-height:0;overflow-y:auto;padding:0 8px 12px;display:flex;flex-direction:column;gap:1px}
+.thread{display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;cursor:pointer;
+  text-align:left;font-family:inherit;color:inherit;padding:10px;border-radius:13px;
+  transition:background .14s}
+.thread:hover{background:var(--soft)}
+.thread.on{background:rgba(10,63,214,.10)}
+.thread .whoav{width:42px;height:42px;font-size:15px}
+.thread .grow{min-width:0;flex:1}
+.trow{display:flex;align-items:baseline;gap:8px}
+.trow b{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.twhen{font-size:11px;color:var(--muted);flex:none}
+.tprev{display:block;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;margin-top:1px}
+.thread.unread .trow b{font-weight:760}
+.thread.unread .tprev{color:var(--ink2);font-weight:560}
+.tbadge{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;display:grid;place-items:center;flex:none}
+
+.hubpane{display:flex;flex-direction:column;min-height:0;min-width:0}
+.hubtop{display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line);
+  flex:none}
+.hubtop .whoav{width:38px;height:38px;font-size:14px;text-decoration:none}
+.hubtop .grow{min-width:0;flex:1}
+.hubtop b{display:block;font-size:15px;font-weight:640;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.hubtop small{font-size:12.5px;color:var(--muted)}
+.hubtop .mini-btn{text-decoration:none;flex:none}
+.hubback{display:none;border:0;background:none;font-size:24px;line-height:1;color:var(--blue);
+  cursor:pointer;padding:0 4px 3px}
+.hubmsgs{flex:1;min-height:0;overflow-y:auto;padding:18px 20px 8px;display:flex;flex-direction:column;
+  gap:3px;scroll-behavior:smooth}
+.daysep{display:flex;align-items:center;gap:12px;margin:14px 0 10px;color:var(--dim);
+  font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.daysep::before,.daysep::after{content:"";flex:1;height:1px;background:var(--line)}
+.bub{max-width:min(74%,520px);padding:9px 14px;border-radius:18px;font-size:14.5px;line-height:1.5;
+  word-wrap:break-word;overflow-wrap:anywhere;animation:rise .2s ease both}
+.bub.them{align-self:flex-start;background:var(--soft);border-bottom-left-radius:6px}
+.bub.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:6px}
+.bub.run{border-top-left-radius:8px;border-top-right-radius:8px}
+.bub.them.run{border-bottom-left-radius:18px}
+.bub.me.run{border-bottom-right-radius:18px}
+.bub.them.last{border-bottom-left-radius:6px}
+.bub.me.last{border-bottom-right-radius:6px}
+.bub .mention{color:inherit;text-decoration:underline}
+.bmeta{font-size:10.5px;margin-top:4px;opacity:.62;letter-spacing:.02em}
+.hubbar{display:flex;gap:9px;align-items:flex-end;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--line);flex:none}
+.hubbar textarea{flex:1;border:1px solid transparent;background:var(--soft);border-radius:20px;
+  padding:11px 16px;font-size:15px;line-height:1.5;resize:none;max-height:150px;
+  transition:background .15s,border-color .15s}
+.hubbar textarea:focus{outline:none;background:var(--card);border-color:rgba(10,63,214,.4)}
+.hubempty{padding:34px 22px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.55;
+  margin:auto}
+.hubempty b{display:block;color:var(--ink);font-size:15.5px;font-weight:620;margin-bottom:4px}
+.hubempty.big{font-size:14.5px}
+
+@media (max-width:900px){
+  .hub{padding:0}
+  .hubbox{max-width:none;max-height:none;border-radius:0;height:100dvh;grid-template-columns:1fr}
+  .hubpane{display:none}
+  .hub.inthread .hubside{display:none}
+  .hub.inthread .hubpane{display:flex}
+  .hubback{display:block}
+  .hubmsgs{padding:14px 14px 6px}
+  .bub{max-width:82%}
+  .hubbar{padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px))}
+  .navmsg{width:auto;flex:none;border-radius:99px;padding:13px 18px;
+    background:var(--card);box-shadow:0 10px 24px -12px rgba(8,26,72,.5)}
+  .navmsg span{display:none}
+  .navmsg svg{width:20px;height:20px}
+  .navdot{position:absolute;top:-4px;right:-4px}
+}
+
 /* ------------------------------------------------------------------- reach */
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .metric{position:relative;background:var(--soft);border-radius:16px;padding:14px 15px 12px;overflow:hidden;
@@ -2407,69 +2505,264 @@ function threads(){
   return [...map.values()].map(t => ({...t, msgs:t.msgs.slice().reverse()}));
 }
 
-/* a conversation, as a sheet */
-async function dmSheet(who){
-  if(!await needAuth()) return;
-  const wrap = document.createElement('div');
-  wrap.className = 'sheet';
-  wrap.innerHTML = `<div class="sheetbox dm">
-    <div class="dmhead">
-      <span class="whoav">${who.photo_url?`<img src="${who.photo_url}" alt="">`:esc(initials(who))}</span>
-      <div class="grow"><b>${esc(who.name||who.handle)}</b><small>@${esc(who.handle)}</small></div>
-      <button class="pclose" id="dmClose" style="display:grid">&#10005;</button>
-    </div>
-    <div class="dmthread" id="dmThread"></div>
-    <div class="chatbar" style="margin-top:2px">
-      <textarea id="dmText" rows="1" maxlength="2000" placeholder="Write to @${esc(who.handle)}"></textarea>
-      <button class="sendbtn" id="dmSend" aria-label="Send" disabled>
+/* ----------------------------------------------------------------- messages
+   One window, opened over everything: the list of conversations on the left,
+   the one you are in on the right. On a phone it is one at a time. */
+let HUB = null, HUBWITH = null, HUBFIND = '';
+
+const dayLabel = ts =>{
+  const d = new Date(ts), t = new Date();
+  const same = (a,b)=> a.toDateString() === b.toDateString();
+  if(same(d,t)) return 'Today';
+  const y = new Date(t.getTime() - 864e5);
+  if(same(d,y)) return 'Yesterday';
+  const week = Date.now() - d.getTime() < 6 * 864e5;
+  return d.toLocaleDateString(undefined, week ? {weekday:'long'}
+    : {month:'long', day:'numeric', year: d.getFullYear() === t.getFullYear() ? undefined : 'numeric'});
+};
+const clockOf = ts => new Date(ts).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'});
+
+function hubThreads(){
+  const q = HUBFIND.trim().toLowerCase();
+  let list = threads();
+  if(q) list = list.filter(t =>
+    (t.who.name || '').toLowerCase().includes(q) ||
+    (t.who.handle || '').toLowerCase().includes(q) ||
+    t.msgs.some(m => (m.text || '').toLowerCase().includes(q)));
+  return list;
+}
+
+function hubListHTML(){
+  const list = hubThreads();
+  if(!list.length) return `<div class="hubempty">
+    <b>${HUBFIND ? 'Nothing matches' : 'No conversations yet'}</b>
+    ${HUBFIND ? 'Try another name or word.' : 'Start one with anybody on the network.'}</div>`;
+  return list.map(t=>{
+    const last = t.msgs[t.msgs.length - 1] || {};
+    const mine = ME && last.sender === ME.id;
+    return `<button class="thread${HUBWITH === t.who.id ? ' on' : ''}${t.unread ? ' unread' : ''}"
+        data-thread="${t.who.id}">
+      <span class="whoav">${t.who.photo_url ? `<img src="${t.who.photo_url}" alt="">`
+        : esc(initials(t.who))}</span>
+      <span class="grow">
+        <span class="trow"><b>${esc(t.who.name || '@' + t.who.handle)}</b>
+          <span class="twhen" data-ts="${last.created_at || ''}" data-noloc>${
+            last.created_at ? ago(last.created_at) : ''}</span></span>
+        <span class="tprev">${mine ? 'You: ' : ''}${esc(trim60(last.text || ''))}</span>
+      </span>
+      ${t.unread ? `<span class="tbadge">${t.unread}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+function hubPaneHTML(){
+  if(!HUBWITH) return `<div class="hubempty big">
+    <b>Pick a conversation</b>Or start a new one with the button above.</div>`;
+  const t = threads().find(x => x.who.id === HUBWITH);
+  const who = t ? t.who : (G.people || []).find(p => p.id === HUBWITH);
+  if(!who) return `<div class="hubempty big"><b>That person is not here</b>They may have left.</div>`;
+  const msgs = t ? t.msgs : [];
+
+  let day = '', out = '';
+  msgs.forEach((m, i)=>{
+    const d = dayLabel(m.created_at);
+    if(d !== day){ day = d; out += `<div class="daysep"><span>${esc(d)}</span></div>` }
+    const mine = ME && m.sender === ME.id;
+    const prev = msgs[i-1], next = msgs[i+1];
+    const run = prev && prev.sender === m.sender
+      && new Date(m.created_at) - new Date(prev.created_at) < 5 * 60e3
+      && dayLabel(prev.created_at) === d;
+    const last = !next || next.sender !== m.sender
+      || new Date(next.created_at) - new Date(m.created_at) >= 5 * 60e3
+      || dayLabel(next.created_at) !== d;
+    out += `<div class="bub ${mine ? 'me' : 'them'}${run ? ' run' : ''}${last ? ' last' : ''}">
+      <div class="btext">${rich(m.text)}</div>
+      ${last ? `<div class="bmeta">${clockOf(m.created_at)}${
+        mine && m.read_at ? ' &middot; Seen' : ''}</div>` : ''}
+    </div>`;
+  });
+
+  return `<header class="hubtop">
+      <button class="hubback" id="hubBack" aria-label="Back">&#8249;</button>
+      <a class="whoav" href="/${esc(who.handle || '')}">${who.photo_url
+        ? `<img src="${who.photo_url}" alt="">` : esc(initials(who))}</a>
+      <div class="grow">
+        <b>${esc(who.name || '@' + who.handle)}</b>
+        <small>@${esc(who.handle || '')}</small>
+      </div>
+      <a class="mini-btn" href="/${esc(who.handle || '')}">View page</a>
+    </header>
+    <div class="hubmsgs" id="hubMsgs">${msgs.length ? out
+      : `<div class="hubempty"><b>Say something</b>This is the beginning of your conversation
+         with ${esc(who.name || '@' + who.handle)}.</div>`}</div>
+    <div class="hubbar">
+      <textarea id="hubText" rows="1" maxlength="2000"
+        placeholder="Message ${esc(who.name || '@' + (who.handle||''))}"></textarea>
+      <button class="sendbtn" id="hubSend" aria-label="Send" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
       </button>
-    </div>
+    </div>`;
+}
+
+function paintHub(){
+  if(!HUB) return;
+  const list = $('hubList'); if(list) list.innerHTML = hubListHTML();
+  const pane = $('hubPane');
+  if(pane){
+    const box0 = $('hubMsgs');
+    const stick = !box0 || box0.scrollTop + box0.clientHeight >= box0.scrollHeight - 60;
+    pane.innerHTML = hubPaneHTML();
+    const box = $('hubMsgs');
+    if(box && stick) box.scrollTop = box.scrollHeight;
+  }
+  HUB.classList.toggle('inthread', !!HUBWITH);
+  wireHub();
+  const n = DMUNREAD;
+  const c = $('hubCount');
+  if(c) c.textContent = n ? `${n} unread` : '';
+}
+
+function wireHub(){
+  if(!HUB) return;
+  HUB.querySelectorAll('[data-thread]').forEach(b=>b.onclick = ()=> openThread(b.dataset.thread));
+  const back = $('hubBack');
+  if(back) back.onclick = ()=>{ HUBWITH = null; paintHub() };
+  const t = $('hubText'), send = $('hubSend');
+  if(t){
+    const grow = ()=>{ t.style.height = 'auto';
+      t.style.height = Math.min(t.scrollHeight, 150) + 'px';
+      send.disabled = !t.value.trim() };
+    t.oninput = grow; grow();
+    mentionable(t);
+    send.onclick = sendHub;
+    t.onkeydown = e=>{
+      if(e.key === 'Enter' && !e.shiftKey && !document.querySelector('.talist')){
+        e.preventDefault(); sendHub();
+      }
+    };
+    if(!phone()) t.focus();
+  }
+}
+
+async function openThread(id){
+  HUBWITH = id;
+  paintHub();
+  /* mark what they sent you as read */
+  if(!ONLINE || !ME) return;
+  const unread = DMS.filter(m => m.sender === id && m.recipient === ME.id && !m.read_at);
+  if(!unread.length) return;
+  try{
+    await sb.from('messages').update({read_at:new Date().toISOString()})
+      .eq('sender', id).eq('recipient', ME.id).is('read_at', null);
+    unread.forEach(m => m.read_at = new Date().toISOString());
+    DMUNREAD = DMS.filter(m => m.recipient === ME.id && !m.read_at).length;
+    renderRail(); paintHub();
+  }catch(e){}
+}
+
+async function sendHub(){
+  const t = $('hubText'); if(!t || !HUBWITH) return;
+  const text = t.value.trim(); if(!text) return;
+  if(!await needAuth()) return;
+  t.value = ''; t.style.height = 'auto';
+  const send = $('hubSend'); if(send) send.disabled = true;
+  /* show it immediately, then let the database confirm */
+  const now = new Date().toISOString();
+  const me = {id:ME.id, handle:ME.handle, name:ME.name, photo_url:ME.photo_url};
+  const other = (threads().find(x=>x.who.id === HUBWITH) || {}).who
+    || (G.people || []).find(p=>p.id === HUBWITH) || {id:HUBWITH};
+  DMS.unshift({id:'tmp'+uid(), sender:ME.id, recipient:HUBWITH, text, created_at:now,
+               read_at:null, sender_p:me, recipient_p:other});
+  paintHub();
+  const r = await sb.from('messages').insert({sender:ME.id, recipient:HUBWITH, text});
+  if(r.error){
+    DMS = DMS.filter(m => String(m.id).slice(0,3) !== 'tmp');
+    toast(friendly(r.error));
+  }
+  await loadDMs(); paintHub(); renderRail();
+}
+
+/* start one with anybody */
+function newThreadSheet(){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>New message</h3>
+    <input class="inp" id="ntFind" placeholder="Search people" autocomplete="off">
+    <div id="ntList" class="notelist"></div>
+    <div class="sheetfoot"><button class="btn ghost" id="ntClose2">Close</button></div>
   </div>`;
   document.body.appendChild(wrap);
   const close = ()=>wrap.remove();
-  $('dmClose').onclick = close;
   wrap.onclick = e=>{ if(e.target===wrap) close() };
-
+  $('ntClose2').onclick = close;
   const paint = ()=>{
-    const t = threads().find(x => x.who.id === who.id);
-    const msgs = t ? t.msgs : [];
-    const box = $('dmThread');
-    box.innerHTML = msgs.length
-      ? msgs.map(m => `<div class="dmmsg ${m.sender===ME.id?'mine':''}">
-          <div class="dmbubble">${esc(m.text)}</div>
-          <span class="dmwhen">${ago(m.created_at)}</span></div>`).join('')
-      : `<p class="hint" style="margin:auto">No messages yet. Say something.</p>`;
-    box.scrollTop = box.scrollHeight;
+    const q = ($('ntFind').value || '').trim().toLowerCase();
+    const people = (G.people || [])
+      .filter(p => p.handle && (!ME || p.id !== ME.id))
+      .filter(p => !q || (p.name||'').toLowerCase().includes(q) || p.handle.toLowerCase().includes(q))
+      .slice(0, 30);
+    $('ntList').innerHTML = people.length
+      ? people.map(p=>`<button class="noterow" data-new="${p.id}">
+          <span class="whoav">${p.photo_url ? `<img src="${p.photo_url}" alt="">` : esc(initials(p))}</span>
+          <span class="grow"><span class="notewhat"><b>${esc(p.name || '@'+p.handle)}</b></span>
+            <small class="notewhen">@${esc(p.handle)}${p.location ? ' &middot; ' + esc(p.location) : ''}</small>
+          </span></button>`).join('')
+      : `<p class="sheetmsg">${q ? 'Nobody by that name.' : 'Nobody else has joined yet.'}</p>`;
+    $('ntList').querySelectorAll('[data-new]').forEach(b=>b.onclick = ()=>{
+      close(); openThread(b.dataset.new);
+    });
   };
+  $('ntFind').oninput = paint;
+  loadPeople().then(paint, paint);
   paint();
-
-  /* mark what they sent you as read */
-  const unread = DMS.filter(m => m.sender === who.id && m.recipient === ME.id && !m.read_at);
-  if(unread.length){
-    await sb.from('messages').update({ read_at:new Date().toISOString() })
-      .eq('sender', who.id).eq('recipient', ME.id).is('read_at', null);
-    unread.forEach(m => m.read_at = new Date().toISOString());
-    DMUNREAD = DMS.filter(m => m.recipient === ME.id && !m.read_at).length;
-    renderRail();
-  }
-
-  const t = $('dmText'), send = $('dmSend');
-  t.focus();
-  const grow = ()=>{ t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,140)+'px';
-                     send.disabled = !t.value.trim() };
-  t.oninput = grow;
-  const fire = async ()=>{
-    const text = t.value.trim(); if(!text) return;
-    send.disabled = true;
-    const { error } = await sb.from('messages').insert({ sender:ME.id, recipient:who.id, text });
-    if(error){ send.disabled=false; return toast(friendly(error)) }
-    t.value=''; grow();
-    await loadDMs(); paint();
-  };
-  send.onclick = fire;
-  t.onkeydown = e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); fire() } };
+  $('ntFind').focus();
 }
+
+async function msgHub(withId){
+  if(!await needAuth()) return;
+  if(HUB){ if(withId) openThread(withId); return }
+  HUBWITH = withId || HUBWITH || null;
+  HUBFIND = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'hub';
+  wrap.innerHTML = `<div class="hubbox">
+    <aside class="hubside">
+      <header class="hubhead">
+        <h2>Messages</h2>
+        <span class="hubcount" id="hubCount"></span>
+        <button class="tbtn" id="hubNew" title="New message" aria-label="New message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="pclose" id="hubClose" style="display:grid" aria-label="Close">&#10005;</button>
+      </header>
+      <div class="hubfind"><input class="inp" id="hubFind" placeholder="Search messages"
+        autocomplete="off"></div>
+      <div class="hublist" id="hubList"></div>
+    </aside>
+    <section class="hubpane" id="hubPane"></section>
+  </div>`;
+  document.body.appendChild(wrap);
+  HUB = wrap;
+  wrap.onclick = e=>{ if(e.target === wrap) closeHub() };
+  $('hubClose').onclick = closeHub;
+  $('hubNew').onclick = newThreadSheet;
+  const find = $('hubFind');
+  find.oninput = ()=>{ HUBFIND = find.value; const l = $('hubList'); if(l) l.innerHTML = hubListHTML();
+    wireHub() };
+  if(ONLINE) await loadDMs();
+  loadPeople().then(()=>paintHub(), ()=>{});
+  /* land in the newest conversation on a wide screen */
+  if(!HUBWITH && !phone()){
+    const first = threads()[0];
+    if(first) return openThread(first.who.id);
+  }
+  paintHub();
+}
+function closeHub(){ if(HUB){ HUB.remove(); HUB = null } }
+
+/* everything that used to open a little sheet now opens the hub */
+function dmSheet(who){ return msgHub(who && who.id) }
 
 /* --------------------------------------------------------------------- feed */
 S.feed = {
@@ -5047,7 +5340,12 @@ function railFoot(){
     : `<button class="acct" id="navAcct" aria-label="Sign in">
          <span class="whoav">&#43;</span>
          <span class="grow"><b>Sign in</b><small>Join the network</small></span></button>`;
+  const msgs = (ONLINE && ME) ? `<button class="navmsg" id="navMsg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-2.8-.4L4 21l1.3-3.8A8.2 8.2 0 0 1 3 11.5C3 6.8 7 3 12 3s9 3.8 9 8.5Z"/></svg>
+      <span>Messages</span>${DMUNREAD ? `<i class="navdot">${DMUNREAD > 99 ? '99+' : DMUNREAD}</i>` : ''}
+    </button>` : '';
   return `<div class="navfoot">
+    ${msgs}
     ${canPost ? `<button class="navpost" id="navPost">Post</button>` : ''}
     ${acct}</div>`;
 }
@@ -5065,6 +5363,7 @@ function moreSheet(){
     <div class="moregrid">${tiles}</div>
     <div class="menu">
       <button data-m2="search">Search</button>
+      <button data-m2="msgs">Messages${DMUNREAD?` · ${DMUNREAD}`:''}</button>
       <button data-m2="notes">Notifications${NOTEUNSEEN?` · ${NOTEUNSEEN}`:''}</button>
       <button data-m2="acct">Account</button>
       <button data-m2="lang">Language${LANG!=='en'?` · ${LANG.toUpperCase()}`:''}</button>
@@ -5080,6 +5379,7 @@ function moreSheet(){
   wrap.querySelectorAll('[data-m2]').forEach(b=>b.onclick = ()=>{
     const m = b.dataset.m2; close();
     if(m==='search') return palOpen();
+    if(m==='msgs')   return msgHub();
     if(m==='notes')  return notesSheet();
     if(m==='acct')   return acctMenu();
     if(m==='lang')   return langSheet();
@@ -5150,6 +5450,8 @@ function renderRail(){
   if(np) np.onclick = ()=>{ open_('feed');
     setTimeout(()=>{ const t = $('qText'); if(t){ t.focus();
       t.scrollIntoView && t.scrollIntoView({block:'center'}) } }, 70) };
+  const nmsg = $('navMsg');
+  if(nmsg) nmsg.onclick = ()=>msgHub();
   const na = $('navAcct');
   if(na) na.onclick = acctMenu;
   const nm = $('navMore');
@@ -5220,6 +5522,10 @@ function goLive(){
   if(!ONLINE || !sb.channel) return;
   sb.channel('everything')
     .on('postgres_changes', {event:'*', schema:'public'}, payload => {
+      if(payload.table === 'messages'){               /* the hub updates in place */
+        loadDMs().then(()=>{ renderRail(); if(HUB) paintHub() });
+        return;
+      }
       if(payload.table === 'room_messages'){          /* the floor updates in place */
         loadRoom().then(()=>{
           if(current === 'townhall'){ paintRoom(); paintLiveFeed() }
@@ -5593,6 +5899,7 @@ function palSources(q){
       setTimeout(()=>{ const t = $('qText'); if(t){ t.focus(); t.scrollIntoView({block:'center'}) } }, 60) }],
     ...(V ? [['Invite someone', 'Share the invitation', ()=>inviteSheet()],
              ['Share my page', 'Hand out your link', ()=>share(shareLine(), V && V.handle)]] : []),
+    ['Messages', 'Your conversations', ()=>msgHub()],
     ['Notifications', 'What people did on your page', ()=>notesSheet()],
     [themeNow()==='dark' ? 'Switch to light' : 'Switch to dark', 'Change the theme', ()=>toggleTheme()],
     ['Keyboard shortcuts', 'Every key that does something', ()=>keysSheet()]
@@ -5704,7 +6011,8 @@ function keysSheet(){
     ['&#8984; K <i>or</i> /', 'Search everything'],
     ['1 &ndash; 9, 0', 'Jump to a screen'],
     ['N', 'Write a post'],
-    ['M', 'Notifications'],
+    ['M', 'Messages'],
+    ['I', 'Notifications'],
     ['D', 'Light or dark'],
     ['?', 'This list'],
     ['Esc', 'Close what is open']
@@ -5775,7 +6083,8 @@ function mentionable(input){
 /* =========================================================== the keys themselves */
 function topLayer(){
   return document.querySelector('.lbox') || (PAL.el ? PAL.el : null)
-      || document.querySelector('.reader') || document.querySelector('.sheet');
+      || document.querySelector('.reader') || document.querySelector('.sheet')
+      || document.querySelector('.hub');
 }
 document.addEventListener('keydown', e=>{
   const el = e.target || {};
@@ -5786,7 +6095,7 @@ document.addEventListener('keydown', e=>{
   }
   if(e.key === 'Escape'){
     const top = topLayer();
-    if(top){ if(top === PAL.el) palClose(); else top.remove(); return }
+    if(top){ if(top === PAL.el) palClose(); else if(top === HUB) closeHub(); else top.remove(); return }
     if(!typing && document.body.classList.contains('open') && $('pclose')) $('pclose').click();
     return;
   }
@@ -5800,7 +6109,8 @@ document.addEventListener('keydown', e=>{
   const k = e.key.toLowerCase();
   if(k === 'n'){ e.preventDefault(); open_('feed');
     setTimeout(()=>{ const t = $('qText'); if(t) t.focus() }, 60); return }
-  if(k === 'm'){ e.preventDefault(); return notesSheet() }
+  if(k === 'm'){ e.preventDefault(); return msgHub() }
+  if(k === 'i'){ e.preventDefault(); return notesSheet() }
   if(k === 'd'){ e.preventDefault(); return toggleTheme() }
 });
 

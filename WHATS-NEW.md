@@ -1,5 +1,28 @@
 # What's new
 
+## Messages have a home
+
+A **Messages button in the nav, directly above Post**, built the same way, with the unread count on
+it. On a phone it's a second floating button beside Post.
+
+It opens a **full-screen hub**. Conversations down the left, the one you're in on the right. On a
+phone it's one at a time with a back arrow.
+
+- **Search** across every name, handle and word anyone has sent you.
+- **New message** — a `+` that opens a searchable list of everyone on the network.
+- Threads show the last line, who said it, when, and an unread count in bold.
+- The newest conversation opens by itself on a wide screen, and reading one marks it read straight
+  away — in the database, on the badge, and in the nav.
+- Messages are grouped into runs and split by day: **Today**, **Yesterday**, then the weekday, then
+  the date. Time under the last of each run, and *Seen* under your last one when they've read it.
+- Sending shows the message instantly and rolls it back if the write fails.
+- New messages arrive live while the hub is open.
+- `@handles` inside a message are links. Esc closes it. `M` opens it from anywhere.
+
+Every Message button on the site — profile pages, the People screen, hover cards, notifications —
+now opens this instead of the old cramped sheet.
+
+
 ## Reach is a real dashboard
 
 Four **metric cards** across the top — what came back, what you put out, new followers, shares — each
