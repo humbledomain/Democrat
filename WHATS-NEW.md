@@ -1,5 +1,68 @@
 # What's new
 
+> **Run `update.txt` again** — it adds one line that lets people change their answer to a poll.
+
+## Polls, rebuilt
+
+Same treatment as Issues. Three tabs and a library of **28 questions ready to ask**, grouped by what
+you're trying to find out: getting organised, where we live, strategy, where you stand, a temperature
+check, and the ballot. Each comes with its answers written and a line on what the result would tell
+you — *"Usually it is not apathy. It is childcare and timing."* One tap asks it as your own.
+
+**Answer** is the tab you land on: every question you haven't answered, as big tappable options.
+
+**The numbers stay hidden until you answer.** That's deliberate — a room that sees the result first
+just agrees with whoever got there earliest. There's a *See the result* link if you'd rather look
+than vote.
+
+When you answer, the bars sweep in behind the words with the percentage and the count, your pick
+outlined, the leader shaded darker. **And the question stays put** — the old build filtered answered
+polls off this tab, so the thing you just voted on vanished before you could see what happened. Now
+it holds its place until you leave the screen.
+
+**Change my answer** is there too, which needs that one new line of SQL.
+
+**Yours** is what you asked, **Everyone** is the whole board by volume, and the sidebar has your
+progress, the *closest call* — the questions nearly tied, which are the ones worth arguing about —
+and the people whose answers match yours.
+
+Writing your own opens a proper sheet: question, two to five answers, add more as you go, and a
+*Check my wording* that flags a question which only allows one honest answer.
+
+
+## Issues, rebuilt
+
+The blank box was the problem — you typed something and nobody, including you, could tell what it
+meant. There's a library now: **60 real policy positions across 15 subjects**, and three tabs.
+
+**Browse.** Pick a subject — healthcare, housing, voting rights, climate, labor, education, guns,
+immigration, courts, cost of living, democracy, LGBTQ+ rights, reproductive rights, public safety,
+transit — and read down the list. Every position says in one line what it would actually do
+("Medicare bargains directly with drugmakers, the way every other rich country does") and who
+decides it: **Federal, State or Local**. That last part matters. Half of what people argue about
+federally is settled in a city council.
+
+Then two buttons: Support, Oppose. One tap. Tap the side you already hold and it clears. Tap the
+other and it switches — one row, not two, which the old version got wrong. And a `?` on each that
+gives you the strongest case *against* your own position.
+
+**Yours.** Everything you've taken, with the split across the network, and the case against.
+
+**Everyone.** The whole board, most-held first, with the buttons right there so you can join a
+position someone else opened.
+
+**Your own words still work** — the Add button opens a sheet that asks for what should *happen*
+rather than how you feel, with a Sharpen button that tightens your line without changing your
+meaning. Custom positions are marked as your words, and they aggregate with anyone else who writes
+the same thing.
+
+**You agree with.** A card showing the people whose positions line up with yours and by how much —
+measured only on the positions you've both actually taken, so it can't be gamed by volume.
+
+And a progress bar: how many of the 60 you've been through. "Not sure? Work it out" still runs the
+interview that turns your answers into positions you approve.
+
+
 ## The wire reads clean
 
 You were seeing `<p>` tags and `&rsquo;` in the summaries. Feeds nest markup inside markup — CDATA

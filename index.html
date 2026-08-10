@@ -984,6 +984,65 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .botchip .whoav{width:20px;height:20px;font-size:9.5px}
 }
 
+/* ------------------------------------------------------------------ issues */
+.stances{display:flex;flex-direction:column}
+.stance{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);
+  flex-wrap:wrap}
+.stance:first-child{border-top:0}
+.stance .grow{flex:1;min-width:min(240px,100%)}
+.stance b{display:block;font-size:15px;font-weight:620;letter-spacing:-.012em;line-height:1.35}
+.stance small{display:block;font-size:13px;line-height:1.45;color:var(--ink2);margin-top:4px;max-width:64ch}
+.srow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:7px 0 6px}
+.lvl{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--blue);
+  background:rgba(10,63,214,.09);border-radius:5px;padding:2px 6px}
+.lvl.own{color:var(--dim);background:var(--soft)}
+.lvl.topic{color:var(--ink3);background:var(--soft)}
+.scount{font-size:11.5px;color:var(--muted)}
+.sbtns{display:flex;gap:6px;align-items:flex-start;flex:none}
+.sbtn{border:1px solid transparent;background:var(--soft);border-radius:10px;padding:8px 13px;
+  font-family:inherit;font-size:12.5px;font-weight:640;color:var(--ink3);cursor:pointer;
+  transition:background .14s,color .14s;white-space:nowrap}
+.sbtn:hover{color:var(--blue)}
+.sbtn.yes.on{background:var(--blue);color:#fff}
+.sbtn.no.on{background:var(--ink3);color:var(--bg)}
+.sbtn.why{width:34px;padding:8px 0;text-align:center;color:var(--dim)}
+.stance .ai{width:100%}
+.stance .rowacts{margin-top:6px}
+@media (max-width:900px){
+  .stance{gap:10px}
+  .sbtns{width:100%}
+  .sbtn{flex:1;padding:11px 8px}
+  .sbtn.why{flex:0 0 42px}
+}
+
+/* ------------------------------------------------------------------- polls */
+.polls{display:flex;flex-direction:column}
+.poll{padding:16px 0;border-top:1px solid var(--line)}
+.poll:first-child{border-top:0}
+.poll h3{font-size:16.5px;font-weight:620;letter-spacing:-.015em;line-height:1.35}
+.poll>small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.pops{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.pop{position:relative;display:flex;align-items:center;gap:10px;width:100%;border:1px solid transparent;
+  background:var(--soft);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:14.5px;
+  font-weight:540;color:inherit;cursor:pointer;text-align:left;overflow:hidden;
+  transition:border-color .15s,background .15s}
+.pop:hover{border-color:rgba(10,63,214,.35)}
+.pop.shown{cursor:default}
+.pop.shown:hover{border-color:transparent}
+.pfill{position:absolute;left:0;top:0;bottom:0;background:rgba(10,63,214,.13);width:0;
+  transition:width .55s cubic-bezier(.2,.9,.25,1);border-radius:12px 0 0 12px}
+.pop.lead .pfill{background:rgba(10,63,214,.22)}
+.pop.mine{border-color:var(--blue)}
+.pop.mine .pfill{background:rgba(10,63,214,.26)}
+.ptext{position:relative;flex:1;min-width:0}
+.ppc{position:relative;font-size:13px;font-weight:800;color:var(--ink3);flex:none;text-align:right}
+.ppc i{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:var(--muted)}
+.poll .rowacts{margin-top:10px}
+@media (max-width:900px){
+  .poll h3{font-size:16px}
+  .pop{padding:13px 14px;font-size:15px}
+}
+
 /* ------------------------------------------------------------------- today */
 .topicbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
   -webkit-overflow-scrolling:touch}
@@ -1349,7 +1408,7 @@ let RO = false;           // viewing someone else
 let current = 'profile';
 const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null, saved:null, room:null};
 let DMS = [], DMUNREAD = 0, OPENPOST = null;   /* conversations, unread count, expanded post */   // everyone's content
-const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'all'};
+const SC = {feed:'all', polls:'open', townhall:'all', issues:'browse', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
 let PSEARCH = '';            // per-screen scope
 let FEEDLIMIT = 60;          // grows when someone asks for more
@@ -1439,6 +1498,7 @@ async function load(){
   await attachComments(D.posts);
   await loadDMs();
   await loadSaves();
+  await loadMine();
   loadNotes();                                    /* in the background: nothing waits on it */
 
   if(ME && RO){
@@ -1465,6 +1525,7 @@ async function decorate(posts, polls, events){
       (p.poll_options||[]).sort((a,b)=>a.ord-b.ord);
       const vs=(data||[]).filter(v=>v.poll_id===p.id);
       p.total=vs.length;
+      p.votes = vs.map(v=>({u:v.user_id, o:v.option_id}));
       (p.poll_options||[]).forEach(o=>o.v=vs.filter(v=>v.option_id===o.id).length);
       p.voted = ME ? ((vs.find(v=>v.user_id===ME.id)||{}).option_id || null) : null;
     });
@@ -2801,86 +2862,407 @@ S.compose = {
 };
 
 /* ------------------------------------------------------------------- issues */
-S.issues = {
-  sub(){ return RO ? `Where @${V.handle} stands` : 'Where you stand' },
-  acts(){ return tabs('issues',[['all','Everyone'],['mine','Yours']]) },
-  view(){
-    const {list, note, loading} = scoped('issues', D.issues, G.issues);
-    const own = RO || SC.issues==='mine' || !ONLINE;
-    const tally = issueTally(SC.issues==='near'?'near':'all');
-    const contested = tally.filter(t=>t.s+t.o>2).sort((a,b)=>Math.abs(a.s-a.o)/(a.s+a.o) - Math.abs(b.s-b.o)/(b.s+b.o)).slice(0,4);
-    const common = tally.slice(0,6);
-    const held = new Set(D.issues.map(i=>i.title.trim().toLowerCase()));
+/* ------------------------------------------------------------------- issues
+   A library of real, concrete policies you can take a side on, so nobody has
+   to invent wording from a blank box. Each one says plainly what it would do
+   and who decides. Writing your own still works — the library is a starting
+   point, not a menu you are limited to. */
+const LIB = [
+ {t:'Healthcare', items:[
+  {q:'Let Medicare negotiate drug prices', w:'Medicare bargains directly with drugmakers, the way every other rich country does.', lv:'Federal'},
+  {q:'Cap insulin at $35 a month for everyone', w:'The cap that already applies to Medicare would cover private insurance too.', lv:'Federal'},
+  {q:'Let anyone buy into Medicare', w:'A public plan on the exchanges, open at any age, competing with private ones.', lv:'Federal'},
+  {q:'Expand Medicaid in every state', w:'The states that refused the federal money take it, covering the people in the gap.', lv:'State'},
+  {q:'Make hospitals publish real prices', w:'Enforceable price lists, so a bill can be checked before the treatment.', lv:'Federal'}]},
 
-    return `<div class="split"><div class="main">
-      ${GUEST() ? joinBar('Sign in to take a position.') : ''}
-      ${(RO||GUEST())?'':`<div class="frow" style="justify-content:space-between">
-        <button class="linkbtn" id="iStand">Not sure where you stand? Work it out →</button></div>
-      <div class="frow">
-        <input class="inp" id="iText" placeholder="Add an issue">
-        <div class="seg" id="iSeg"><button class="on" data-v="Support">Support</button><button data-v="Oppose">Oppose</button></div>
-        <button class="btn" id="iAdd">Add</button></div>`}
-      ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(i=>{
-        const a = ONLINE ? agree(i.title) : {s:0,o:0};
-        const tot = a.s+a.o;
-        return `<div class="item" data-id="${i.id}" style="display:block">
-          ${!own && i.profiles ? who(i.profiles) : ''}
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <h3 class="grow">${esc(i.title)}</h3>
-            <span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span>
-          </div>
-          ${tot>1?`<div style="margin-top:9px">${splitbar(a.s,a.o)}</div>`:''}
-          <div class="rowacts">
-            ${act('share','Share')}
-            <button class="iconbtn" data-act="against">The case against</button>
-            ${own&&!RO?act('del'):''}
-          </div>
-          <div class="ai" id="ai-${i.id}" hidden></div>
-        </div>`}).join('')}</div>`
-        :`<div class="empty"><b>No positions yet</b>${RO?'':'Say where you stand. Positions travel further than opinions.'}</div>`}
+ {t:'Cost of living', items:[
+  {q:'Break up grocery and meatpacking monopolies', w:'Antitrust enforcement where four firms set the price of dinner.', lv:'Federal'},
+  {q:'Cap credit card interest', w:'A ceiling on the rate, the way credit unions already have one.', lv:'Federal'},
+  {q:'Free school meals for every child', w:'Breakfast and lunch for all pupils, no forms and no stigma.', lv:'State'},
+  {q:'Cap childcare at 7% of income', w:'Federal subsidy covering the rest, on the model of the wartime programme.', lv:'Federal'},
+  {q:'Ban junk fees on tickets, hotels and banking', w:'The advertised price has to be the price you pay.', lv:'Federal'}]},
+
+ {t:'Housing', items:[
+  {q:'Legalise duplexes and triplexes in single-family zones', w:'Small buildings allowed by right where only detached houses are now.', lv:'Local'},
+  {q:'Convert empty offices to housing', w:'Rezoning and a conversion fund for downtowns that emptied out.', lv:'Local'},
+  {q:'Build public housing again', w:'Publicly owned, mixed-income, permanently affordable — not vouchers alone.', lv:'Federal'},
+  {q:'A lawyer for every tenant facing eviction', w:'Right to counsel in housing court, which keeps most tenants housed.', lv:'State'},
+  {q:'Cap yearly rent increases', w:'A ceiling tied to inflation, with new construction exempt for a period.', lv:'State'}]},
+
+ {t:'Voting rights', items:[
+  {q:'Two weeks of early voting everywhere', w:'A federal floor for early in-person voting, including weekends.', lv:'Federal'},
+  {q:'Automatic voter registration', w:'Registered when you deal with the DMV unless you opt out.', lv:'State'},
+  {q:'Restore voting rights on release from prison', w:'The vote comes back at the prison gate, not years later.', lv:'State'},
+  {q:'Independent commissions draw the district lines', w:'Map-drawing taken out of the hands of the people running.', lv:'State'},
+  {q:'Same-day voter registration', w:'Register and vote in one trip, on the day.', lv:'State'},
+  {q:'Make election day a national holiday', w:'A federal holiday, with a mandate for hourly workers to be paid.', lv:'Federal'}]},
+
+ {t:'Democracy', items:[
+  {q:'Overturn Citizens United', w:'A constitutional amendment letting Congress limit election spending again.', lv:'Federal'},
+  {q:'Public financing of campaigns', w:'Small donations matched with public funds, so small donors count.', lv:'Federal'},
+  {q:'Eighteen-year terms for Supreme Court justices', w:'Staggered terms, one appointment every two years, no lifetime seats.', lv:'Federal'},
+  {q:'A binding ethics code for the Supreme Court', w:'The same gift and recusal rules every other federal judge follows.', lv:'Federal'},
+  {q:'Statehood for the District of Columbia', w:'Two senators and a voting representative for 700,000 people.', lv:'Federal'},
+  {q:'End the filibuster for voting rights bills', w:'A carve-out so a majority can pass election law.', lv:'Federal'}]},
+
+ {t:'Labor', items:[
+  {q:'Recognise a union when a majority signs cards', w:'Card check, without a months-long election the employer can drag out.', lv:'Federal'},
+  {q:'Raise the federal minimum wage and index it', w:'A higher floor that rises with wages instead of being refought each decade.', lv:'Federal'},
+  {q:'Ban captive-audience meetings', w:'Employers cannot compel staff to sit through anti-union presentations.', lv:'State'},
+  {q:'Paid family and medical leave for everyone', w:'A national insurance programme, not a benefit only good jobs carry.', lv:'Federal'},
+  {q:'Portable benefits for gig and contract workers', w:'Health cover and retirement that follow the worker between apps.', lv:'State'}]},
+
+ {t:'Climate', items:[
+  {q:'No new oil and gas leases on federal land', w:'Existing leases run out; no new public acreage is opened.', lv:'Federal'},
+  {q:'All-electric new construction', w:'New buildings wired rather than piped, with an exemption for industry.', lv:'Local'},
+  {q:'Make polluters pay for climate damage', w:'A superfund levy on the largest historic emitters, paying for adaptation.', lv:'State'},
+  {q:'Electrify the school bus fleet', w:'Replace diesel buses, starting with the districts with the worst air.', lv:'State'},
+  {q:'Public money for community solar', w:'Shared arrays for people who cannot put panels on their own roof.', lv:'State'}]},
+
+ {t:'Education', items:[
+  {q:'Fund schools by need, not property values', w:'State formulas that send more money to the poorer districts, not less.', lv:'State'},
+  {q:'Universal pre-kindergarten', w:'Free pre-K for every three and four year old.', lv:'State'},
+  {q:'Cancel the interest on student loans', w:'Balances stop growing; payments go to the principal.', lv:'Federal'},
+  {q:'Keep the books on the shelves', w:'Removal decided by librarians and educators, not by petition.', lv:'State'},
+  {q:'Pay teachers a professional salary floor', w:'A state minimum well above the current starting pay.', lv:'State'}]},
+
+ {t:'Guns', items:[
+  {q:'Universal background checks', w:'The same check for private and gun-show sales as for dealer sales.', lv:'Federal'},
+  {q:'Red flag laws', w:'A court can remove firearms temporarily when someone is a danger.', lv:'State'},
+  {q:'Ban assault-style rifles', w:'A prohibition on new sales, with existing owners registered.', lv:'Federal'},
+  {q:'Require safe storage', w:'Locked storage where children are present, enforced after the fact.', lv:'State'}]},
+
+ {t:'Immigration', items:[
+  {q:'Citizenship for Dreamers', w:'A permanent path for people brought here as children.', lv:'Federal'},
+  {q:'Hire enough immigration judges to clear the backlog', w:'Cases decided in months rather than years.', lv:'Federal'},
+  {q:'End for-profit immigration detention', w:'Close private detention contracts; use supervised release.', lv:'Federal'},
+  {q:'Work permits for people already here and working', w:'Legal status for long-settled workers paying taxes.', lv:'Federal'}]},
+
+ {t:'Reproductive rights', items:[
+  {q:"Write Roe's protections into federal law", w:'A national floor no state can go beneath.', lv:'Federal'},
+  {q:'Protect access to abortion medication', w:'Mifepristone stays available by mail and at the pharmacy.', lv:'Federal'},
+  {q:'Cover IVF under insurance', w:'Fertility treatment treated as medicine, not a luxury.', lv:'State'},
+  {q:'Protect people who travel for care', w:'No prosecution for crossing a state line to see a doctor.', lv:'State'}]},
+
+ {t:'LGBTQ+ rights', items:[
+  {q:'Pass the Equality Act', w:'Civil rights law covers sexual orientation and gender identity explicitly.', lv:'Federal'},
+  {q:'Ban conversion therapy', w:'Licensed practitioners cannot practise it on minors.', lv:'State'},
+  {q:'Protect gender-affirming care', w:'Treatment decided between a patient, their family and their doctor.', lv:'State'}]},
+
+ {t:'Public safety', items:[
+  {q:'Send mental health responders to mental health calls', w:'Trained clinicians, not armed officers, for non-violent crises.', lv:'Local'},
+  {q:'Fund community violence intervention', w:'Pay the credible messengers who interrupt retaliation.', lv:'Local'},
+  {q:'A national standard on use of force', w:'De-escalation required, chokeholds barred, misconduct records public.', lv:'Federal'}]},
+
+ {t:'Transit', items:[
+  {q:'Fund frequent bus service', w:'Buses every ten minutes on the busiest routes, all day.', lv:'Local'},
+  {q:'Free transit for students and seniors', w:'No fare for people who mostly cannot drive anyway.', lv:'Local'},
+  {q:'Build protected bike lanes', w:'Physical separation, not paint, on arterial roads.', lv:'Local'}]}
+];
+const LIBCOUNT = LIB.reduce((n,g)=>n + g.items.length, 0);
+const libFind = q => { const k = String(q||'').trim().toLowerCase();
+  for(const g of LIB) for(const it of g.items) if(it.q.toLowerCase() === k) return {...it, topic:g.t};
+  return null; };
+let LIBTOPIC = LIB[0].t, LIBSEARCH = '';
+
+/* what I personally hold, kept apart from whichever profile is on screen */
+let MYSTANCE = new Map();
+function stanceKey(t){ return String(t||'').trim().toLowerCase() }
+async function loadMine(){
+  MYSTANCE = new Map();
+  if(!ONLINE){
+    (localDB().issues || []).forEach(i => MYSTANCE.set(stanceKey(i.title), {id:i.id, stance:i.stance}));
+    return;
+  }
+  if(!ME) return;
+  const r = await sb.from('issues').select('id,title,stance').eq('author', ME.id);
+  ((r && r.data) || []).forEach(i => MYSTANCE.set(stanceKey(i.title), {id:i.id, stance:i.stance}));
+}
+const myStance = t => (MYSTANCE.get(stanceKey(t)) || {}).stance || '';
+
+/* one tap sets, changes or clears where you stand */
+async function setStance(title, stance){
+  title = String(title||'').trim();
+  if(!title) return;
+  if(!await needAuth()) return;
+  const key = stanceKey(title);
+  const cur = MYSTANCE.get(key);
+  const clearing = cur && cur.stance === stance;
+
+  if(clearing) MYSTANCE.delete(key);
+  else MYSTANCE.set(key, {id: cur ? cur.id : 'pending', stance});
+  if(current === 'issues') open_('issues', true);          /* answer the tap at once */
+
+  if(!ONLINE){
+    const db = localDB();
+    db.issues = (db.issues || []).filter(i => stanceKey(i.title) !== key);
+    if(!clearing) db.issues.unshift({id:uid(), title, stance, created_at:new Date().toISOString()});
+    localSave(db);
+    await load(); render();
+    return;
+  }
+  try{
+    if(cur && cur.id !== 'pending') await sb.from('issues').delete().eq('id', cur.id);
+    if(!clearing){
+      const ins = await sb.from('issues').insert({author:ME.id, title, stance}).select().single();
+      if(ins.error) throw ins.error;
+      MYSTANCE.set(key, {id:ins.data.id, stance});
+    }
+  }catch(e){ toast(friendly(e)); await loadMine() }
+  G.issues = null;
+  await load(); await loadGlobal('issues');
+  render();
+}
+
+/* people whose positions line up with yours */
+function allies(){
+  if(!MYSTANCE.size) return [];
+  const by = new Map();
+  (G.issues || []).forEach(i=>{
+    if(!i.profiles || !i.author || (ME && i.author === ME.id)) return;
+    const mine = MYSTANCE.get(stanceKey(i.title));
+    if(!mine) return;
+    const e = by.get(i.author) || {agree:0, total:0, p:i.profiles};
+    e.total++; if(mine.stance === i.stance) e.agree++;
+    by.set(i.author, e);
+  });
+  return [...by.values()].filter(x => x.total >= 2)
+    .sort((a,b)=> (b.agree/b.total) - (a.agree/a.total) || b.total - a.total).slice(0, 5);
+}
+
+function stanceRow(it, topic){
+  const a = ONLINE ? agree(it.q) : {s:0, o:0};
+  const tot = a.s + a.o;
+  const mine = myStance(it.q);
+  return `<div class="stance" data-q="${esc(it.q)}">
+    <div class="grow">
+      <b>${esc(it.q)}</b>
+      <small>${esc(it.w)}</small>
+      <div class="srow">
+        <span class="lvl">${esc(it.lv)}</span>
+        ${topic ? `<span class="lvl topic">${esc(topic)}</span>` : ''}
+        ${tot ? `<span class="scount">${a.s} support &middot; ${a.o} oppose</span>`
+              : `<span class="scount">Nobody here yet</span>`}
+      </div>
+      ${tot ? splitbar(a.s, a.o) : ''}
     </div>
+    <div class="sbtns">
+      <button class="sbtn yes${mine==='Support'?' on':''}" data-side="Support"
+        aria-pressed="${mine==='Support'}">Support</button>
+      <button class="sbtn no${mine==='Oppose'?' on':''}" data-side="Oppose"
+        aria-pressed="${mine==='Oppose'}">Oppose</button>
+      <button class="sbtn why" data-why="${esc(it.q)}" title="The strongest case against">?</button>
+    </div>
+    <div class="ai" id="why-${esc(it.q).replace(/[^a-z0-9]+/gi,'').slice(0,24)}" hidden></div>
+  </div>`;
+}
+
+S.issues = {
+  sub(){ return RO ? `Where @${V.handle} stands`
+    : `${MYSTANCE.size} of ${LIBCOUNT} taken &middot; and anything else you add` },
+  acts(){
+    if(RO || !ONLINE && false) return '';
+    const tb = RO ? [] : [['browse','Browse'],['mine','Yours'],['all','Everyone']];
+    return `${tb.length ? `<div class="seg tabs" data-tabs="issues">${tb.map(([v,l])=>
+      `<button class="${(SC.issues||'browse')===v?'on':''}" data-v="${v}">${l}</button>`).join('')}</div>` : ''}
+      ${(RO||GUEST())?'':`<button class="btn ghost" id="iOwn">Add your own</button>`}`;
+  },
+  view(){
+    const mode = RO ? 'mine' : (SC.issues || 'browse');
+    const tally = issueTally('all');
+    const contested = tally.filter(t=>t.s+t.o > 2)
+      .sort((a,b)=>Math.abs(a.s-a.o)/(a.s+a.o) - Math.abs(b.s-b.o)/(b.s+b.o)).slice(0,5);
+    const friends = allies();
+
+    /* ---------------- browse the library ---------------- */
+    let main = '';
+    if(mode === 'browse'){
+      const q = LIBSEARCH.trim().toLowerCase();
+      const hits = q
+        ? LIB.flatMap(g => g.items.filter(it =>
+            (it.q + ' ' + it.w).toLowerCase().includes(q)).map(it => ({...it, topic:g.t})))
+        : (LIB.find(g => g.t === LIBTOPIC) || LIB[0]).items.map(it => ({...it, topic:LIBTOPIC}));
+      main = `
+        ${GUEST() ? joinBar('Sign in to take a side.') : ''}
+        <div class="topicbar">${LIB.map(g=>{
+          const taken = g.items.filter(it => myStance(it.q)).length;
+          return `<button class="tchip${!q && LIBTOPIC===g.t?' on':''}" data-lib="${esc(g.t)}">
+            ${esc(g.t)}${taken?`<i>${taken}</i>`:''}</button>`}).join('')}</div>
+        <input class="inp" id="libFind" placeholder="Search every position" value="${esc(LIBSEARCH)}">
+        ${hits.length ? `<div class="stances">${hits.map(it => stanceRow(it, q ? it.topic : '')).join('')}</div>`
+          : `<div class="empty"><b>Nothing matches</b>Try another word, or write your own position.</div>`}`;
+    }
+
+    /* ---------------- your own positions ---------------- */
+    if(mode === 'mine'){
+      const list = D.issues || [];
+      main = `${GUEST() ? joinBar('Sign in to take a position.') : ''}
+        ${list.length ? `<div class="stances">${list.map(i=>{
+          const known = libFind(i.title);
+          const a = ONLINE ? agree(i.title) : {s:0,o:0};
+          const tot = a.s + a.o;
+          return `<div class="stance" data-id="${i.id}" data-q="${esc(i.title)}">
+            <div class="grow">
+              <b>${esc(i.title)}</b>
+              ${known ? `<small>${esc(known.w)}</small>` : ''}
+              <div class="srow">
+                ${known ? `<span class="lvl">${esc(known.lv)}</span>` : `<span class="lvl own">Your words</span>`}
+                ${tot ? `<span class="scount">${a.s} support &middot; ${a.o} oppose</span>` : ''}
+              </div>
+              ${tot ? splitbar(a.s, a.o) : ''}
+              <div class="rowacts">
+                ${act('share','Share')}
+                <button class="iconbtn" data-act="against">The case against</button>
+                ${RO?'':act('del')}
+              </div>
+              <div class="ai" id="ai-${i.id}" hidden></div>
+            </div>
+            <div class="sbtns">
+              ${RO ? `<span class="sbtn ${i.stance==='Support'?'yes on':'no on'}">${i.stance}</span>`
+                   : `<button class="sbtn yes${i.stance==='Support'?' on':''}" data-side="Support">Support</button>
+                      <button class="sbtn no${i.stance==='Oppose'?' on':''}" data-side="Oppose">Oppose</button>`}
+            </div>
+          </div>`}).join('')}</div>`
+        : `<div class="empty"><b>${RO?'No positions yet':'You have not taken a side yet'}</b>${
+            RO ? 'Nothing on the record here.' : 'Browse the library, or write your own.'}</div>`}`;
+    }
+
+    /* ---------------- what everyone holds ---------------- */
+    if(mode === 'all'){
+      const rows = tally.slice(0, 40);
+      main = `${rows.length ? `<div class="stances">${rows.map(t=>{
+        const known = libFind(t.title);
+        const mine = myStance(t.title);
+        return `<div class="stance" data-q="${esc(t.title)}">
+          <div class="grow">
+            <b>${esc(t.title)}</b>
+            ${known ? `<small>${esc(known.w)}</small>` : ''}
+            <div class="srow">
+              ${known ? `<span class="lvl">${esc(known.lv)}</span>` : `<span class="lvl own">Someone's words</span>`}
+              <span class="scount">${t.s} support &middot; ${t.o} oppose</span>
+            </div>
+            ${splitbar(t.s, t.o)}
+          </div>
+          ${(RO||GUEST())?'':`<div class="sbtns">
+            <button class="sbtn yes${mine==='Support'?' on':''}" data-side="Support">Support</button>
+            <button class="sbtn no${mine==='Oppose'?' on':''}" data-side="Oppose">Oppose</button>
+          </div>`}
+        </div>`}).join('')}</div>`
+      : `<div class="empty"><b>Nothing on the board yet</b>Take the first position and it shows up here.</div>`}`;
+    }
+
+    return `<div class="split"><div class="main">${main}</div>
     <aside class="side">
-      ${common.length?`<div class="card"><h5>Most held</h5>
-        ${common.map(t=>`<div class="row"><span style="flex:1">${esc(t.title)}</span>
-          ${(!RO && !GUEST() && ONLINE && !held.has(t.title.toLowerCase()))
-            ? `<button class="mini-btn" data-adopt="${esc(t.title)}">Take a side</button>`
-            : `<b>${t.s+t.o}</b>`}</div>`).join('')}
+      ${(RO||GUEST())?'':`<div class="card"><h5>Where you stand</h5>
+        <div class="row"><span>Positions taken</span><b>${MYSTANCE.size}</b></div>
+        <div class="row"><span>From the library</span><b>${
+          [...MYSTANCE.keys()].filter(k => libFind(k)).length} of ${LIBCOUNT}</b></div>
+        <div class="bar"><i style="width:${Math.min(100, Math.round(
+          [...MYSTANCE.keys()].filter(k=>libFind(k)).length / LIBCOUNT * 100))}%"></i></div>
+        <button class="mini-btn" id="iStand" style="align-self:flex-start">Not sure? Work it out</button>
+      </div>`}
+      ${friends.length?`<div class="card"><h5>You agree with</h5>
+        ${friends.map(f=>personRow(f.p,
+          `<span class="tag ${f.agree/f.total>=0.7?'b':''}">${Math.round(f.agree/f.total*100)}%</span>`)).join('')}
+        <p class="hint" style="text-align:left;color:var(--dim)">Measured only on positions you have both taken.</p>
       </div>`:''}
-      ${contested.length?`<div class="card"><h5>Most divided</h5>
-        ${contested.map(t=>`<div><div class="row"><span>${esc(t.title)}</span></div>${splitbar(t.s,t.o)}</div>`).join('')}
+      ${contested.length?`<div class="card"><h5>Most divided here</h5>
+        ${contested.map(t=>`<div><div class="row"><span>${esc(t.title)}</span><b>${t.s+t.o}</b></div>
+          ${splitbar(t.s,t.o)}</div>`).join('')}
+      </div>`:''}
+      ${tally.length?`<div class="card"><h5>Most held</h5>
+        ${tally.slice(0,5).map(t=>`<div class="row"><span style="flex:1">${esc(t.title)}</span>
+          <b>${t.s+t.o}</b></div>`).join('')}
       </div>`:''}
     </aside></div>`;
   },
   init(){
-    wireTabs(); ensure('issues','issues');
-    const {list} = scoped('issues', D.issues, G.issues);
-    let stance='Support';
-    if(!RO && !GUEST()){
-      const seg=$('iSeg'), t=$('iText');
-      seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
-        stance=b.dataset.v; [...seg.children].forEach(x=>x.classList.toggle('on',x===b)) };
-      const add=async (title,st)=>{
-        title=(title||t.value).trim(); if(!title) return;
-        if(!await needAuth()) return;
-        mutate({ local:db=>db.issues.unshift({id:uid(),title,stance:st||stance}),
-          remote:async()=>(await sb.from('issues').insert({author:ME.id,title,stance:st||stance})).error, clears:['issues'] });
-      };
-      $('iAdd').onclick=()=>add(); t.onkeydown=e=>{ if(e.key==='Enter') add() };
-      if($('iStand')) $('iStand').onclick = standSheet;
-      document.querySelectorAll('[data-adopt]').forEach(b=>b.onclick=()=>{
-        $('iText').value=b.dataset.adopt; $('iText').focus(); toast('Pick Support or Oppose, then Add');
-      });
+    wireTabs(); ensure('issues','issues'); ensure('people','issues');
+
+    document.querySelectorAll('[data-lib]').forEach(b=>b.onclick = ()=>{
+      LIBTOPIC = b.dataset.lib; LIBSEARCH = ''; open_('issues', true);
+    });
+    const find = $('libFind');
+    if(find){
+      let t = null;
+      find.oninput = ()=>{ clearTimeout(t); t = setTimeout(()=>{
+        LIBSEARCH = find.value; open_('issues', true);
+        const f2 = $('libFind'); if(f2){ f2.focus();
+          f2.setSelectionRange(f2.value.length, f2.value.length) }
+      }, 260) };
     }
-    rows(list,(i,a,btn)=>{
+
+    /* support / oppose, anywhere they appear */
+    document.querySelectorAll('.stance').forEach(el=>{
+      const q = el.dataset.q;
+      el.querySelectorAll('[data-side]').forEach(b=>b.onclick = ()=> setStance(q, b.dataset.side));
+      const why = el.querySelector('[data-why]');
+      if(why) why.onclick = ()=>{
+        const id = 'why-' + q.replace(/[^a-z0-9]+/gi,'').slice(0,24);
+        const known = libFind(q);
+        suggest(id, why, 'against', `${myStance(q) || 'Support'} — ${q}${known?`. ${known.w}`:''}`,
+          { note:'The other side, at its strongest. Judge it yourself.' });
+      };
+    });
+
+    const own = $('iOwn');
+    if(own) own.onclick = ownSheet;
+    const st = $('iStand');
+    if(st) st.onclick = standSheet;
+
+    rows(D.issues || [], (i,a,btn)=>{
       if(a==='share') return share(`${i.stance}: ${i.title}`, i.profiles && i.profiles.handle);
       if(a==='against') return suggest('ai-'+i.id, btn, 'against', `${i.stance} — ${i.title}`,
         { note:'Written by AI. Judge it for yourself.' });
-      if(a==='del') return mutate({ local:db=>db.issues=db.issues.filter(x=>x.id!==i.id),
-        remote:async()=>(await sb.from('issues').delete().eq('id',i.id)).error, clears:['issues'] });
+      if(a==='del') return setStance(i.title, i.stance);       /* same title, same side: clears it */
     });
   }
 };
+
+/* write your own, with help turning a feeling into a position */
+function ownSheet(){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>Your own position</h3>
+    <p class="sheetmsg">Say what should happen, not how you feel about it. "Fund frequent buses"
+      travels further than "transit matters".</p>
+    <input class="inp" id="owText" placeholder="What should happen" maxlength="120">
+    <div class="frow">
+      <div class="seg" id="owSeg"><button class="on" data-v="Support">I support this</button>
+        <button data-v="Oppose">I oppose this</button></div>
+      <button class="linkbtn" id="owSharp" style="margin-left:auto">Sharpen it</button>
+    </div>
+    <div class="ai" id="owAi" hidden></div>
+    <div class="sheetfoot">
+      <button class="btn" id="owAdd">Add it</button>
+      <button class="btn ghost" id="owClose">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('owClose').onclick = close;
+  const t = $('owText'), seg = $('owSeg');
+  let stance = 'Support';
+  seg.onclick = e=>{ const b = e.target.closest('button'); if(!b) return;
+    stance = b.dataset.v; [...seg.children].forEach(x=>x.classList.toggle('on', x===b)) };
+  $('owSharp').onclick = ()=>{
+    const v = t.value.trim();
+    if(v.length < 6) return toast('Write a line first');
+    suggest('owAi', $('owSharp'), 'tighten', v, { apply:o=>{ t.value = o.replace(/^["']|["']$/g,'') },
+      note:'Your meaning, fewer words.' });
+  };
+  t.focus();
+  $('owAdd').onclick = async ()=>{
+    const v = t.value.trim();
+    if(v.length < 4) return toast('Write a line first');
+    close();
+    if(!RO) SC.issues = 'mine';
+    await setStance(v, stance);
+  };
+  t.onkeydown = e=>{ if(e.key === 'Enter') $('owAdd').click() };
+}
 
 /* ----------------------------------------------------------------- endorsed */
 S.endorsed = {
@@ -3786,99 +4168,358 @@ S.ballot = {
 };
 
 /* -------------------------------------------------------------------- polls */
-S.polls = {
-  sub(){ return RO ? `Questions from @${V.handle}` : 'Ask, then listen' },
-  acts(){ return tabs('polls',[['all','Everyone'],['mine','Yours']]) },
-  view(){
-    const mine = RO || !ONLINE || SC.polls==='mine';
-    const {list, note, loading} = scoped('polls', D.polls, G.polls);
-    const answered = list.filter(p=>p.voted).length;
-    const busiest = [...list].sort((a,b)=>(b.total||0)-(a.total||0)).slice(0,3).filter(p=>p.total);
+/* -------------------------------------------------------------------- polls
+   Questions worth asking, ready to go, plus a proper way to write your own.
+   You see the numbers after you answer — not before, so the room does not
+   simply agree with whoever got there first. */
+const PLIB = [
+ {t:'Getting organised', items:[
+  {q:'What should we knock on doors about first?', w:'Tells you which message the people doing the work believe in.',
+   o:['Cost of living','Healthcare','Democracy and the courts','Schools']},
+  {q:'What stops you turning up to things?', w:'Usually it is not apathy. It is childcare and timing.',
+   o:['Time of day','Childcare','Transport','Nothing — I turn up']},
+  {q:'Which is the better use of a free Saturday?', w:'Settles the argument between contact and visibility.',
+   o:['Knocking doors','Phone banking','A rally','Registering voters']},
+  {q:'How should we spend our next $500?', w:'A small budget, decided by the people who raised it.',
+   o:['Printing','Food at events','Digital ads','Bus fare and childcare']},
+  {q:'What would make you bring a friend next time?', w:'The honest answer is usually about the room, not the cause.',
+   o:['Knowing someone there','A clear task','Food','Somewhere to leave the kids']}]},
 
-    return `<div class="split"><div class="main">
-      ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length? list.map(p=>{
-        const opts=p.poll_options||[];
-        return `<div class="item" data-poll="${p.id}" style="display:block">
-          ${!mine && p.profiles ? who(p.profiles) : ''}
-          <h3>${esc(p.question)}</h3>
-          <small>${p.total||0} vote${p.total===1?'':'s'}${p.voted?'':' · tap to vote'}</small>
-          <div style="margin-top:10px">${opts.map(o=>`
-            <div style="margin-bottom:9px">
-              <button class="opt${p.voted===o.id?' on':''}" data-opt="${o.id}">
-                <span>${esc(o.text)}</span>${p.voted?`<b>${p.total?Math.round(o.v/p.total*100):0}%</b>`:''}</button>
-              <div class="bar"><i style="width:${p.total&&p.voted?o.v/p.total*100:0}%"></i></div>
-            </div>`).join('')}</div>
-          <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
-        </div>`}).join('')
-        :`<div class="empty"><b>No questions yet</b>${mine?'One good question travels further than ten posts.':'Nobody has asked anything yet.'}</div>`}
+ {t:'Where we live', items:[
+  {q:'What would make the biggest difference on your street?', w:'Local priorities rarely match national ones.',
+   o:['Housing costs','Public safety','Roads and transit','Schools','Parks and green space']},
+  {q:'Should the council allow more housing near transit?', w:'The zoning fight, in one question.',
+   o:['Yes, much more','Yes, some','No','Not sure yet']},
+  {q:'How is your local bus service?', w:'Frequency is the whole argument.',
+   o:['Good','Patchy','Bad','There is none']},
+  {q:'What should a new local budget protect first?', w:'Forces the trade-off people usually avoid.',
+   o:['Schools','Housing','Transit','Public safety','Libraries and parks']},
+  {q:'Do you know who your city council member is?', w:'A quiet measure of how reachable local power is.',
+   o:['Yes, and I have contacted them','Yes, by name','No','We do not have one']}]},
+
+ {t:'Strategy', items:[
+  {q:'Where should the party spend its energy this year?', w:'The perennial argument, put to the people in it.',
+   o:['Turning out our own','Persuading the middle','Recruiting candidates','State legislatures']},
+  {q:'What loses us more voters?', w:'Diagnosis before treatment.',
+   o:['Sounding out of touch','Not delivering','Being outspent','Not showing up locally']},
+  {q:'Which race matters most where you live?', w:'Attention follows the answer.',
+   o:['Governor','Senate','House','State legislature','School board']},
+  {q:'Should candidates take corporate PAC money?', w:'A real split, worth measuring rather than assuming.',
+   o:['Never','Only if disclosed','It does not matter','Not sure']},
+  {q:'Primary a sitting Democrat who votes wrong?', w:'The accountability question.',
+   o:['Yes','Only on the big votes','No','Depends on the seat']}]},
+
+ {t:'Where you stand', items:[
+  {q:'Which comes first if you could only pick one?', w:'Priorities, not preferences.',
+   o:['Healthcare','Housing','Climate','Democracy','Wages']},
+  {q:'Is the economy working for people you know?', w:'Ask the room before believing the indicators.',
+   o:['Yes','For some','No','Getting worse']},
+  {q:'How much should the top 1% pay?', w:'Puts a number on a slogan.',
+   o:['A lot more','Somewhat more','About the same','Less']},
+  {q:'What should be free at the point of use?', w:'Where the line actually sits.',
+   o:['Healthcare','Childcare','College','Public transit','All of these']},
+  {q:'Where do you get your political news?', w:'Tells you where to actually reach people.',
+   o:['Local news','National TV','Newsletters','Social media','Word of mouth']}]},
+
+ {t:'Temperature check', items:[
+  {q:'How are you feeling about the next election?', w:'Worth taking regularly. Mood moves.',
+   o:['Hopeful','Determined','Worried','Exhausted']},
+  {q:'Has this year changed how involved you are?', w:'Measures the thing that actually matters.',
+   o:['More involved','About the same','Less','Just starting']},
+  {q:'Do you talk politics with people who disagree?', w:'Persuasion needs contact.',
+   o:['Often','Sometimes','Rarely','Never']},
+  {q:'What would you want from this network?', w:'Ask the people using it.',
+   o:['Meet people nearby','Know what is happening','Argue well','Get things done']}]},
+
+ {t:'The ballot', items:[
+  {q:'Do you know when your next election is?', w:'The first gap to close.',
+   o:['Yes, the date','Roughly','No','There is one soon?']},
+  {q:'How do you plan to vote?', w:'Plans beat intentions, and this makes one.',
+   o:['In person on the day','Early in person','By mail','Not decided']},
+  {q:'Have you checked your registration this year?', w:'Purges are quiet. This is the nudge.',
+   o:['Yes','No','I am not registered','Not sure how']},
+  {q:'What would make voting easier for you?', w:'Turns frustration into a policy ask.',
+   o:['More early days','Vote by mail','Shorter lines','A holiday','Nothing, it is easy']}]}
+];
+const PLIBCOUNT = PLIB.reduce((n,g)=>n + g.items.length, 0);
+let PTOPIC = PLIB[0].t, PEEK = new Set();
+/* answer a question and it stays on screen with its result, rather than
+   vanishing off the Answer tab the instant you touch it */
+let JUSTVOTED = new Set();
+
+/* who answers the way you do */
+function pollAllies(){
+  const mine = new Map();
+  (G.polls || []).forEach(p=>{ if(p.voted) mine.set(p.id, p.voted) });
+  if(!mine.size) return [];
+  const by = new Map();
+  (G.polls || []).forEach(p=>{
+    const my = mine.get(p.id); if(!my) return;
+    (p.votes || []).forEach(v=>{
+      if(!v.u || (ME && v.u === ME.id)) return;
+      const e = by.get(v.u) || {agree:0, total:0, id:v.u};
+      e.total++; if(v.o === my) e.agree++;
+      by.set(v.u, e);
+    });
+  });
+  const people = G.people || [];
+  return [...by.values()].filter(x => x.total >= 2)
+    .map(x => ({...x, p: people.find(pp => pp.id === x.id)}))
+    .filter(x => x.p)
+    .sort((a,b)=> (b.agree/b.total) - (a.agree/a.total) || b.total - a.total).slice(0, 5);
+}
+
+function pollCard(p, opts){
+  const os = (p.poll_options || []).slice().sort((a,b)=>(a.ord||0)-(b.ord||0));
+  const tot = p.total || 0;
+  const show = !!p.voted || PEEK.has(p.id) || (ME && p.author === ME.id) || RO || !ONLINE;
+  const lead = show && tot ? Math.max(...os.map(o=>o.v || 0)) : -1;
+  return `<article class="poll" data-poll="${p.id}">
+    ${(opts && opts.who && p.profiles) ? who(p.profiles) : ''}
+    <h3>${esc(p.question)}</h3>
+    <small>${tot} ${tot===1?'answer':'answers'}${p.voted ? ' &middot; you answered'
+      : show ? '' : ' &middot; pick one to see the result'}${
+      p.created_at ? ` &middot; <span data-ts="${p.created_at}" data-noloc>${ago(p.created_at)}</span>` : ''}</small>
+    <div class="pops">${os.map(o=>{
+      const pc = tot ? Math.round((o.v || 0) / tot * 100) : 0;
+      return `<button class="pop${p.voted===o.id?' mine':''}${show?' shown':''}${
+          show && (o.v||0) === lead && tot ? ' lead' : ''}" data-opt="${o.id}">
+        <span class="pfill" style="width:${show ? pc : 0}%"></span>
+        <span class="ptext">${esc(o.text)}</span>
+        ${show ? `<span class="ppc">${pc}%<i>${o.v || 0}</i></span>` : ''}
+      </button>`}).join('')}</div>
+    <div class="rowacts">
+      ${act('share','Share')}
+      ${(!show && !GUEST()) ? `<button class="iconbtn" data-peek="${p.id}">See the result</button>` : ''}
+      ${(p.voted && !RO) ? `<button class="iconbtn" data-clear="${p.id}">Change my answer</button>` : ''}
+      ${(ME && p.author === ME.id && !RO) ? act('del') : ''}
     </div>
+  </article>`;
+}
+
+S.polls = {
+  sub(){ return RO ? `Questions from @${V.handle}` : 'Ask the room, then listen to it' },
+  acts(){
+    const tb = RO ? [] : [['open','Answer'],['mine','Yours'],['all','Everyone']];
+    return `${tb.length ? `<div class="seg tabs" data-tabs="polls">${tb.map(([v,l])=>
+      `<button class="${(SC.polls||'open')===v?'on':''}" data-v="${v}">${l}</button>`).join('')}</div>` : ''}
+      ${(RO||GUEST())?'':`<button class="btn ghost" id="pAsk">Ask</button>`}`;
+  },
+  view(){
+    const mode = RO ? 'mine' : (SC.polls || 'open');
+    const all = (RO || !ONLINE) ? (D.polls || []) : (G.polls || []);
+    const loading = !RO && ONLINE && G.polls === null;
+    const unanswered = all.filter(p => !p.voted || JUSTVOTED.has(p.id));
+    const answeredN = all.filter(p => p.voted).length;
+    const busiest = [...all].filter(p=>p.total).sort((a,b)=>(b.total||0)-(a.total||0)).slice(0,4);
+    const close = [...all].filter(p => (p.total||0) >= 3).map(p=>{
+      const os = p.poll_options || [];
+      const top = [...os].sort((a,b)=>(b.v||0)-(a.v||0));
+      const gap = top.length > 1 ? ((top[0].v||0) - (top[1].v||0)) / (p.total||1) : 1;
+      return {p, gap};
+    }).sort((a,b)=>a.gap - b.gap).slice(0,3);
+    const friends = pollAllies();
+
+    let main = '';
+    if(mode === 'open'){
+      const list = unanswered;
+      main = `${GUEST() ? joinBar('Sign in to answer, or ask your own.') : ''}
+        ${loading ? skel(3)
+          : list.length ? `<div class="polls">${list.map(p=>pollCard(p, {who:true})).join('')}</div>`
+          : `<div class="empty"><b>${all.length ? 'You have answered everything' : 'No questions yet'}</b>${
+              all.length ? 'Ask one of these and see what the room says.'
+                         : 'One good question travels further than ten posts.'}</div>`}
+        ${(RO||GUEST())?'':`
+          <div class="sechead" style="margin-top:22px"><h4>Ready to ask</h4></div>
+          <div class="topicbar">${PLIB.map(g=>
+            `<button class="tchip${PTOPIC===g.t?' on':''}" data-plib="${esc(g.t)}">${esc(g.t)}</button>`).join('')}</div>
+          <div class="stances">${(PLIB.find(g=>g.t===PTOPIC) || PLIB[0]).items.map(it=>{
+            const asked = all.some(p => p.question.trim().toLowerCase() === it.q.toLowerCase());
+            return `<div class="stance">
+              <div class="grow">
+                <b>${esc(it.q)}</b>
+                <small>${esc(it.w)}</small>
+                <div class="srow">${it.o.map(o=>`<span class="lvl topic">${esc(o)}</span>`).join('')}</div>
+              </div>
+              <div class="sbtns">
+                <button class="sbtn yes" data-ask="${esc(it.q)}" ${asked?'disabled':''}>${
+                  asked ? 'Asked' : 'Ask this'}</button>
+              </div>
+            </div>`}).join('')}</div>`}`;
+    }
+
+    if(mode === 'mine'){
+      const list = D.polls || [];
+      main = list.length ? `<div class="polls">${list.map(p=>pollCard(p, {who:false})).join('')}</div>`
+        : `<div class="empty"><b>${RO?'No questions yet':'You have not asked anything'}</b>${
+            RO ? 'Nothing here.' : 'Pick one from the list, or write your own.'}</div>`;
+    }
+
+    if(mode === 'all'){
+      const list = [...all].sort((a,b)=>(b.total||0)-(a.total||0));
+      main = loading ? skel(3) : list.length
+        ? `<div class="polls">${list.map(p=>pollCard(p, {who:true})).join('')}</div>`
+        : `<div class="empty"><b>Nothing asked yet</b>Be the first.</div>`;
+    }
+
+    return `<div class="split"><div class="main">${main}</div>
     <aside class="side">
-      ${GUEST() ? joinBar('Sign in to ask a question or vote.') : ''}
-      ${(RO||GUEST())?'':`<div class="card">
-        <h5>Ask a question</h5>
-        <input class="inp" id="pQ" placeholder="Your question">
-        <div class="ai" id="pAi" hidden></div>
-        <input class="inp" id="pA" placeholder="Option 1">
-        <input class="inp" id="pB" placeholder="Option 2">
-        <input class="inp" id="pC" placeholder="Option 3 (optional)">
-        <input class="inp" id="pD" placeholder="Option 4 (optional)">
-        <div class="row">
-          <button class="linkbtn" id="pCheck" hidden>Check my wording</button>
-          <button class="btn" id="pAdd" style="margin-left:auto">Post</button>
-        </div>
+      ${(RO||GUEST())?'':`<div class="card"><h5>You</h5>
+        <div class="row"><span>Answered</span><b>${answeredN} of ${all.length}</b></div>
+        <div class="row"><span>Asked</span><b>${(D.polls||[]).length}</b></div>
+        ${all.length?`<div class="bar"><i style="width:${Math.round(answeredN/all.length*100)}%"></i></div>`:''}
+        <button class="mini-btn" id="pAsk2" style="align-self:flex-start">Ask a question</button>
       </div>`}
-      ${busiest.length?`<div class="card"><h5>Most answered</h5>
-        ${busiest.map(p=>`<div class="row"><span style="flex:1">${esc(p.question)}</span><b>${p.total}</b></div>`).join('')}
+      ${close.length?`<div class="card"><h5>Closest call</h5>
+        ${close.map(c=>`<div class="row"><span style="flex:1">${esc(c.p.question)}</span>
+          <b>${c.p.total}</b></div>`).join('')}
+        <p class="hint" style="text-align:left;color:var(--dim)">Nearly even. Worth arguing about.</p>
       </div>`:''}
-      ${!RO&&list.length?`<div class="card"><h5>You</h5>
-        <div class="row"><span>Answered</span><b>${answered} of ${list.length}</b></div>
-        <div class="row"><span>Asked</span><b>${D.polls.length}</b></div>
+      ${busiest.length?`<div class="card"><h5>Most answered</h5>
+        ${busiest.map(p=>`<div class="row"><span style="flex:1">${esc(p.question)}</span>
+          <b>${p.total}</b></div>`).join('')}
+      </div>`:''}
+      ${friends.length?`<div class="card"><h5>Answers like yours</h5>
+        ${friends.map(f=>personRow(f.p,
+          `<span class="tag ${f.agree/f.total>=0.7?'b':''}">${Math.round(f.agree/f.total*100)}%</span>`)).join('')}
       </div>`:''}
     </aside></div>`;
   },
   init(){
     wireTabs();
     if(SC.polls !== 'mine') ensure('polls','polls');
-    const {list} = scoped('polls', D.polls, G.polls);
-    if(!RO && !GUEST()){
-      const Q=$('pQ'), chk=$('pCheck');
-      Q.oninput=()=>{ chk.hidden = Q.value.trim().length<12 };
-      chk.onclick=()=>suggest('pAi',chk,'neutral',Q.value,{apply:o=>{Q.value=o}});
-      $('pAdd').onclick=async ()=>{
-        const q=Q.value.trim();
-        const opts=[$('pA'),$('pB'),$('pC'),$('pD')].map(el=>el.value.trim()).filter(Boolean);
-        if(!q||opts.length<2) return toast('Add a question and at least two options');
-        if(!await needAuth()) return;
-        mutate({
-          local:db=>db.polls.unshift({id:uid(),question:q,total:0,voted:null,
-            poll_options:opts.map((t,i)=>({id:uid(),text:t,v:0,ord:i}))}),
-          remote:async()=>{
-            const ins=await sb.from('polls').insert({author:ME.id,question:q}).select().single();
-            if(ins.error) return ins.error;
-            return (await sb.from('poll_options').insert(opts.map((t,i)=>({poll_id:ins.data.id,text:t,ord:i})))).error;
-          }, clears:['polls'] });
-      };
-    }
+    ensure('people','polls');
+    const all = (RO || !ONLINE) ? (D.polls || []) : (G.polls || []);
+
+    document.querySelectorAll('[data-plib]').forEach(b=>b.onclick = ()=>{
+      PTOPIC = b.dataset.plib; open_('polls', true);
+    });
+    document.querySelectorAll('[data-ask]').forEach(b=>b.onclick = async ()=>{
+      const it = PLIB.flatMap(g=>g.items).find(x => x.q === b.dataset.ask);
+      if(!it) return;
+      b.disabled = true; b.textContent = 'Asking…';
+      await askPoll(it.q, it.o);
+    });
+    const ask = ()=> askSheet();
+    if($('pAsk'))  $('pAsk').onclick  = ask;
+    if($('pAsk2')) $('pAsk2').onclick = ask;
+
+    document.querySelectorAll('[data-peek]').forEach(b=>b.onclick = ()=>{
+      PEEK.add(b.dataset.peek); open_('polls', true);
+    });
+    document.querySelectorAll('[data-clear]').forEach(b=>b.onclick = async ()=>{
+      if(!await needAuth()) return;
+      const id = b.dataset.clear;
+      const r = await sb.from('poll_votes').delete().eq('poll_id', id).eq('user_id', ME.id);
+      if(r.error) return toast(/policy|denied|row-level/i.test(r.error.message)
+        ? 'Run the latest update.sql to allow changing an answer' : friendly(r.error));
+      PEEK.delete(id);
+      G.polls = null; await load(); await loadGlobal('polls'); render();
+    });
+
     document.querySelectorAll('[data-poll]').forEach(el=>{
-      const p=list.find(x=>x.id===el.dataset.poll); if(!p) return;
-      el.addEventListener('click', async e=>{
-        const o=e.target.closest('[data-opt]'), b=e.target.closest('[data-act]');
-        if(b && b.dataset.act==='share') return share(p.question, p.profiles && p.profiles.handle);
-        if(b && b.dataset.act==='del') return mutate({ local:db=>db.polls=db.polls.filter(x=>x.id!==p.id),
-          remote:async()=>(await sb.from('polls').delete().eq('id',p.id)).error, clears:['polls'] });
-        if(o && !p.voted){
-          if(!await needAuth()) return;
-          const oid=o.dataset.opt;
-          mutate({ local:db=>{ const q=db.polls.find(x=>x.id===p.id);
-              q.poll_options.find(x=>x.id===oid).v++; q.total=(q.total||0)+1; q.voted=oid },
-            remote:async()=>(await sb.from('poll_votes').insert({poll_id:p.id,option_id:oid,user_id:ME.id})).error,
-            clears:['polls'] });
+      const p = all.find(x => String(x.id) === el.dataset.poll); if(!p) return;
+      el.querySelectorAll('[data-opt]').forEach(b=>b.onclick = async ()=>{
+        if(p.voted) return;                        /* change it with the button, not by mis-tap */
+        if(!await needAuth()) return;
+        const oid = b.dataset.opt;
+        /* answer at once, then tell the database */
+        p.voted = oid; p.total = (p.total || 0) + 1; JUSTVOTED.add(p.id);
+        const opt = (p.poll_options || []).find(o => o.id === oid);
+        if(opt) opt.v = (opt.v || 0) + 1;
+        open_('polls', true);
+        if(!ONLINE){
+          const db = localDB(); const q = (db.polls||[]).find(x=>x.id===p.id);
+          if(q){ q.voted = oid; q.total = (q.total||0)+1;
+                 const o2 = (q.poll_options||[]).find(o=>o.id===oid); if(o2) o2.v = (o2.v||0)+1;
+                 localSave(db) }
+          return;
         }
+        const r = await sb.from('poll_votes').insert({poll_id:p.id, option_id:oid, user_id:ME.id});
+        if(r.error) toast(friendly(r.error));
+        G.polls = null; await load(); await loadGlobal('polls'); render();
       });
+    });
+
+    rows(all, (p,a)=>{
+      if(a==='share') return share(p.question, p.profiles && p.profiles.handle);
+      if(a==='del') return mutate({ local:db=>db.polls = (db.polls||[]).filter(x=>x.id!==p.id),
+        remote:async()=>(await sb.from('polls').delete().eq('id',p.id)).error, clears:['polls'] });
     });
   }
 };
+
+async function askPoll(question, options){
+  question = String(question||'').trim();
+  const opts = (options||[]).map(o=>String(o).trim()).filter(Boolean).slice(0,5);
+  if(question.length < 5 || opts.length < 2) return toast('A question and at least two answers');
+  if(!await needAuth()) return;
+  await mutate({
+    local: db => db.polls.unshift({id:uid(), question, total:0, voted:null,
+      created_at:new Date().toISOString(),
+      poll_options: opts.map((t,i)=>({id:uid(), text:t, v:0, ord:i}))}),
+    remote: async ()=>{
+      const ins = await sb.from('polls').insert({author:ME.id, question}).select().single();
+      if(ins.error) return ins.error;
+      return (await sb.from('poll_options')
+        .insert(opts.map((t,i)=>({poll_id:ins.data.id, text:t, ord:i})))).error;
+    }, clears:['polls'] });
+  toast('Asked');
+}
+
+/* write your own question, with a check on the wording */
+function askSheet(){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>Ask a question</h3>
+    <p class="sheetmsg">Short, and answerable. A question people can only answer one way is not
+      a question.</p>
+    <input class="inp" id="akQ" placeholder="Your question" maxlength="140">
+    <div class="ai" id="akAi" hidden></div>
+    <div id="akOpts">
+      <input class="inp akO" placeholder="Answer 1" maxlength="60">
+      <input class="inp akO" placeholder="Answer 2" maxlength="60">
+    </div>
+    <div class="frow">
+      <button class="linkbtn" id="akMore">Add an answer</button>
+      <button class="linkbtn" id="akCheck" style="margin-left:auto">Check my wording</button>
+    </div>
+    <div class="sheetfoot">
+      <button class="btn" id="akAdd">Ask it</button>
+      <button class="btn ghost" id="akClose">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('akClose').onclick = close;
+  const Q = $('akQ'), box = $('akOpts');
+  Q.focus();
+  $('akMore').onclick = ()=>{
+    const n = box.querySelectorAll('.akO').length;
+    if(n >= 5){ toast('Five is plenty'); return }
+    const i = document.createElement('input');
+    i.className = 'inp akO'; i.placeholder = 'Answer ' + (n + 1); i.maxLength = 60;
+    box.appendChild(i); i.focus();
+  };
+  $('akCheck').onclick = ()=>{
+    const v = Q.value.trim();
+    if(v.length < 8) return toast('Write the question first');
+    suggest('akAi', $('akCheck'), 'neutral', v,
+      { apply:o=>{ Q.value = o.replace(/^["']|["']$/g,'') },
+        note:'Checked for a question that leads the answer.' });
+  };
+  $('akAdd').onclick = async ()=>{
+    const opts = [...box.querySelectorAll('.akO')].map(el=>el.value);
+    const q = Q.value.trim();
+    if(q.length < 5 || opts.filter(o=>o.trim()).length < 2)
+      return toast('A question and at least two answers');
+    close();
+    if(!RO) SC.polls = 'mine';
+    await askPoll(q, opts);
+  };
+}
 
 /* ---------------------------------------------------------------- fundraise */
 S.fundraise = {
@@ -4162,6 +4803,7 @@ const phone = ()=> innerWidth <= 900;
 function open_(id, quiet){
   const a = APPS.find(x=>x.id===id), s = S[id]; if(!a||!s) return;
   const first = current!==id;
+  if(first && current === 'polls' && typeof JUSTVOTED !== 'undefined') JUSTVOTED.clear();
   /* a repaint should never throw you back to the top, and coming back to a
      screen should put you where you left it */
   const oldBody = panel.querySelector('.pbody');

@@ -165,3 +165,7 @@ begin
   exception when duplicate_object then null;
   end;
 end $$;
+
+-- 11. let someone change their mind on a poll
+drop policy if exists self_delete on poll_votes;
+create policy self_delete on poll_votes for delete using (auth.uid() = user_id);
