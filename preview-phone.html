@@ -68,7 +68,8 @@ button,input,textarea{font:inherit;color:inherit}
 
 /* the masthead: one bar across the top, the way a news front page opens */
 .mast{position:fixed;top:0;left:0;right:0;height:var(--mast);z-index:8;display:flex;align-items:center;
-  gap:clamp(12px,1.8vw,26px);padding:0 var(--pad);background:var(--bg);border-bottom:1px solid var(--line)}
+  gap:clamp(10px,1.4vw,20px);padding:0 var(--pad);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px;flex:none;min-width:0}
 .mark{display:flex;align-items:center;gap:clamp(9px,1vw,14px);text-decoration:none;color:inherit;flex:none}
 .dot{width:clamp(13px,1.35vw,19px);aspect-ratio:1;border-radius:50%;background:var(--blue);position:relative;flex:none}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
@@ -612,7 +613,10 @@ button.tag{cursor:pointer}
   .mast{flex-wrap:wrap;height:auto;min-height:52px;padding:0 14px;align-content:flex-start;row-gap:0}
   .mast .mark{height:52px;display:flex;align-items:center}
   .topbar{height:52px}
-  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
+  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px;
+    justify-content:flex-start}
+  .ticks{flex:1;width:auto}
+  .brand{gap:7px}
   .tick{font-size:12.5px}
   .tick b{font-size:9.5px}
 
@@ -637,8 +641,8 @@ button.tag{cursor:pointer}
   /* the five that do not fit live behind More */
   .app[data-id="issues"],.app[data-id="ballot"],.app[data-id="polls"],
   .app[data-id="fundraise"],.app[data-id="reach"],.app[data-id="endorsed"]{display:none}
-  .app[data-id="today"]{order:1}.app[data-id="feed"]{order:2}
-  .app[data-id="townhall"]{order:3}.app[data-id="compose"]{order:4}
+  .app[data-id="today"]{order:1}.app[data-id="townhall"]{order:2}
+  .app[data-id="feed"]{order:3}.app[data-id="compose"]{order:4}
   .app[data-id="profile"]{order:5}
   .app.more{display:flex;order:6}
 
@@ -769,12 +773,14 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 /* ------------------------------------------------------------------ top bar */
 .topbar{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}
-.ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
+.ticker{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;
+  gap:clamp(10px,1.2vw,16px);height:100%}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
   color:var(--live);flex:none;text-transform:uppercase}
-.livechip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:10px;font-weight:800;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--live);margin-left:-2px;
-  padding:3px 8px 3px 7px;border-radius:99px;background:rgba(229,53,43,.09)}
+.livechip{display:inline-flex;align-items:center;gap:5px;flex:none;font-size:9.5px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--live);
+  padding:2px 7px 2px 6px;border-radius:99px;background:rgba(229,53,43,.09);align-self:center;
+  position:relative;top:1px}
 .livechip i{width:6px;height:6px;border-radius:50%;background:var(--live);flex:none;
   animation:livepulse 1.9s ease-in-out infinite}
 .livechip.off{color:var(--dim);background:var(--soft)}
@@ -784,7 +790,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 @keyframes livepulse{
   0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(229,53,43,.45)}
   50%{opacity:.5;box-shadow:0 0 0 6px rgba(229,53,43,0)}}
-.ticks{position:relative;flex:1;min-width:0;height:100%;overflow:hidden}
+.ticks{position:relative;flex:0 1 min(54vw,640px);width:min(54vw,640px);min-width:0;height:100%;
+  overflow:hidden}
 .tick{position:absolute;inset:0;display:flex;align-items:center;gap:9px;min-width:0;border:0;background:none;
   font-family:inherit;font-size:13px;color:var(--ink);text-align:left;cursor:pointer;padding:0;
   opacity:0;transform:translateY(7px);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
@@ -1055,6 +1062,18 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .offline{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabs) + 16px);z-index:75;
   background:rgba(12,18,34,.94);color:#fff;font-size:12.5px;font-weight:560;padding:9px 16px;
   border-radius:99px;max-width:88vw;text-align:center;animation:drop .3s cubic-bezier(.2,.9,.25,1) both}
+.tbtn[data-code]:not([data-code=""])::after{content:attr(data-code);position:absolute;bottom:-1px;right:-2px;
+  font-size:8.5px;font-weight:800;letter-spacing:.02em;background:var(--blue);color:#fff;
+  border-radius:5px;padding:0 3px;line-height:1.5;box-shadow:0 0 0 2px var(--bg)}
+.tbtn.working svg{animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.langgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:52vh;overflow-y:auto}
+.langbtn{display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;
+  background:var(--soft);border-radius:12px;padding:11px 13px;font-family:inherit;font-size:14px;
+  font-weight:560;color:inherit;cursor:pointer;text-align:left}
+.langbtn:hover{color:var(--blue)}
+.langbtn.on{background:var(--blue);color:#fff}
+.langbtn span{font-weight:800}
 .moregrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .moretile{display:flex;align-items:center;gap:10px;border:0;background:var(--soft);border-radius:14px;
   padding:11px 12px;font-family:inherit;font-size:14px;font-weight:600;color:inherit;cursor:pointer;
@@ -1069,8 +1088,10 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
-<a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="brand" data-noloc="">
+  <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+  <span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+</div>
 <div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
@@ -1078,6 +1099,9 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <span>Search</span><span class="kbd">⌘K</span></button>
   <button class="tbtn" id="tBell" aria-label="Notifications" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path><path d="M10.3 20a2 2 0 0 0 3.4 0"></path></svg></button>
+  <button class="tbtn" id="tLang" aria-label="Language" title="Language">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"></circle><path d="M3.2 9.5h17.6M3.2 14.5h17.6M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18"></path></svg>
+  </button>
   <button class="tbtn" id="tTheme" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.4 8.4 0 1 0 20 14.2Z"></path></svg></button>
 </div>
 </header>
@@ -1143,56 +1167,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Today</span>
-      </button><button class="app" data-id="compose" style="animation-delay:0.12s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"></path>
-       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="#0A3FD6" stroke-width="5"></path>
-       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="#0A3FD6"></path>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg></span>
-      <span class="label">Chat</span>
-      </button><button class="app" data-id="feed" style="animation-delay:0.15s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <circle cx="27" cy="34" r="7" fill="#fff"></circle>
-       <rect x="44" y="28" width="52" height="12" rx="6" fill="#fff"></rect>
-       <circle cx="27" cy="60" r="7" fill="#fff"></circle>
-       <rect x="44" y="54" width="52" height="12" rx="6" fill="#fff"></rect>
-       <circle cx="27" cy="86" r="7" fill="#fff"></circle>
-       <rect x="44" y="80" width="34" height="12" rx="6" fill="#fff"></rect>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg></span>
-      <span class="label">Feed</span>
-      </button><button class="app" data-id="issues" style="animation-delay:0.18s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <circle cx="60" cy="26" r="7" fill="#fff"></circle>
-       <rect x="56.5" y="30" width="7" height="62" rx="3.5" fill="#fff"></rect>
-       <rect x="18" y="40" width="84" height="7" rx="3.5" fill="#fff"></rect>
-       <path d="M28 47v9M92 47v9" stroke="#fff" stroke-width="3" stroke-linecap="round"></path>
-       <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
-       <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
-       <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"></rect>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg></span>
-      <span class="label">Issues</span>
-      </button><button class="app" data-id="townhall" style="animation-delay:0.21s">
+      </button><button class="app" data-id="townhall" style="animation-delay:0.12s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1211,7 +1186,56 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Town Hall</span>
-      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.24s">
+      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="compose" style="animation-delay:0.15s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"></path>
+       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="#0A3FD6" stroke-width="5"></path>
+       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="#0A3FD6"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Chat</span>
+      </button><button class="app" data-id="feed" style="animation-delay:0.18s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="27" cy="34" r="7" fill="#fff"></circle>
+       <rect x="44" y="28" width="52" height="12" rx="6" fill="#fff"></rect>
+       <circle cx="27" cy="60" r="7" fill="#fff"></circle>
+       <rect x="44" y="54" width="52" height="12" rx="6" fill="#fff"></rect>
+       <circle cx="27" cy="86" r="7" fill="#fff"></circle>
+       <rect x="44" y="80" width="34" height="12" rx="6" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Feed</span>
+      </button><button class="app" data-id="issues" style="animation-delay:0.21s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="60" cy="26" r="7" fill="#fff"></circle>
+       <rect x="56.5" y="30" width="7" height="62" rx="3.5" fill="#fff"></rect>
+       <rect x="18" y="40" width="84" height="7" rx="3.5" fill="#fff"></rect>
+       <path d="M28 47v9M92 47v9" stroke="#fff" stroke-width="3" stroke-linecap="round"></path>
+       <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
+       <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
+       <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Issues</span>
+      </button><button class="app" data-id="ballot" style="animation-delay:0.24s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1240,20 +1264,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Polls</span>
-      </button><button class="app" data-id="fundraise" style="animation-delay:0.30s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"></path>
-       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"></path>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg></span>
-      <span class="label">Fundraise</span>
-      </button><button class="app" data-id="reach" style="animation-delay:0.33s">
+      </button><button class="app" data-id="reach" style="animation-delay:0.30s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1267,6 +1278,19 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Reach</span>
+      </button><button class="app" data-id="fundraise" style="animation-delay:0.33s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"></path>
+       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Fundraise</span>
       </button><button class="app more" id="navMore" data-more="1">
        <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true"><g clip-path="url(#sq)">
          <rect width="120" height="120" fill="#0A3FD6"></rect>

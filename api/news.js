@@ -36,16 +36,54 @@ const FEEDS = [
 const TIMEOUT = 4500;
 let CACHE = { at:0, body:null };
 
-/* ------------------------------------------------------------- tiny parsers */
-const unwrap = t => String(t || '')
-  .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-  .replace(/<[^>]+>/g, ' ')
-  .replace(/&#(\d+);/g, (m,d)=>String.fromCharCode(+d))
-  .replace(/&#x([0-9a-f]+);/gi, (m,h)=>String.fromCharCode(parseInt(h,16)))
-  .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-  .replace(/&quot;/g, '"').replace(/&apos;|&#39;/g, "'")
-  .replace(/\s+/g, ' ')
-  .trim();
+/* ------------------------------------------------------------- tiny parsers
+   Feeds arrive with markup inside markup: CDATA wrapping HTML, HTML escaped as
+   entities, and entities escaped again. Decode and strip in turns until the
+   text stops changing, so no tag or &rsquo; ever reaches a reader. */
+const ENT = {
+  nbsp:' ', amp:'&', lt:'<', gt:'>', quot:'"', apos:"'",
+  rsquo:'\u2019', lsquo:'\u2018', rdquo:'\u201d', ldquo:'\u201c', sbquo:'\u201a', bdquo:'\u201e',
+  mdash:'\u2014', ndash:'\u2013', minus:'\u2212', hellip:'\u2026', bull:'\u2022', middot:'\u00b7',
+  prime:'\u2032', Prime:'\u2033', deg:'\u00b0', trade:'\u2122', copy:'\u00a9', reg:'\u00ae',
+  laquo:'\u00ab', raquo:'\u00bb', eacute:'\u00e9', egrave:'\u00e8', agrave:'\u00e0',
+  ccedil:'\u00e7', ntilde:'\u00f1', uuml:'\u00fc', ouml:'\u00f6', auml:'\u00e4',
+  aacute:'\u00e1', iacute:'\u00ed', oacute:'\u00f3', uacute:'\u00fa', euro:'\u20ac',
+  pound:'\u00a3', dollar:'$', frac12:'\u00bd', times:'\u00d7', shy:'', zwnj:'', zwj:'', ensp:' ',
+  emsp:' ', thinsp:' ', lrm:'', rlm:''
+};
+const decode = t => String(t || '')
+  .replace(/&#(\d+);/g, (m,d)=>{ const n = +d; return n > 8 && n < 1114112 ? String.fromCodePoint(n) : ' ' })
+  .replace(/&#x([0-9a-f]+);/gi, (m,h)=>{ const n = parseInt(h,16);
+    return n > 8 && n < 1114112 ? String.fromCodePoint(n) : ' ' })
+  .replace(/&([a-z][a-z0-9]{1,8});/gi, (m,n)=>{
+    const v = ENT[n] !== undefined ? ENT[n] : ENT[n.toLowerCase()];
+    return v !== undefined ? v : m;
+  });
+const strip = t => String(t || '')
+  .replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ')
+  .replace(/<br\s*\/?>|<\/p>|<\/div>|<\/li>/gi, ' ')
+  .replace(/<[^>]*>/g, ' ');
+
+const unwrap = t => {
+  let x = String(t || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
+  for(let i = 0; i < 3; i++){
+    const next = strip(decode(x));
+    if(next === x) break;
+    x = next;
+  }
+  return x.replace(/\s+/g, ' ').trim();
+};
+
+/* cut at a sentence if we can, a word if we cannot, never mid-word */
+const clamp = (t, n) => {
+  t = String(t || '').trim();
+  if(t.length <= n) return t;
+  const cut = t.slice(0, n);
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('? '), cut.lastIndexOf('! '));
+  if(stop > n * 0.55) return cut.slice(0, stop + 1);
+  const sp = cut.lastIndexOf(' ');
+  return (sp > 0 ? cut.slice(0, sp) : cut).replace(/[,;:\u2014\u2013-]+$/, '') + '\u2026';
+};
 
 const tag = (block, name) => {
   const m = block.match(new RegExp('<' + name + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + name + '>', 'i'));
@@ -118,11 +156,13 @@ function parse(xml, source){
     const when = tag(block,'pubDate') || tag(block,'published') || tag(block,'updated')
               || tag(block,'dc:date');
     const t = Date.parse(unwrap(when));
-    const summary = unwrap(tag(block,'description') || tag(block,'summary')).slice(0, 260);
+    const summary = clamp(unwrap(tag(block,'description') || tag(block,'summary')
+                                 || tag(block,'content:encoded')), 240);
     out.push({
       title, link, source,
       when: isFinite(t) ? new Date(t).toISOString() : null,
-      summary: summary && summary.toLowerCase() !== title.toLowerCase() ? summary : '',
+      summary: summary && summary.toLowerCase().replace(/\u2026$/,'') !== title.toLowerCase()
+               && !/^\s*(read more|continue reading)/i.test(summary) ? summary : '',
       image: image(block)
     });
     if(out.length >= 16) break;

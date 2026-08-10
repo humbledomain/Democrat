@@ -1,5 +1,44 @@
 # What's new
 
+## The wire reads clean
+
+You were seeing `<p>` tags and `&rsquo;` in the summaries. Feeds nest markup inside markup — CDATA
+wrapping HTML, HTML escaped as entities, entities escaped again — and I was stripping tags *before*
+decoding entities, so escaped tags reappeared afterwards. It now decodes and strips in turns until
+the text stops changing, with a table of every entity these feeds actually use. Scripts and styles
+are removed whole, paragraph ends become spaces rather than running words together, and the browser
+cleans anything the server misses using an inert parser that can't execute what it's reading.
+
+Summaries also end where a sentence does now, or failing that a word — never mid-word.
+
+## The top bar
+
+The crawl moved right, up against the tools, in a bounded column so it can't push anything around.
+**LIVE now sits tight against the wordmark** — the two are one group with a 9px gap, so the red dot
+reads as part of the logo rather than as a separate thing. On a phone the crawl still drops to its
+own row underneath.
+
+## Any language
+
+A globe in the top bar, twenty languages: Spanish, Chinese, Tagalog, Vietnamese, Arabic, French,
+Korean, Russian, Portuguese, Haitian Creole, Hindi, German, Japanese, Italian, Polish, Somali,
+Amharic, Ukrainian, Farsi — and English.
+
+Nothing is pre-translated. The words actually on your screen get translated once, cached in your
+browser for good, and applied — so the second time you meet a phrase it appears instantly and costs
+nothing. It covers everything: the chrome, the news, the posts, the placeholders in the boxes you
+type into. Handles, hashtags, links, numbers and names are left exactly as they are, and Arabic and
+Farsi flip the whole layout right to left. Timestamps stay as they are because they tick.
+
+It runs through your Anthropic key, so it costs a fraction of a cent the first time someone reads a
+page in a new language, and nothing after that.
+
+## Order
+
+Town Hall moved above Chat. Fundraise is last. The phone tabs follow: Today, Town Hall, Feed, Chat,
+Profile.
+
+
 ## Live, everywhere
 
 **LIVE is back on the logo** — red dot, pulsing, right after the wordmark. It's honest: it goes grey

@@ -77,7 +77,8 @@ button,input,textarea{font:inherit;color:inherit}
 
 /* the masthead: one bar across the top, the way a news front page opens */
 .mast{position:fixed;top:0;left:0;right:0;height:var(--mast);z-index:8;display:flex;align-items:center;
-  gap:clamp(12px,1.8vw,26px);padding:0 var(--pad);background:var(--bg);border-bottom:1px solid var(--line)}
+  gap:clamp(10px,1.4vw,20px);padding:0 var(--pad);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px;flex:none;min-width:0}
 .mark{display:flex;align-items:center;gap:clamp(9px,1vw,14px);text-decoration:none;color:inherit;flex:none}
 .dot{width:clamp(13px,1.35vw,19px);aspect-ratio:1;border-radius:50%;background:var(--blue);position:relative;flex:none}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
@@ -621,7 +622,10 @@ button.tag{cursor:pointer}
   .mast{flex-wrap:wrap;height:auto;min-height:52px;padding:0 14px;align-content:flex-start;row-gap:0}
   .mast .mark{height:52px;display:flex;align-items:center}
   .topbar{height:52px}
-  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
+  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px;
+    justify-content:flex-start}
+  .ticks{flex:1;width:auto}
+  .brand{gap:7px}
   .tick{font-size:12.5px}
   .tick b{font-size:9.5px}
 
@@ -646,8 +650,8 @@ button.tag{cursor:pointer}
   /* the five that do not fit live behind More */
   .app[data-id="issues"],.app[data-id="ballot"],.app[data-id="polls"],
   .app[data-id="fundraise"],.app[data-id="reach"],.app[data-id="endorsed"]{display:none}
-  .app[data-id="today"]{order:1}.app[data-id="feed"]{order:2}
-  .app[data-id="townhall"]{order:3}.app[data-id="compose"]{order:4}
+  .app[data-id="today"]{order:1}.app[data-id="townhall"]{order:2}
+  .app[data-id="feed"]{order:3}.app[data-id="compose"]{order:4}
   .app[data-id="profile"]{order:5}
   .app.more{display:flex;order:6}
 
@@ -778,12 +782,14 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 /* ------------------------------------------------------------------ top bar */
 .topbar{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}
-.ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
+.ticker{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;
+  gap:clamp(10px,1.2vw,16px);height:100%}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
   color:var(--live);flex:none;text-transform:uppercase}
-.livechip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:10px;font-weight:800;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--live);margin-left:-2px;
-  padding:3px 8px 3px 7px;border-radius:99px;background:rgba(229,53,43,.09)}
+.livechip{display:inline-flex;align-items:center;gap:5px;flex:none;font-size:9.5px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--live);
+  padding:2px 7px 2px 6px;border-radius:99px;background:rgba(229,53,43,.09);align-self:center;
+  position:relative;top:1px}
 .livechip i{width:6px;height:6px;border-radius:50%;background:var(--live);flex:none;
   animation:livepulse 1.9s ease-in-out infinite}
 .livechip.off{color:var(--dim);background:var(--soft)}
@@ -793,7 +799,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 @keyframes livepulse{
   0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(229,53,43,.45)}
   50%{opacity:.5;box-shadow:0 0 0 6px rgba(229,53,43,0)}}
-.ticks{position:relative;flex:1;min-width:0;height:100%;overflow:hidden}
+.ticks{position:relative;flex:0 1 min(54vw,640px);width:min(54vw,640px);min-width:0;height:100%;
+  overflow:hidden}
 .tick{position:absolute;inset:0;display:flex;align-items:center;gap:9px;min-width:0;border:0;background:none;
   font-family:inherit;font-size:13px;color:var(--ink);text-align:left;cursor:pointer;padding:0;
   opacity:0;transform:translateY(7px);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
@@ -1064,6 +1071,18 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .offline{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabs) + 16px);z-index:75;
   background:rgba(12,18,34,.94);color:#fff;font-size:12.5px;font-weight:560;padding:9px 16px;
   border-radius:99px;max-width:88vw;text-align:center;animation:drop .3s cubic-bezier(.2,.9,.25,1) both}
+.tbtn[data-code]:not([data-code=""])::after{content:attr(data-code);position:absolute;bottom:-1px;right:-2px;
+  font-size:8.5px;font-weight:800;letter-spacing:.02em;background:var(--blue);color:#fff;
+  border-radius:5px;padding:0 3px;line-height:1.5;box-shadow:0 0 0 2px var(--bg)}
+.tbtn.working svg{animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.langgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:52vh;overflow-y:auto}
+.langbtn{display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;
+  background:var(--soft);border-radius:12px;padding:11px 13px;font-family:inherit;font-size:14px;
+  font-weight:560;color:inherit;cursor:pointer;text-align:left}
+.langbtn:hover{color:var(--blue)}
+.langbtn.on{background:var(--blue);color:#fff}
+.langbtn span{font-weight:800}
 .moregrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .moretile{display:flex;align-items:center;gap:10px;border:0;background:var(--soft);border-radius:14px;
   padding:11px 12px;font-family:inherit;font-size:14px;font-weight:600;color:inherit;cursor:pointer;
@@ -1078,8 +1097,10 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
-<a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="brand" data-noloc>
+  <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+  <span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+</div>
 <div class="ticker" id="ticker"><div class="ticks" id="ticks"></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
@@ -1087,6 +1108,9 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <span>Search</span><span class="kbd">&#8984;K</span></button>
   <button class="tbtn" id="tBell" aria-label="Notifications" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></button>
+  <button class="tbtn" id="tLang" aria-label="Language" title="Language">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M3.2 9.5h17.6M3.2 14.5h17.6M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18"/></svg>
+  </button>
   <button class="tbtn" id="tTheme" aria-label="Dark mode" title="Dark mode"></button>
 </div>
 </header>
@@ -1147,6 +1171,14 @@ const APPS = [
        <rect x="27" y="73" width="66" height="5" rx="2.5" fill="${BLUE}"/>
        <rect x="27" y="83" width="47" height="5" rx="2.5" fill="${BLUE}"/>
        <circle cx="97" cy="30" r="11" fill="#fff"/><circle cx="97" cy="30" r="8" fill="#E5352B"/>`},
+{id:'townhall',name:'Town Hall',art:`<rect x="58.6" y="10" width="2.8" height="9" rx="1.4" fill="#fff"/>
+       <path d="M49 30a11 11 0 0 1 22 0Z" fill="#fff"/>
+       <path d="M13 52 60 28l47 24Z" fill="#fff"/>
+       <rect x="19" y="54" width="82" height="7" rx="2" fill="#fff"/>
+       <rect x="31" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="55" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="79" y="65" width="10" height="27" rx="2" fill="#fff"/>
+       <rect x="15" y="96" width="90" height="9" rx="3" fill="#fff"/>`},
 {id:'compose',name:'Chat',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
        <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
        <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
@@ -1163,14 +1195,6 @@ const APPS = [
        <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
        <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"/>
        <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"/>`},
-{id:'townhall',name:'Town Hall',art:`<rect x="58.6" y="10" width="2.8" height="9" rx="1.4" fill="#fff"/>
-       <path d="M49 30a11 11 0 0 1 22 0Z" fill="#fff"/>
-       <path d="M13 52 60 28l47 24Z" fill="#fff"/>
-       <rect x="19" y="54" width="82" height="7" rx="2" fill="#fff"/>
-       <rect x="31" y="65" width="10" height="27" rx="2" fill="#fff"/>
-       <rect x="55" y="65" width="10" height="27" rx="2" fill="#fff"/>
-       <rect x="79" y="65" width="10" height="27" rx="2" fill="#fff"/>
-       <rect x="15" y="96" width="90" height="9" rx="3" fill="#fff"/>`},
 {id:'ballot',name:'Ballot',art:`<rect x="38" y="14" width="44" height="42" rx="7" fill="#fff"/>
        <path d="M50 34.5l7.5 7.5 14.5-15" stroke="#E5352B" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
        <rect x="16" y="52" width="88" height="54" rx="11" fill="#fff"/>
@@ -1178,11 +1202,11 @@ const APPS = [
 {id:'polls',name:'Polls',art:`<rect x="16" y="56" width="20" height="42" rx="10" fill="#fff"/>
        <rect x="50" y="30" width="20" height="68" rx="10" fill="#fff"/>
        <rect x="84" y="44" width="20" height="54" rx="10" fill="#fff"/>`},
-{id:'fundraise',name:'Fundraise',art:`<path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"/>
-       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"/>`},
 {id:'reach',name:'Reach',art:`<circle cx="60" cy="60" r="46" fill="none" stroke="#fff" stroke-width="8"/>
        <circle cx="60" cy="60" r="31" fill="none" stroke="#fff" stroke-width="8"/>
-       <circle cx="60" cy="60" r="16" fill="none" stroke="#fff" stroke-width="8"/>`}
+       <circle cx="60" cy="60" r="16" fill="none" stroke="#fff" stroke-width="8"/>`},
+{id:'fundraise',name:'Fundraise',art:`<path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"/>
+       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"/>`}
 ];
 
 const ONLINE = !!(CFG.url && CFG.key && window.supabase);
@@ -3001,6 +3025,20 @@ const TOPICMAP = [
   ['Money in politics',['super pac','dark money','lobby','donor','campaign finance','citizens united']]
 ];
 
+/* a feed can always sneak markup past the server, so clean it here as well.
+   DOMParser gives an inert document: no script runs, no image loads. */
+function plain(t){
+  let x = String(t || '');
+  for(let i = 0; i < 2; i++){
+    let next = x;
+    try{ next = new DOMParser().parseFromString(x, 'text/html').documentElement.textContent || '' }
+    catch(e){ next = x.replace(/<[^>]*>/g, ' ') }
+    next = next.replace(/<[^>]*>/g, ' ');
+    if(next === x) break;
+    x = next;
+  }
+  return x.replace(/\s+/g, ' ').trim();
+}
 const hay = it => (String(it.title||'') + ' ' + String(it.summary||'')).toLowerCase();
 function topicsOf(it){
   const t = ' ' + hay(it) + ' ';
@@ -3040,7 +3078,9 @@ async function loadNews(force){
     if(r.status === 404 || r.status === 501) throw new Error('not deployed');
     if(!r.ok) throw new Error('the wire did not answer');
     const d = await r.json();
-    NEWS = Array.isArray(d.items) ? d.items : [];
+    NEWS = (Array.isArray(d.items) ? d.items : []).map(it => ({
+      ...it, title: plain(it.title), summary: plain(it.summary)
+    })).filter(it => it.title);
     NEWSSRC = d.sources || [];
     NEWSAT = Date.now(); NEWSFAIL = '';
   }catch(e){
@@ -3054,6 +3094,7 @@ async function loadNews(force){
 /* anything with a data-ts keeps its own clock */
 function tickTimes(){
   document.querySelectorAll('[data-ts]').forEach(el=>{
+    if(!el.hasAttribute('data-noloc')) el.setAttribute('data-noloc','');
     const ts = el.getAttribute('data-ts'); if(!ts) return;
     const t = el.getAttribute('data-tsfmt') === 'news' ? newsWhen(ts) : ago(ts);
     if(el.textContent !== t) el.textContent = t;
@@ -4024,6 +4065,7 @@ function moreSheet(){
       <button data-m2="search">Search</button>
       <button data-m2="notes">Notifications${NOTEUNSEEN?` · ${NOTEUNSEEN}`:''}</button>
       <button data-m2="acct">Account</button>
+      <button data-m2="lang">Language${LANG!=='en'?` · ${LANG.toUpperCase()}`:''}</button>
       <button data-m2="theme">${themeNow()==='dark'?'Switch to light':'Switch to dark'}</button>
     </div>
     <div class="sheetfoot"><button class="btn ghost" id="moClose">Close</button></div>
@@ -4038,6 +4080,7 @@ function moreSheet(){
     if(m==='search') return palOpen();
     if(m==='notes')  return notesSheet();
     if(m==='acct')   return acctMenu();
+    if(m==='lang')   return langSheet();
     if(m==='theme')  return toggleTheme();
   });
 }
@@ -4054,6 +4097,7 @@ function acctMenu(){
       <button data-m="share">Share your page</button>
       <button data-m="invite">Invite someone</button>
       <button data-m="notes">Notifications</button>
+      <button data-m="lang">Language${LANG!=='en'?` · ${LANG.toUpperCase()}`:''}</button>
       <button data-m="muted">Muted${MUTED.size?` · ${MUTED.size}`:''}</button>
       <button data-m="keys">Keyboard shortcuts</button>
       <button data-m="theme">${themeNow()==='dark' ? 'Switch to light' : 'Switch to dark'}</button>
@@ -4071,6 +4115,7 @@ function acctMenu(){
     if(m==='share')   return share(shareLine(), me.handle);
     if(m==='invite')  return inviteSheet();
     if(m==='notes')   return notesSheet();
+    if(m==='lang')    return langSheet();
     if(m==='muted')   return mutedSheet();
     if(m==='keys')    return keysSheet();
     if(m==='theme')   return toggleTheme();
@@ -4966,16 +5011,176 @@ function watchMast(){
   setTimeout(sizeMast, 300);
 }
 
+/* ================================================================= language
+   The whole page, in any of these. Nothing is pre-translated: the text that
+   is actually on screen gets sent for translation once, cached in this
+   browser for ever, and applied. Second time you see a phrase it is instant. */
+const LANGS = [
+  ['en','English','English'],        ['es','Español','Spanish'],
+  ['zh','中文','Simplified Chinese'], ['tl','Tagalog','Tagalog'],
+  ['vi','Tiếng Việt','Vietnamese'],  ['ar','العربية','Arabic'],
+  ['fr','Français','French'],        ['ko','한국어','Korean'],
+  ['ru','Русский','Russian'],        ['pt','Português','Portuguese'],
+  ['ht','Kreyòl','Haitian Creole'],  ['hi','हिन्दी','Hindi'],
+  ['de','Deutsch','German'],         ['ja','日本語','Japanese'],
+  ['it','Italiano','Italian'],       ['pl','Polski','Polish'],
+  ['so','Soomaali','Somali'],        ['am','አማርኛ','Amharic'],
+  ['uk','Українська','Ukrainian'],   ['fa','فارسی','Farsi']
+];
+const RTL = new Set(['ar','fa','he','ur']);
+let LANG = (()=>{ try{ return localStorage.getItem('dai.lang') || 'en' }catch(e){ return 'en' } })();
+let TCACHE = {}, TBUSY = false, TTIMER = null, TAPPLY = false, TOLD = false;
+
+const langRow = code => LANGS.find(l => l[0] === code) || LANGS[0];
+function loadTCache(){
+  try{ TCACHE = JSON.parse(localStorage.getItem('dai.tr.' + LANG) || '{}') }catch(e){ TCACHE = {} }
+}
+function saveTCache(){
+  try{
+    const keys = Object.keys(TCACHE);
+    if(keys.length > 4000) keys.slice(0, keys.length - 3000).forEach(k => delete TCACHE[k]);
+    localStorage.setItem('dai.tr.' + LANG, JSON.stringify(TCACHE));
+  }catch(e){}
+}
+
+/* what on this page is actually language */
+const SKIP_TAGS = /^(SCRIPT|STYLE|TEXTAREA|INPUT|SVG|PATH|CIRCLE|RECT|CODE|KBD)$/;
+function sayable(n){
+  const p = n.parentElement;
+  if(!p || SKIP_TAGS.test(p.tagName)) return false;
+  if(p.hasAttribute && p.hasAttribute('data-ts')) return false;   /* clocks tick, leave them */
+  if(p.closest('[data-noloc]')) return false;
+  const s = (n.__src || n.nodeValue || '').trim();
+  if(s.length < 2 || s.length > 400) return false;
+  if(!/[A-Za-z]{2}/.test(s)) return false;          /* numbers, times, handles */
+  if(/^[@#]/.test(s)) return false;
+  if(/^https?:\/\//.test(s)) return false;
+  return true;
+}
+function sayableNodes(){
+  const out = [];
+  try{
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    while(w.nextNode()){ const n = w.currentNode; if(sayable(n)) out.push(n) }
+  }catch(e){}
+  return out;
+}
+const holders = ()=> [...document.querySelectorAll('[placeholder]')]
+  .filter(el => !el.closest('[data-noloc]') && (el.__srcPh || el.getAttribute('placeholder') || '').length > 2);
+
+function applyTranslations(){
+  TAPPLY = true;
+  try{
+    sayableNodes().forEach(n=>{
+      const src = n.__src || (n.__src = n.nodeValue.trim());
+      const to = TCACHE[src];
+      if(to && n.nodeValue.trim() !== to) n.nodeValue = n.nodeValue.replace(src, to);
+    });
+    holders().forEach(el=>{
+      const src = el.__srcPh || (el.__srcPh = el.getAttribute('placeholder'));
+      const to = TCACHE[src];
+      if(to && el.getAttribute('placeholder') !== to) el.setAttribute('placeholder', to);
+    });
+  }catch(e){}
+  TAPPLY = false;
+}
+
+async function translatePage(){
+  if(LANG === 'en') return;
+  applyTranslations();                      /* whatever we already know, right now */
+  if(TBUSY) return;
+  const need = new Set();
+  sayableNodes().forEach(n=>{ const s = n.__src || n.nodeValue.trim(); if(!TCACHE[s]) need.add(s) });
+  holders().forEach(el=>{ const s = el.__srcPh || el.getAttribute('placeholder'); if(s && !TCACHE[s]) need.add(s) });
+  if(!need.size) return;
+
+  const batch = [...need].slice(0, 70);
+  TBUSY = true;
+  const chip = $('tLang'); if(chip) chip.classList.add('working');
+  let got = null;
+  try{ got = await ai('translate', JSON.stringify(batch), { lang: langRow(LANG)[2] }) }catch(e){}
+  TBUSY = false;
+  if(chip) chip.classList.remove('working');
+
+  let list = null;
+  if(got){
+    try{
+      const a = got.indexOf('['), b = got.lastIndexOf(']');
+      if(a >= 0 && b > a) list = JSON.parse(got.slice(a, b + 1));
+    }catch(e){}
+  }
+  if(!Array.isArray(list) || list.length !== batch.length){
+    if(!TOLD){ TOLD = true;
+      toast(got ? 'The translator got confused — staying in English'
+                : 'Translation needs the AI key on Vercel'); }
+    return;
+  }
+  batch.forEach((src, i)=>{ if(typeof list[i] === 'string' && list[i].trim()) TCACHE[src] = list[i].trim() });
+  saveTCache();
+  applyTranslations();
+  if(need.size > batch.length) scheduleTranslate(200);   /* more to do */
+}
+function scheduleTranslate(wait){
+  if(LANG === 'en') return;
+  clearTimeout(TTIMER);
+  TTIMER = setTimeout(translatePage, wait || 260);
+}
+function watchLanguage(){
+  try{
+    new MutationObserver(()=>{ if(!TAPPLY) scheduleTranslate() })
+      .observe(document.body, {childList:true, subtree:true});
+  }catch(e){}
+}
+function setLang(code){
+  LANG = code;
+  try{ localStorage.setItem('dai.lang', code) }catch(e){}
+  document.documentElement.lang = code;
+  document.documentElement.dir = RTL.has(code) ? 'rtl' : 'ltr';
+  TOLD = false;
+  loadTCache();
+  const chip = $('tLang');
+  if(chip) chip.dataset.code = code === 'en' ? '' : code.toUpperCase();
+  if(code === 'en'){ location.reload(); return }   /* the cleanest way back to the original */
+  translatePage();
+}
+function langSheet(){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox" data-noloc>
+    <h3>Language</h3>
+    <div class="langgrid">${LANGS.map(([code,name])=>
+      `<button class="langbtn${code===LANG?' on':''}" data-lang="${code}">${esc(name)}
+        ${code===LANG?'<span>&#10003;</span>':''}</button>`).join('')}</div>
+    <p class="readnote">Everything on screen is translated as you read, then remembered on this
+      device. Names, handles and links are left alone.</p>
+    <div class="sheetfoot"><button class="btn ghost" id="lgClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('lgClose').onclick = close;
+  wrap.querySelectorAll('[data-lang]').forEach(b=>b.onclick = ()=>{ const c = b.dataset.lang; close(); setLang(c) });
+}
+
 function wireTopbar(){
-  const s = $('tSearch'), b = $('tBell'), t = $('tTheme');
+  const s = $('tSearch'), b = $('tBell'), t = $('tTheme'), g = $('tLang');
   if(s) s.onclick = ()=>palOpen();
   if(b) b.onclick = ()=>notesSheet();
   if(t) t.onclick = ()=>toggleTheme();
+  if(g) g.onclick = ()=>langSheet();
   applyTheme();
   paintBell();
   paintTicker();
   netWatch();
   watchMast();
+  if(LANG !== 'en'){
+    document.documentElement.lang = LANG;
+    document.documentElement.dir = RTL.has(LANG) ? 'rtl' : 'ltr';
+    const g2 = $('tLang'); if(g2) g2.dataset.code = LANG.toUpperCase();
+    loadTCache();
+  }
+  watchLanguage();
+  scheduleTranslate(400);
 }
 
 /* --------------------------------------------------------------------- boot */

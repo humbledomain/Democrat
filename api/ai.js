@@ -317,7 +317,44 @@ module.exports = async (req, res) => {
   });
   const textOf = data => (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
 
-  const { task, input, messages, context, bot, ask, topic } = req.body || {};
+  const { task, input, messages, context, bot, ask, topic, lang } = req.body || {};
+
+  /* ---------------- the page, in another language ---------------- */
+  if(task === 'translate'){
+    let list = null;
+    try{ list = JSON.parse(String(input || '')) }catch(e){}
+    if(!Array.isArray(list) || !list.length) return res.status(400).json({ error:'nothing to translate' });
+    list = list.slice(0, 90).map(x => String(x).slice(0, 400));
+    const target = String(lang || 'Spanish').slice(0, 40);
+    const system =
+      `Translate each string in the JSON array into ${target}.
+` +
+      `Return ONLY a JSON array of strings — same length, same order, no keys, no commentary, ` +
+      `no code fence.
+` +
+      `These are the labels, headlines and messages of a civic website, so keep them short and ` +
+      `natural: a button that says "Post" should stay one word.
+` +
+      `Leave exactly as they are: @handles, #hashtags, URLs, email addresses, numbers, dates, ` +
+      `times, and the product names democrat.ai and democrat.si.
+` +
+      `Names of people, places, publications and organisations stay in their original form.
+` +
+      `If a string is already in ${target}, or is a proper noun, return it unchanged.
+` +
+      `Use the plain register a public service would use — not formal officialese.`;
+    try{
+      const r = await call({ model:MODEL, max_tokens:4000, system,
+                             messages:[{ role:'user', content: JSON.stringify(list) }] });
+      if(!r.ok){
+        const detail = await r.text();
+        return res.status(502).json({ error:'upstream', detail: detail.slice(0,300) });
+      }
+      return res.status(200).json({ text: textOf(await r.json()) });
+    }catch(e){
+      return res.status(500).json({ error:'request failed' });
+    }
+  }
 
   /* ---------------- the day, read from the wire ---------------- */
   if(task === 'today'){
