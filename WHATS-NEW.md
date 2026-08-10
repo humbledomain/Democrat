@@ -1,5 +1,31 @@
 # What's new
 
+## Reach is a real dashboard
+
+Four **metric cards** across the top — what came back, what you put out, new followers, shares — each
+with the number, a sparkline drawn behind it, and the change against the same length of time before.
+Green up, red down.
+
+**The chart.** Thirty days by default, seven or ninety on a switch. A blue line and filled area for
+everything that came back to you — likes, replies, follows, shares, RSVPs, votes — with grey bars
+underneath for what you put out. Hover any point or bar and it tells you the day and the number.
+
+**A donut** breaking the return down by kind, with the total in the middle and a colour key beside it.
+
+**Twelve weeks of squares** — a contribution grid, one square per day, darker the more you did. Under
+it: active days in the period, your current run, and the day of the week people answer you most.
+
+**What travelled furthest** — your best posts, ranked by what came back, weighting a reply above a
+like. Click one and it opens.
+
+**Where they are** — the states your followers are actually in, as a bar list. And what you've built:
+posts, positions, questions, events.
+
+All of it is hand-drawn SVG. No chart library, nothing to load, nothing to go stale — and every
+number is a count of rows in your database, which is why the page says so at the bottom. Nothing here
+is estimated or modelled.
+
+
 > **Run `update.txt` again** — it adds one line that lets people change their answer to a poll.
 
 ## Polls, rebuilt
