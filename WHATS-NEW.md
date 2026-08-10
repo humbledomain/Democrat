@@ -1,5 +1,29 @@
 # What's new
 
+## Six fixes
+
+**The blank Polls page.** A real bug, and a nasty one. At startup, if you'd set a location, the app
+was still assigning the old `near` scope to Polls — a value the rebuilt screen has no case for, so it
+rendered an empty string and you got a white page with a working sidebar. That assignment is gone,
+and the screen now falls back to Everyone rather than to nothing if it's ever handed a value it
+doesn't recognise. Polls opens on **Everyone** now, so there's always something there.
+
+**Ready to ask moved to the top** — a shelf of cards that scroll sideways, above the questions, on
+both the Answer and Everyone tabs. Each card shows the question, what the answer would tell you, its
+answers, and one button.
+
+**The Messages panel is off the People page**, and the unread count is off the People tile — both of
+those now live on the Messages button where they belong.
+
+**Followers and Following go to People**, on their own tabs — a real screen with search and profiles
+rather than a small list in a sheet. There's a new Followers tab to land on. **Shares goes to Reach.**
+On someone else's page those numbers still open a list, since you can't browse their followers.
+
+**Chat answers can leave the chat.** Every answer now has **Post** and **Share** beside the other
+buttons. Post drops it into the feed composer so you can edit before it goes out; Share opens the
+usual sheet with it ready to send anywhere.
+
+
 ## Messages have a home
 
 A **Messages button in the nav, directly above Post**, built the same way, with the unread count on

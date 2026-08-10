@@ -497,6 +497,8 @@ button.tag{cursor:pointer}
 .mact button{border:1px solid transparent;background:var(--soft);color:var(--dim);border-radius:7px;
   padding:2px 8px;font-size:11px;font-weight:560;line-height:1.7;cursor:pointer;transition:.14s;white-space:nowrap}
 .mact button.sym{min-width:24px;padding:2px 0;font-size:13px;text-align:center}
+.mact button.keep{color:var(--blue);background:rgba(10,63,214,.07)}
+.mact button.keep:hover{background:rgba(10,63,214,.13)}
 .mact button:hover{border-color:rgba(10,63,214,.4);color:var(--blue);background:rgba(10,63,214,.05)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
 .cmt{display:flex;gap:10px;align-items:flex-start}
 .whoav.sm{width:28px;height:28px;font-size:11px;text-decoration:none}
@@ -1180,6 +1182,24 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 }
 
 /* ------------------------------------------------------------------- polls */
+.shelf{display:flex;flex-direction:column;gap:10px;padding-bottom:16px;margin-bottom:4px;
+  border-bottom:1px solid var(--line)}
+.shelfhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.shelfhead h4{font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--dim);flex:none}
+.shelfhead .topicbar{flex:1;min-width:0;padding-bottom:0}
+.shelfrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.shelfrow::-webkit-scrollbar{display:none}
+.askcard{flex:0 0 clamp(230px,26vw,282px);background:var(--soft);border-radius:16px;padding:14px;
+  display:flex;flex-direction:column;gap:7px}
+.askcard b{font-size:14.5px;font-weight:620;line-height:1.35}
+.askcard small{font-size:12.5px;line-height:1.45;color:var(--ink2);flex:1}
+.askopts{display:flex;flex-wrap:wrap;gap:4px}
+.askopts span{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);
+  background:var(--card);border-radius:5px;padding:2px 7px}
+.askcard .sbtn{width:100%;text-align:center}
+.askcard .sbtn[disabled]{opacity:.5;cursor:default}
 .polls{display:flex;flex-direction:column}
 .poll{padding:16px 0;border-top:1px solid var(--line)}
 .poll:first-child{border-top:0}
@@ -1377,7 +1397,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -1679,7 +1699,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app on" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -1861,7 +1881,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 5 stories from 4 newsrooms<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 5 stories from 4 newsrooms<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="tdRefresh">Refresh</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -1884,7 +1904,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       <span class="live"><i></i>Just in</span><span class="sep">·</span>
       <b>NPR</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T08:17:34.806Z" data-tsfmt="news">8m ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T09:22:09.817Z" data-tsfmt="news">8m ago</span>
     </div>
           <a class="hl" href="https://npr.org/a" data-read="https://npr.org/a" target="_blank" rel="noopener noreferrer">Senate passes voting rights measure after all-night session</a>
           <p class="dek">The bill expands early voting and restores federal oversight of election law.</p>
@@ -1902,7 +1922,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>ProPublica</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T05:25:34.806Z" data-tsfmt="news">3h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T06:30:09.817Z" data-tsfmt="news">3h ago</span>
     </div>
           <a class="hl" href="https://propublica.org/b" data-read="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Medicaid cuts would close rural hospitals, study finds</a>
           
@@ -1920,7 +1940,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Guardian</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T04:25:34.806Z" data-tsfmt="news">4h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T05:30:09.817Z" data-tsfmt="news">4h ago</span>
     </div>
           <a class="hl" href="https://guardian.com/e" data-read="https://guardian.com/e" target="_blank" rel="noopener noreferrer">Centrist Democrats dismiss the winner ’as radical’</a>
           
@@ -1938,7 +1958,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Hill</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T03:25:34.806Z" data-tsfmt="news">5h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T04:30:09.817Z" data-tsfmt="news">5h ago</span>
     </div>
           <a class="hl" href="https://thehill.com/c" data-read="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Union files for election at third warehouse this month</a>
           
@@ -1956,7 +1976,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Guardian</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-09T23:25:34.806Z" data-tsfmt="news">9h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T00:30:09.817Z" data-tsfmt="news">9h ago</span>
     </div>
           <a class="hl" href="https://guardian.com/d" data-read="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Appeals court blocks deportation flights pending review</a>
           
@@ -2067,7 +2087,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">1</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -2247,7 +2267,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="on" data-v="near">Near you</button><button class="" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -2358,7 +2378,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <span class="whoav">R</span>
       <span class="grow">
         <span class="trow"><b>Renato Perez</b>
-          <span class="twhen" data-ts="2026-08-10T07:25:13.784Z" data-noloc="">1h</span></span>
+          <span class="twhen" data-ts="2026-08-10T08:30:35.024Z" data-noloc="">1h</span></span>
         <span class="tprev">Are you going Saturday?</span>
       </span>
       
@@ -2366,7 +2386,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <span class="whoav">W</span>
       <span class="grow">
         <span class="trow"><b>Wallace Alphin</b>
-          <span class="twhen" data-ts="2026-08-08T07:25:13.784Z" data-noloc="">2d</span></span>
+          <span class="twhen" data-ts="2026-08-08T08:30:35.024Z" data-noloc="">2d</span></span>
         <span class="tprev">You: Sent it over</span>
       </span>
       <span class="tbadge">1</span>
@@ -2383,13 +2403,13 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     </header>
     <div class="hubmsgs" id="hubMsgs"><div class="daysep"><span>Yesterday</span></div><div class="bub me last">
       <div class="btext">Planning on it. You?</div>
-      <div class="bmeta">2:25 AM · Seen</div>
+      <div class="bmeta">3:30 AM · Seen</div>
     </div><div class="bub them last">
       <div class="btext">Yes — bringing two friends</div>
-      <div class="bmeta">3:25 AM</div>
+      <div class="bmeta">4:30 AM</div>
     </div><div class="daysep"><span>Today</span></div><div class="bub them last">
       <div class="btext">Are you going Saturday?</div>
-      <div class="bmeta">3:25 AM</div>
+      <div class="bmeta">4:30 AM</div>
     </div></div>
     <div class="hubbar">
       <textarea id="hubText" rows="1" maxlength="2000" placeholder="Message Renato Perez" style="height: 0px;"></textarea>
@@ -2459,7 +2479,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -2636,7 +2656,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Reach</h2><p>Counted, not estimated<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Reach</h2><p>Counted, not estimated<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><div class="seg tabs" id="rgRange"><button class="" data-r="7">7 days</button><button class="on" data-r="30">30 days</button><button class="" data-r="90">90 days</button></div><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -2909,7 +2929,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -3090,7 +3110,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Issues</h2><p>1 of 63 taken · and anything else you add<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Issues</h2><p>1 of 63 taken · and anything else you add<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="issues"><button class="on" data-v="browse">Browse</button><button class="" data-v="mine">Yours</button><button class="" data-v="all">Everyone</button></div>
       <button class="btn ghost" id="iOwn">Add your own</button><button class="pclose" id="pclose">✕</button></div>
     </header>
@@ -3284,7 +3304,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -3461,11 +3481,90 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Polls</h2><p>Ask the room, then listen to it<span class="stamp">Updated 4:25 AM</span></p></div>
-      <div class="acts"><div class="seg tabs" data-tabs="polls"><button class="" data-v="open">Answer</button><button class="" data-v="mine">Yours</button><button class="" data-v="all">Everyone</button></div>
+      <div class="grow"><h2>Polls</h2><p>Ask the room, then listen to it<span class="stamp">Updated 5:30 AM</span></p></div>
+      <div class="acts"><div class="seg tabs" data-tabs="polls"><button class="" data-v="open">Answer</button><button class="" data-v="mine">Yours</button><button class="on" data-v="all">Everyone</button></div>
       <button class="btn ghost" id="pAsk">Ask</button><button class="pclose" id="pclose">✕</button></div>
     </header>
-    <div class="pbody"><div class="split"><div class="main"></div>
+    <div class="pbody"><div class="split"><div class="main">
+        <section class="shelf">
+      <div class="shelfhead">
+        <h4>Ready to ask</h4>
+        <div class="topicbar"><button class="tchip on" data-plib="Getting organised">Getting organised</button><button class="tchip" data-plib="Where we live">Where we live</button><button class="tchip" data-plib="Strategy">Strategy</button><button class="tchip" data-plib="Where you stand">Where you stand</button><button class="tchip" data-plib="Temperature check">Temperature check</button><button class="tchip" data-plib="The ballot">The ballot</button></div>
+      </div>
+      <div class="shelfrow"><article class="askcard">
+          <b>What should we knock on doors about first?</b>
+          <small>Tells you which message the people doing the work believe in.</small>
+          <div class="askopts"><span>Cost of living</span><span>Healthcare</span><span>Democracy and the courts</span><span>Schools</span></div>
+          <button class="sbtn yes" data-ask="What should we knock on doors about first?">Ask this</button>
+        </article><article class="askcard">
+          <b>What stops you turning up to things?</b>
+          <small>Usually it is not apathy. It is childcare and timing.</small>
+          <div class="askopts"><span>Time of day</span><span>Childcare</span><span>Transport</span><span>Nothing — I turn up</span></div>
+          <button class="sbtn yes" data-ask="What stops you turning up to things?">Ask this</button>
+        </article><article class="askcard">
+          <b>Which is the better use of a free Saturday?</b>
+          <small>Settles the argument between contact and visibility.</small>
+          <div class="askopts"><span>Knocking doors</span><span>Phone banking</span><span>A rally</span><span>Registering voters</span></div>
+          <button class="sbtn yes" data-ask="Which is the better use of a free Saturday?">Ask this</button>
+        </article><article class="askcard">
+          <b>How should we spend our next $500?</b>
+          <small>A small budget, decided by the people who raised it.</small>
+          <div class="askopts"><span>Printing</span><span>Food at events</span><span>Digital ads</span><span>Bus fare and childcare</span></div>
+          <button class="sbtn yes" data-ask="How should we spend our next $500?">Ask this</button>
+        </article><article class="askcard">
+          <b>What would make you bring a friend next time?</b>
+          <small>The honest answer is usually about the room, not the cause.</small>
+          <div class="askopts"><span>Knowing someone there</span><span>A clear task</span><span>Food</span><span>Somewhere to leave the kids</span></div>
+          <button class="sbtn yes" data-ask="What would make you bring a friend next time?">Ask this</button>
+        </article></div>
+    </section>
+        <div class="polls"><article class="poll" data-poll="q2">
+    <a class="who" href="/renato">
+    <span class="whoav">R</span>
+    <b>Renato Perez</b><span>@renato</span></a>
+    <h3>Which race matters most where you live?</h3>
+    <small>1 answer · pick one to see the result · <span data-ts="2026-08-10T02:30:20.590Z" data-noloc="">7h</span></small>
+    <div class="pops"><button class="pop" data-opt="o3">
+        <span class="pfill" style="width:0%"></span>
+        <span class="ptext">Governor</span>
+        
+      </button><button class="pop" data-opt="o4">
+        <span class="pfill" style="width:0%"></span>
+        <span class="ptext">Senate</span>
+        
+      </button><button class="pop" data-opt="o5">
+        <span class="pfill" style="width:0%"></span>
+        <span class="ptext">School board</span>
+        
+      </button></div>
+    <div class="rowacts">
+      <button class="iconbtn" data-act="share"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4 4 4"></path><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"></path></svg><span>Share</span></button>
+      <button class="iconbtn" data-peek="q2">See the result</button>
+      
+      
+    </div>
+  </article><article class="poll" data-poll="q1">
+    <a class="who" href="/michael">
+    <span class="whoav">M</span>
+    <b>Michael K</b><span>@michael</span></a>
+    <h3>Should we canvass on Saturday?</h3>
+    <small>1 answer · <span data-ts="2026-08-09T21:30:20.590Z" data-noloc="">12h</span></small>
+    <div class="pops"><button class="pop shown lead" data-opt="o1">
+        <span class="pfill" style="width:100%"></span>
+        <span class="ptext">Yes</span>
+        <span class="ppc">100%<i>1</i></span>
+      </button><button class="pop shown" data-opt="o2">
+        <span class="pfill" style="width:0%"></span>
+        <span class="ptext">No</span>
+        <span class="ppc">0%<i>0</i></span>
+      </button></div>
+    <div class="rowacts">
+      <button class="iconbtn" data-act="share"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4 4 4"></path><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"></path></svg><span>Share</span></button>
+      
+      
+      <button class="iconbtn" data-act="del"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M10 7V5h4v2M8 7l.8 12.1a1 1 0 0 0 1 .9h4.4a1 1 0 0 0 1-.9L16 7"></path></svg></button>
+    </div>
+  </article></div></div>
     <aside class="side">
       <div class="card"><h5>You</h5>
         <div class="row"><span>Answered</span><b>0 of 2</b></div>
@@ -3549,7 +3648,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -3729,7 +3828,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="" data-v="near">Near you</button><button class="on" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -3887,7 +3986,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">3</span></span>
+</svg></span>
       <span class="label">People</span>
       </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
@@ -4069,7 +4168,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 4:25 AM</span></p></div>
+      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 5:30 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="thAsk">Ask the desk</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody chatbody"><div class="split"><div class="main room">
@@ -4083,7 +4182,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/renato"><b>Renato Perez</b></a>
-          <span class="rtime" data-ts="2026-08-10T05:25:54.816Z">3h</span>
+          <span class="rtime" data-ts="2026-08-10T06:30:27.883Z">3h</span>
           
         </div>
         <div class="rtext">Anyone going to the school board meeting?</div>
@@ -4092,7 +4191,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/wallace"><b>Wallace Alphin</b></a>
-          <span class="rtime" data-ts="2026-08-10T06:25:54.816Z">2h</span>
+          <span class="rtime" data-ts="2026-08-10T07:30:27.883Z">2h</span>
           
         </div>
         <div class="rtext">I am. <a class="mention" href="/michael">@michael</a> you coming?</div>
@@ -4101,7 +4200,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <b style="color:#0A3FD6">The Desk</b><span class="bottag">Anchor</span>
-          <span class="rtime" data-ts="2026-08-10T08:24:54.816Z">1m</span>
+          <span class="rtime" data-ts="2026-08-10T09:29:27.883Z">1m</span>
           <button class="rdel" data-rdel="r3" aria-label="Delete">✕</button>
         </div>
         <div class="rtext" style="border-color:#0A3FD6"><p>Three new positions today. Turnout is the story.</p></div>
@@ -4128,67 +4227,67 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <aside class="side">
       <div class="card"><h5><span class="live"><i></i>Live</span> Right now</h5>
         <div class="lfeed" id="lfeed"><button class="lrow" data-live="0">
-      <span class="lwhen" data-ts="2026-08-10T08:24:54.816Z">1m</span>
+      <span class="lwhen" data-ts="2026-08-10T09:29:27.883Z">1m</span>
       <span class="grow"><b>On the floor</b><span class="lwho">The Desk</span>
         <span class="ltext">Three new positions today. Turnout is the story.</span></span>
     </button><button class="lrow wire" data-live="1">
-      <span class="lwhen" data-ts="2026-08-10T08:17:55.054Z">8m</span>
+      <span class="lwhen" data-ts="2026-08-10T09:22:28.098Z">8m</span>
       <span class="grow"><b>NPR</b>
         <span class="ltext">Senate passes voting rights measure after all-night session</span></span>
     </button><button class="lrow" data-live="2">
-      <span class="lwhen" data-ts="2026-08-10T06:25:54.816Z">2h</span>
+      <span class="lwhen" data-ts="2026-08-10T07:30:27.883Z">2h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Michael K</span>
         <span class="ltext">Knocked 40 doors today. #canvassing with @renato</span></span>
     </button><button class="lrow" data-live="3">
-      <span class="lwhen" data-ts="2026-08-10T06:25:54.816Z">2h</span>
+      <span class="lwhen" data-ts="2026-08-10T07:30:27.883Z">2h</span>
       <span class="grow"><b>On the floor</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">I am. @michael you coming?</span></span>
     </button><button class="lrow wire" data-live="4">
-      <span class="lwhen" data-ts="2026-08-10T05:25:55.054Z">3h</span>
+      <span class="lwhen" data-ts="2026-08-10T06:30:28.098Z">3h</span>
       <span class="grow"><b>ProPublica</b>
         <span class="ltext">Medicaid cuts would close rural hospitals, study finds</span></span>
     </button><button class="lrow" data-live="5">
-      <span class="lwhen" data-ts="2026-08-10T05:25:54.816Z">3h</span>
+      <span class="lwhen" data-ts="2026-08-10T06:30:27.883Z">3h</span>
       <span class="grow"><b>On the floor</b><span class="lwho">Renato Perez</span>
         <span class="ltext">Anyone going to the school board meeting?</span></span>
     </button><button class="lrow wire" data-live="6">
-      <span class="lwhen" data-ts="2026-08-10T04:25:55.054Z">4h</span>
+      <span class="lwhen" data-ts="2026-08-10T05:30:28.098Z">4h</span>
       <span class="grow"><b>The Guardian</b>
         <span class="ltext">Centrist Democrats dismiss the winner ’as radical’</span></span>
     </button><button class="lrow wire" data-live="7">
-      <span class="lwhen" data-ts="2026-08-10T03:25:55.054Z">5h</span>
+      <span class="lwhen" data-ts="2026-08-10T04:30:28.098Z">5h</span>
       <span class="grow"><b>The Hill</b>
         <span class="ltext">Union files for election at third warehouse this month</span></span>
     </button><button class="lrow" data-live="8">
-      <span class="lwhen" data-ts="2026-08-10T03:25:54.816Z">5h</span>
+      <span class="lwhen" data-ts="2026-08-10T04:30:27.883Z">5h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Renato Perez</span>
         <span class="ltext">School board meeting was packed. #schools</span></span>
     </button><button class="lrow wire" data-live="9">
-      <span class="lwhen" data-ts="2026-08-09T23:25:55.054Z">9h</span>
+      <span class="lwhen" data-ts="2026-08-10T00:30:28.098Z">9h</span>
       <span class="grow"><b>The Guardian</b>
         <span class="ltext">Appeals court blocks deportation flights pending review</span></span>
     </button><button class="lrow" data-live="10">
-      <span class="lwhen" data-ts="2026-08-09T23:25:54.816Z">9h</span>
+      <span class="lwhen" data-ts="2026-08-10T00:30:27.883Z">9h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">Ballot drop box opened downtown</span></span>
     </button><button class="lrow" data-live="11">
-      <span class="lwhen" data-ts="2026-08-09T14:25:54.816Z">18h</span>
+      <span class="lwhen" data-ts="2026-08-09T15:30:27.883Z">18h</span>
       <span class="grow"><b>Opposes</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="12">
-      <span class="lwhen" data-ts="2026-08-09T13:25:54.816Z">19h</span>
+      <span class="lwhen" data-ts="2026-08-09T14:30:27.883Z">19h</span>
       <span class="grow"><b>Supports</b><span class="lwho">Renato Perez</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="13">
-      <span class="lwhen" data-ts="2026-08-09T12:25:54.816Z">20h</span>
+      <span class="lwhen" data-ts="2026-08-09T13:30:27.883Z">20h</span>
       <span class="grow"><b>Supports</b><span class="lwho">Michael K</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="14">
-      <span class="lwhen" data-ts="2026-08-09T02:25:54.816Z">1d</span>
+      <span class="lwhen" data-ts="2026-08-09T03:30:27.883Z">1d</span>
       <span class="grow"><b>Joined</b><span class="lwho">Wallace Alphin</span>
         </span>
     </button><button class="lrow" data-live="15">
-      <span class="lwhen" data-ts="2026-08-07T20:25:54.816Z">2d</span>
+      <span class="lwhen" data-ts="2026-08-07T21:30:27.883Z">2d</span>
       <span class="grow"><b>Joined</b><span class="lwho">Renato Perez</span>
         </span>
     </button></div>

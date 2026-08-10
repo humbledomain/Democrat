@@ -506,6 +506,8 @@ button.tag{cursor:pointer}
 .mact button{border:1px solid transparent;background:var(--soft);color:var(--dim);border-radius:7px;
   padding:2px 8px;font-size:11px;font-weight:560;line-height:1.7;cursor:pointer;transition:.14s;white-space:nowrap}
 .mact button.sym{min-width:24px;padding:2px 0;font-size:13px;text-align:center}
+.mact button.keep{color:var(--blue);background:rgba(10,63,214,.07)}
+.mact button.keep:hover{background:rgba(10,63,214,.13)}
 .mact button:hover{border-color:rgba(10,63,214,.4);color:var(--blue);background:rgba(10,63,214,.05)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
 .cmt{display:flex;gap:10px;align-items:flex-start}
 .whoav.sm{width:28px;height:28px;font-size:11px;text-decoration:none}
@@ -1189,6 +1191,24 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 }
 
 /* ------------------------------------------------------------------- polls */
+.shelf{display:flex;flex-direction:column;gap:10px;padding-bottom:16px;margin-bottom:4px;
+  border-bottom:1px solid var(--line)}
+.shelfhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.shelfhead h4{font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--dim);flex:none}
+.shelfhead .topicbar{flex:1;min-width:0;padding-bottom:0}
+.shelfrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.shelfrow::-webkit-scrollbar{display:none}
+.askcard{flex:0 0 clamp(230px,26vw,282px);background:var(--soft);border-radius:16px;padding:14px;
+  display:flex;flex-direction:column;gap:7px}
+.askcard b{font-size:14.5px;font-weight:620;line-height:1.35}
+.askcard small{font-size:12.5px;line-height:1.45;color:var(--ink2);flex:1}
+.askopts{display:flex;flex-wrap:wrap;gap:4px}
+.askopts span{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);
+  background:var(--card);border-radius:5px;padding:2px 7px}
+.askcard .sbtn{width:100%;text-align:center}
+.askcard .sbtn[disabled]{opacity:.5;cursor:default}
 .polls{display:flex;flex-direction:column}
 .poll{padding:16px 0;border-top:1px solid var(--line)}
 .poll:first-child{border-top:0}
@@ -1574,7 +1594,7 @@ async function suggest(boxId, btn, task, input, opts){
 
 /* ------------------------------------------------------------------- state */
 let ME = null;            // signed-in profile
-let MYFOLLOWS = new Set();
+let MYFOLLOWS = new Set(), MYFOLLOWERS = new Set();
 let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
@@ -1582,7 +1602,7 @@ let current = 'profile';
 const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null, saved:null,
             room:null, reach:null};
 let DMS = [], DMUNREAD = 0, OPENPOST = null;   /* conversations, unread count, expanded post */   // everyone's content
-const SC = {feed:'all', polls:'open', townhall:'all', issues:'browse', endorsed:'all'};
+const SC = {feed:'all', polls:'all', townhall:'all', issues:'browse', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
 let PSEARCH = '';            // per-screen scope
 let FEEDLIMIT = 60;          // grows when someone asks for more
@@ -1642,9 +1662,13 @@ async function load(){
   }
 
   if(ME){
-    const { data:f } = await sb.from('follows').select('followee').eq('follower',ME.id);
-    MYFOLLOWS = new Set((f||[]).map(x=>x.followee));
-  } else MYFOLLOWS = new Set();
+    const [{ data:f }, { data:fb }] = await Promise.all([
+      sb.from('follows').select('followee').eq('follower',ME.id),
+      sb.from('follows').select('follower').eq('followee',ME.id)
+    ]);
+    MYFOLLOWS   = new Set((f ||[]).map(x=>x.followee));
+    MYFOLLOWERS = new Set((fb||[]).map(x=>x.follower));
+  } else { MYFOLLOWS = new Set(); MYFOLLOWERS = new Set() }
 
   const h = qHandle();
   V = h ? (await sb.from('profiles').select('*').eq('handle',h).maybeSingle()).data : ME;
@@ -3028,9 +3052,11 @@ S.feed = {
 /* every message can be pushed further — for, against, deeper, plainer */
 const MSG_ACTIONS = {
   assistant: [['for','+','The case for'], ['against','\u2212','The case against'],
-              ['deeper','Deep','Go deeper'], ['simple','Simple','Put it simply']],
+              ['deeper','Deep','Go deeper'], ['simple','Simple','Put it simply'],
+              ['post','Post','Put this in your feed'], ['share','Share','Send it somewhere']],
   user:      []
 };
+const MSG_PLAIN = new Set(['post','share']);   /* these do not ask another question */
 function actPrompt(kind, role, text){
   const q = (text||'').length > 240 ? text.slice(0,240) + '…' : (text||'');
   const it = role === 'user' ? `this: "${q}"` : 'that';
@@ -3044,7 +3070,7 @@ const actionRow = (i, role) => {
   if(!set.length) return '';
   return `<div class="mact">${set.map(([k,label,title]) =>
     `<button data-mact="${k}" data-mi="${i}" title="${title}" aria-label="${title}"
-      class="${k==='for'||k==='against'?'sym':''}">${label}</button>`).join('')}</div>`;
+      class="${k==='for'||k==='against'?'sym':''}${MSG_PLAIN.has(k)?' keep':''}">${label}</button>`).join('')}</div>`;
 };
 
 /* Clicking one of these does not paste the label into the box — it opens the
@@ -3216,9 +3242,18 @@ S.compose = {
     }
 
     box.addEventListener('click', e=>{
-      const b = e.target.closest('[data-mact]'); if(!b || busy) return;
+      const b = e.target.closest('[data-mact]'); if(!b) return;
       const m = CHAT[+b.dataset.mi]; if(!m) return;
-      ask(actPrompt(b.dataset.mact, m.role, m.content));
+      const k = b.dataset.mact;
+      if(k === 'post'){                       /* your feed, in your own words if you want */
+        PREFILL.feed = String(m.content || '').trim() + '\n\n';
+        return open_('feed');
+      }
+      if(k === 'share') return shareSheet({ title:'Share this',
+        text: String(m.content || '').trim().slice(0, 600),
+        url: publicUrl(V && V.handle), editable:true, canPost:!RO && !GUEST() });
+      if(busy) return;
+      ask(actPrompt(k, m.role, m.content));
     });
 
     send.onclick = ()=>ask(t.value);
@@ -3636,7 +3671,8 @@ function ownSheet(){
 /* ----------------------------------------------------------------- endorsed */
 S.endorsed = {
   sub(){ return 'Who is here' },
-  acts(){ return tabs('endorsed',[['all','Everyone'],['mine','Following']]) },
+  acts(){ return tabs('endorsed',
+    [['all','Everyone'],['mine','Following'],['followers','Followers']]) },
   view(){
     if(!ONLINE) return `<div class="empty"><b>People show up once you are online</b>Connect the backend and everyone who joins appears here.</div>`;
     const all = G.people;
@@ -3647,6 +3683,7 @@ S.endorsed = {
     const sc = SC.endorsed;
     if(sc==='near')  people = people.filter(x=>isNear({profiles:x}));
     if(sc==='mine')  people = people.filter(x=>MYFOLLOWS.has(x.id));
+    if(sc==='followers') people = people.filter(x=>MYFOLLOWERS.has(x.id));
     if(PSEARCH){
       const q = PSEARCH.toLowerCase();
       people = people.filter(x=>((x.name||'')+' '+(x.handle||'')+' '+(x.role||'')+' '+(x.location||'')).toLowerCase().includes(q));
@@ -3680,19 +3717,17 @@ S.endorsed = {
                   </div>`
                : `<a class="btn ghost pfollow" href="/">Sign in to follow</a>`}
         </div>`}).join('')}</div>`
-        : `<div class="empty"><b>${PSEARCH?'Nobody by that name':'Nobody here yet'}</b>${PSEARCH?'Try another search.':'Share your page and this fills up.'}</div>`}
+        : `<div class="empty"><b>${
+             PSEARCH ? 'Nobody by that name'
+             : sc==='followers' ? 'Nobody follows you yet'
+             : sc==='mine' ? 'You are not following anyone yet'
+             : 'Nobody here yet'}</b>${
+             PSEARCH ? 'Try another search.'
+             : sc==='followers' ? 'Share your page and this fills up.'
+             : sc==='mine' ? 'Follow a few people and they land here.'
+             : 'Share your page and this fills up.'}</div>`}
     </div>
     <aside class="side">
-      ${ME ? (()=>{ const th = threads();
-        return `<div class="card"><h5>Messages${DMUNREAD?` · ${DMUNREAD} new`:''}</h5>
-          ${th.length ? th.slice(0,6).map(t=>`
-            <button class="dmrow" data-dm="${t.who.id}">
-              <span class="whoav sm">${t.who.photo_url?`<img src="${t.who.photo_url}" alt="">`:esc(initials(t.who))}</span>
-              <span class="grow"><b>${esc(t.who.name||t.who.handle)}</b><small>${esc(t.last.text.slice(0,42))}</small></span>
-              ${t.unread?`<span class="dot-new"></span>`:''}
-            </button>`).join('')
-          : '<span class="ainote">No messages yet. Say hello to someone.</span>'}
-        </div>` })() : ''}
       <div class="card"><h5>The network</h5>
         <div class="row"><span>People</span><b>${(all||[]).length}</b></div>
         <div class="row"><span>In ${stateName(myState())||'your state'}</span><b>${nearCount}</b></div>
@@ -3868,11 +3903,19 @@ const NEWSFRESH = 45 * 60e3;
 function wireStats(){
   document.querySelectorAll('[data-stat]').forEach(b=>b.onclick = ()=>{
     const k = b.dataset.stat;
-    if(k === 'followers') return peopleSheet(RO ? `Following @${V.handle}` : 'Following you', 'followers');
-    if(k === 'following') return peopleSheet(RO ? `@${V.handle} follows` : 'You follow', 'following');
+    /* someone else's page has no list of their followers to show, so those
+       numbers offer the person instead */
+    if(k === 'followers'){
+      if(RO) return peopleSheet(`Following @${V.handle}`, 'followers');
+      SC.endorsed = 'followers'; PSEARCH = ''; return open_('endorsed');
+    }
+    if(k === 'following'){
+      if(RO) return peopleSheet(`@${V.handle} follows`, 'following');
+      SC.endorsed = 'mine'; PSEARCH = ''; return open_('endorsed');
+    }
     if(k === 'posts' || k === 'likes'){ if(!RO) SC.feed = 'mine'; return open_('feed') }
-    if(k === 'votes')     return open_('polls');
-    if(k === 'shares')    return share(shareLine(), V && V.handle);
+    if(k === 'votes')  return open_('polls');
+    if(k === 'shares'){ if(RO) return share(shareLine(), V && V.handle); return open_('reach') }
   });
 }
 
@@ -4675,7 +4718,9 @@ S.polls = {
       ${(RO||GUEST())?'':`<button class="btn ghost" id="pAsk">Ask</button>`}`;
   },
   view(){
-    const mode = RO ? 'mine' : (SC.polls || 'open');
+    /* anything unexpected in SC.polls used to leave the screen blank */
+    const mode = RO ? 'mine'
+      : ['open','mine','all'].includes(SC.polls) ? SC.polls : (SC.polls = 'all');
     const all = (RO || !ONLINE) ? (D.polls || []) : (G.polls || []);
     const loading = !RO && ONLINE && G.polls === null;
     const unanswered = all.filter(p => !p.voted || JUSTVOTED.has(p.id));
@@ -4689,32 +4734,34 @@ S.polls = {
     }).sort((a,b)=>a.gap - b.gap).slice(0,3);
     const friends = pollAllies();
 
+    /* the shelf of questions ready to go, at the top where it can be used */
+    const shelf = (RO || GUEST()) ? '' : `<section class="shelf">
+      <div class="shelfhead">
+        <h4>Ready to ask</h4>
+        <div class="topicbar">${PLIB.map(g=>
+          `<button class="tchip${PTOPIC===g.t?' on':''}" data-plib="${esc(g.t)}">${esc(g.t)}</button>`).join('')}</div>
+      </div>
+      <div class="shelfrow">${(PLIB.find(g=>g.t===PTOPIC) || PLIB[0]).items.map(it=>{
+        const asked = all.some(p => (p.question||'').trim().toLowerCase() === it.q.toLowerCase());
+        return `<article class="askcard">
+          <b>${esc(it.q)}</b>
+          <small>${esc(it.w)}</small>
+          <div class="askopts">${it.o.slice(0,4).map(o=>`<span>${esc(o)}</span>`).join('')}</div>
+          <button class="sbtn yes" data-ask="${esc(it.q)}" ${asked?'disabled':''}>${
+            asked ? 'Already asked' : 'Ask this'}</button>
+        </article>`}).join('')}</div>
+    </section>`;
+
     let main = '';
     if(mode === 'open'){
       const list = unanswered;
       main = `${GUEST() ? joinBar('Sign in to answer, or ask your own.') : ''}
+        ${shelf}
         ${loading ? skel(3)
           : list.length ? `<div class="polls">${list.map(p=>pollCard(p, {who:true})).join('')}</div>`
           : `<div class="empty"><b>${all.length ? 'You have answered everything' : 'No questions yet'}</b>${
-              all.length ? 'Ask one of these and see what the room says.'
-                         : 'One good question travels further than ten posts.'}</div>`}
-        ${(RO||GUEST())?'':`
-          <div class="sechead" style="margin-top:22px"><h4>Ready to ask</h4></div>
-          <div class="topicbar">${PLIB.map(g=>
-            `<button class="tchip${PTOPIC===g.t?' on':''}" data-plib="${esc(g.t)}">${esc(g.t)}</button>`).join('')}</div>
-          <div class="stances">${(PLIB.find(g=>g.t===PTOPIC) || PLIB[0]).items.map(it=>{
-            const asked = all.some(p => p.question.trim().toLowerCase() === it.q.toLowerCase());
-            return `<div class="stance">
-              <div class="grow">
-                <b>${esc(it.q)}</b>
-                <small>${esc(it.w)}</small>
-                <div class="srow">${it.o.map(o=>`<span class="lvl topic">${esc(o)}</span>`).join('')}</div>
-              </div>
-              <div class="sbtns">
-                <button class="sbtn yes" data-ask="${esc(it.q)}" ${asked?'disabled':''}>${
-                  asked ? 'Asked' : 'Ask this'}</button>
-              </div>
-            </div>`}).join('')}</div>`}`;
+              all.length ? 'Ask one from the shelf and see what the room says.'
+                         : 'One good question travels further than ten posts.'}</div>`}`;
     }
 
     if(mode === 'mine'){
@@ -4726,9 +4773,11 @@ S.polls = {
 
     if(mode === 'all'){
       const list = [...all].sort((a,b)=>(b.total||0)-(a.total||0));
-      main = loading ? skel(3) : list.length
-        ? `<div class="polls">${list.map(p=>pollCard(p, {who:true})).join('')}</div>`
-        : `<div class="empty"><b>Nothing asked yet</b>Be the first.</div>`;
+      main = `${GUEST() ? joinBar('Sign in to answer, or ask your own.') : ''}
+        ${shelf}
+        ${loading ? skel(3) : list.length
+          ? `<div class="polls">${list.map(p=>pollCard(p, {who:true})).join('')}</div>`
+          : `<div class="empty"><b>Nothing asked yet</b>Ask one from the shelf above.</div>`}`;
     }
 
     return `<div class="split"><div class="main">${main}</div>
@@ -5429,7 +5478,7 @@ let railPainted = false;
 function renderRail(){
   const live = floorLive();
   rail.innerHTML = `<div class="nav">` + APPS.map((a,i)=>{
-    const n = a.id==='feed' ? feedUnseen() : a.id==='endorsed' ? DMUNREAD : 0;
+    const n = a.id==='feed' ? feedUnseen() : 0;
     const hot = a.id==='townhall' && live;
     return `<button class="app${a.id===current?' on':''}" data-id="${a.id}" style="animation-delay:${(i*.03+.03).toFixed(2)}s">
       <span class="tile">${icon(a)}${n?`<span class="badge">${n>99?'99+':n}</span>`:''}</span>
@@ -6510,7 +6559,7 @@ function wireTopbar(){
       if(evt==='SIGNED_IN'||evt==='SIGNED_OUT'){
         chatReset(evt==='SIGNED_OUT');          /* never carry a conversation across accounts */
         Object.keys(G).forEach(k=>G[k]=null);
-        MYFOLLOWS = new Set();
+        MYFOLLOWS = new Set(); MYFOLLOWERS = new Set();
         await load(); render();
       }
     });
@@ -6520,7 +6569,7 @@ function wireTopbar(){
   wireWatch();
   loadNews().then(()=>{ paintTicker(); if(current === 'townhall') paintLiveFeed() });
   if(ONLINE){
-    if(myState()) ['feed','polls'].forEach(k=>SC[k]='near');   /* People stays on Everyone */
+    if(myState()) SC.feed = 'near';        /* the others have tabs of their own */
     await Promise.all([loadGlobal('issues'), loadGlobal('events'), loadRoom()]);
     joinFloor();
   }
