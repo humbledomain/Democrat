@@ -49,7 +49,7 @@ try{var _t=localStorage.getItem('dai.theme')||'auto';
   /* surfaces and text tones, so the whole app can turn dark in one place */
   --bg:#fff; --card:#fff; --panelbg:rgba(255,255,255,.9); --raise:rgba(255,255,255,.78);
   --ink2:#39415a; --ink3:#28304a; --dim:#8b93a8; --ph:#9aa3b8; --faint:#c9d2e6;
-  --gutter:clamp(20px,2.4vw,40px); --mast:58px; --live:#E5352B; --tabs:0px;
+  --gutter:clamp(20px,2.4vw,40px); --mast:58px; --live:#E5352B; --tabs:0px; --phead:52px;
 }
 html[data-theme="dark"]{
   color-scheme:dark;
@@ -294,7 +294,7 @@ button.tag{cursor:pointer}
 
 /* ------------------------------------------------------------ profile page */
 .pwrap{display:flex;flex-direction:column;gap:0;max-width:900px}
-.phero{padding:4px 0 16px;background:var(--bg);position:relative;z-index:1}
+.phero{padding:clamp(16px,2.4vh,26px) 0 16px;background:var(--bg);position:relative;z-index:1}
 .pheroin{display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start}
 .pav{--s:clamp(96px,11vw,128px);width:var(--s);height:var(--s);flex:none;border-radius:26px;
   position:relative;border:0;padding:0;overflow:hidden;cursor:pointer;display:block;
@@ -365,7 +365,9 @@ button.tag{cursor:pointer}
   .pheroin{gap:14px}
   .pav{--s:84px;border-radius:20px}
   .pfname{font-size:23px}
-  .psticky{top:calc(var(--mast) + 52px)}
+  .psticky{top:calc(var(--mast) + var(--phead) - 1px)}
+  .pbody.pf{padding-top:0}
+  .phero{padding-top:12px}
   .ptabbody{padding-top:16px}
 }
 @media (max-width:460px){
@@ -374,7 +376,7 @@ button.tag{cursor:pointer}
 }
 
 /* profile page layout */
-.pbody.pf{display:block;padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
+.pbody.pf{display:block;padding:0 var(--gutter) clamp(20px,3vh,30px)}
 .pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
   align-items:start;max-width:1100px;margin:0 auto}
 .photo{width:100%;aspect-ratio:1;border-radius:22px;position:relative;border:0;padding:0;overflow:hidden;
@@ -800,9 +802,9 @@ button.tag{cursor:pointer}
   .net{width:46px;height:46px}
   .btn{padding:11px 16px}
   .linkbtn{padding:8px 10px;margin-left:-10px}
-  .newpill{top:calc(var(--mast) + 46px)}
+  .newpill{top:calc(var(--mast) + var(--phead))}
   .story.big .hl{font-size:23px}
-  .topicbar{position:sticky;top:calc(var(--mast) + 54px);z-index:6;background:var(--bg);padding:8px 0}
+  .topicbar{position:sticky;top:calc(var(--mast) + var(--phead));z-index:6;background:var(--bg);padding:8px 0}
   .shelf{background:var(--bg)}
   .dek{font-size:14px}
 
@@ -817,7 +819,7 @@ button.tag{cursor:pointer}
     box-shadow:0 -6px 18px -12px rgba(8,26,72,.5), 0 0 0 1px var(--line)}
   .bots{position:sticky;bottom:calc(var(--tabs) + 62px);z-index:8;padding:6px 0;
     background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
-  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6;
+  .quick{position:sticky;top:calc(var(--mast) + var(--phead));z-index:6;
     background:linear-gradient(var(--soft),var(--soft)) var(--bg)}
 
   .split{gap:20px}
@@ -6299,6 +6301,7 @@ function open_(id, quiet){
     <div class="pbody">${s.view()}</div>`;
   if(id==='compose' || id==='townhall') panel.querySelector('.pbody').classList.add('chatbody');
   if(s.init) s.init();
+  if(typeof sizeMast === 'function') requestAnimationFrame(sizeMast);
   const body = panel.querySelector('.pbody');
   if(phone()){ if(keep) requestAnimationFrame(()=>window.scrollTo(0, keep));
                else if(first) window.scrollTo(0, 0); }
@@ -7121,9 +7124,16 @@ function netWatch(){
 /* the masthead is one row on a desktop and two on a phone, and it disappears a
    row when the crawl has nothing to say. Measure it rather than assume. */
 function sizeMast(){
-  const m = document.querySelector('.mast'); if(!m) return;
-  const h = Math.round(m.getBoundingClientRect().height);
-  if(h > 20) document.documentElement.style.setProperty('--mast', h + 'px');
+  const m = document.querySelector('.mast');
+  if(m){
+    const h = Math.round(m.getBoundingClientRect().height);
+    if(h > 20) document.documentElement.style.setProperty('--mast', h + 'px');
+  }
+  const p = document.querySelector('.phead');
+  if(p){
+    const h = Math.round(p.getBoundingClientRect().height);
+    if(h > 20) document.documentElement.style.setProperty('--phead', h + 'px');
+  }
 }
 function watchMast(){
   sizeMast();
