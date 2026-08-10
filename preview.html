@@ -772,6 +772,13 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
   color:var(--live);flex:none;text-transform:uppercase}
+.livechip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:10px;font-weight:800;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--live);margin-left:-2px;
+  padding:3px 8px 3px 7px;border-radius:99px;background:rgba(229,53,43,.09)}
+.livechip i{width:6px;height:6px;border-radius:50%;background:var(--live);flex:none;
+  animation:livepulse 1.9s ease-in-out infinite}
+.livechip.off{color:var(--dim);background:var(--soft)}
+.livechip.off i{background:var(--dim);animation:none}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;
   animation:livepulse 1.9s ease-in-out infinite}
 @keyframes livepulse{
@@ -933,6 +940,22 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .rmsg.isbot .rtext{background:var(--soft);border-radius:0 12px 12px 0;padding:10px 14px;
   border-left:3px solid var(--blue)}
 .whoav.bot{font-weight:800;letter-spacing:.02em}
+.lfeed{display:flex;flex-direction:column;max-height:min(46vh,420px);overflow-y:auto;
+  margin:-6px -4px;scrollbar-width:none}
+.lfeed::-webkit-scrollbar{display:none}
+.lrow{display:flex;gap:10px;align-items:baseline;width:100%;border:0;background:none;cursor:pointer;
+  text-align:left;font-family:inherit;padding:8px 4px;border-radius:9px;color:inherit;
+  border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+.lrow:hover{background:var(--soft)}
+.lwhen{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);
+  flex:none;width:36px}
+.lrow .grow{min-width:0;flex:1;font-size:12.5px;line-height:1.45}
+.lrow b{font-weight:800;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);
+  margin-right:5px}
+.lrow.wire b{color:var(--ink2)}
+.lwho{font-weight:640;margin-right:5px}
+.ltext{color:var(--ink2)}
 .bots{display:flex;gap:6px;flex-wrap:wrap;flex:none}
 .botchip{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;background:var(--soft);
   border-radius:99px;padding:4px 13px 4px 4px;font-family:inherit;font-size:12px;font-weight:600;
@@ -1046,7 +1069,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1338,7 +1362,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1567,7 +1592,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 4 stories from 4 newsrooms<span class="stamp">Updated 1:15 AM</span></p></div>
+      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 4 stories from 4 newsrooms<span class="stamp">Updated 1:54 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="tdRefresh">Refresh</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -1585,12 +1610,12 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
       
       <article class="story big">
-        <img class="hero" src="https://img.test/a.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <img class="hero" src="https://img.test/a.jpg" alt="" loading="lazy" onload="imgOK(this,700)" onerror="this.remove()">
         <div class="grow">
           <div class="kick">
       <span class="live"><i></i>Just in</span><span class="sep">·</span>
       <b>NPR</b>
-      <span class="sep">·</span><span class="place">8m ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T05:46:23.622Z" data-tsfmt="news">8m ago</span>
     </div>
           <a class="hl" href="https://npr.org/a" data-read="https://npr.org/a" target="_blank" rel="noopener noreferrer">Senate passes voting rights measure after all-night session</a>
           <p class="dek">The bill expands early voting and restores federal oversight of election law.</p>
@@ -1608,7 +1633,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>ProPublica</b>
-      <span class="sep">·</span><span class="place">3h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T02:54:23.622Z" data-tsfmt="news">3h ago</span>
     </div>
           <a class="hl" href="https://propublica.org/b" data-read="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Medicaid cuts would close rural hospitals, study finds</a>
           
@@ -1618,7 +1643,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
             <button class="iconbtn" data-floor="https://propublica.org/b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>To the floor</span></button>
           </div>
         </div>
-        <img class="thumb-s" src="https://img.test/b.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <img class="thumb-s" src="https://img.test/b.jpg" alt="" loading="lazy" onload="imgOK(this,560)" onerror="this.remove()">
       </article>
       <article class="story">
         
@@ -1626,7 +1651,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Hill</b>
-      <span class="sep">·</span><span class="place">5h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T00:54:23.622Z" data-tsfmt="news">5h ago</span>
     </div>
           <a class="hl" href="https://thehill.com/c" data-read="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Union files for election at third warehouse this month</a>
           
@@ -1636,7 +1661,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
             <button class="iconbtn" data-floor="https://thehill.com/c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>To the floor</span></button>
           </div>
         </div>
-        <img class="thumb-s" src="https://img.test/c.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <img class="thumb-s" src="https://img.test/c.jpg" alt="" loading="lazy" onload="imgOK(this,560)" onerror="this.remove()">
       </article>
       <article class="story">
         
@@ -1644,7 +1669,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Guardian</b>
-      <span class="sep">·</span><span class="place">9h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-09T20:54:23.622Z" data-tsfmt="news">9h ago</span>
     </div>
           <a class="hl" href="https://guardian.com/d" data-read="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Appeals court blocks deportation flights pending review</a>
           
@@ -1698,7 +1723,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1925,7 +1951,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 1:15 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 1:54 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="" data-v="near">Near you</button><button class="on" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -2026,7 +2052,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -2255,7 +2282,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 1:15 AM</span></p></div>
+      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 1:54 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="thAsk">Ask the desk</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody chatbody"><div class="split"><div class="main room">
@@ -2269,7 +2296,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/renato"><b>Renato Perez</b></a>
-          <span class="rtime">3h</span>
+          <span class="rtime" data-ts="2026-08-10T02:54:30.471Z">3h</span>
           
         </div>
         <div class="rtext">Anyone going to the school board meeting?</div>
@@ -2278,7 +2305,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/wallace"><b>Wallace Alphin</b></a>
-          <span class="rtime">2h</span>
+          <span class="rtime" data-ts="2026-08-10T03:54:30.471Z">2h</span>
           
         </div>
         <div class="rtext">I am. <a class="mention" href="/michael">@michael</a> you coming?</div>
@@ -2287,7 +2314,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <b style="color:#0A3FD6">The Desk</b><span class="bottag">Anchor</span>
-          <span class="rtime">1m</span>
+          <span class="rtime" data-ts="2026-08-10T05:53:30.471Z">1m</span>
           <button class="rdel" data-rdel="r3" aria-label="Delete">✕</button>
         </div>
         <div class="rtext" style="border-color:#0A3FD6"><p>Three new positions today. Turnout is the story.</p></div>
@@ -2312,6 +2339,73 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       </div>
     </div>
     <aside class="side">
+      <div class="card"><h5><span class="live"><i></i>Live</span> Right now</h5>
+        <div class="lfeed" id="lfeed"><button class="lrow" data-live="0">
+      <span class="lwhen" data-ts="2026-08-10T05:53:30.471Z">1m</span>
+      <span class="grow"><b>On the floor</b><span class="lwho">The Desk</span>
+        <span class="ltext">Three new positions today. Turnout is the story.</span></span>
+    </button><button class="lrow wire" data-live="1">
+      <span class="lwhen" data-ts="2026-08-10T05:46:30.690Z">8m</span>
+      <span class="grow"><b>NPR</b>
+        <span class="ltext">Senate passes voting rights measure after all-night session</span></span>
+    </button><button class="lrow" data-live="2">
+      <span class="lwhen" data-ts="2026-08-10T03:54:30.471Z">2h</span>
+      <span class="grow"><b>Posted</b><span class="lwho">Michael K</span>
+        <span class="ltext">Knocked 40 doors today. #canvassing with @renato</span></span>
+    </button><button class="lrow" data-live="3">
+      <span class="lwhen" data-ts="2026-08-10T03:54:30.471Z">2h</span>
+      <span class="grow"><b>On the floor</b><span class="lwho">Wallace Alphin</span>
+        <span class="ltext">I am. @michael you coming?</span></span>
+    </button><button class="lrow wire" data-live="4">
+      <span class="lwhen" data-ts="2026-08-10T02:54:30.690Z">3h</span>
+      <span class="grow"><b>ProPublica</b>
+        <span class="ltext">Medicaid cuts would close rural hospitals, study finds</span></span>
+    </button><button class="lrow" data-live="5">
+      <span class="lwhen" data-ts="2026-08-10T02:54:30.471Z">3h</span>
+      <span class="grow"><b>On the floor</b><span class="lwho">Renato Perez</span>
+        <span class="ltext">Anyone going to the school board meeting?</span></span>
+    </button><button class="lrow wire" data-live="6">
+      <span class="lwhen" data-ts="2026-08-10T00:54:30.690Z">5h</span>
+      <span class="grow"><b>The Hill</b>
+        <span class="ltext">Union files for election at third warehouse this month</span></span>
+    </button><button class="lrow" data-live="7">
+      <span class="lwhen" data-ts="2026-08-10T00:54:30.471Z">5h</span>
+      <span class="grow"><b>Posted</b><span class="lwho">Renato Perez</span>
+        <span class="ltext">School board meeting was packed. #schools</span></span>
+    </button><button class="lrow wire" data-live="8">
+      <span class="lwhen" data-ts="2026-08-09T20:54:30.690Z">9h</span>
+      <span class="grow"><b>The Guardian</b>
+        <span class="ltext">Appeals court blocks deportation flights pending review</span></span>
+    </button><button class="lrow" data-live="9">
+      <span class="lwhen" data-ts="2026-08-09T20:54:30.471Z">9h</span>
+      <span class="grow"><b>Posted</b><span class="lwho">Wallace Alphin</span>
+        <span class="ltext">Ballot drop box opened downtown</span></span>
+    </button><button class="lrow" data-live="10">
+      <span class="lwhen" data-ts="2026-08-09T11:54:30.471Z">18h</span>
+      <span class="grow"><b>Opposes</b><span class="lwho">Wallace Alphin</span>
+        <span class="ltext">Expand early voting</span></span>
+    </button><button class="lrow" data-live="11">
+      <span class="lwhen" data-ts="2026-08-09T10:54:30.471Z">19h</span>
+      <span class="grow"><b>Supports</b><span class="lwho">Renato Perez</span>
+        <span class="ltext">Expand early voting</span></span>
+    </button><button class="lrow" data-live="12">
+      <span class="lwhen" data-ts="2026-08-09T09:54:30.471Z">20h</span>
+      <span class="grow"><b>Supports</b><span class="lwho">Michael K</span>
+        <span class="ltext">Expand early voting</span></span>
+    </button><button class="lrow" data-live="13">
+      <span class="lwhen" data-ts="2026-08-08T23:54:30.471Z">1d</span>
+      <span class="grow"><b>Joined</b><span class="lwho">Wallace Alphin</span>
+        </span>
+    </button><button class="lrow" data-live="14">
+      <span class="lwhen" data-ts="2026-08-07T17:54:30.471Z">2d</span>
+      <span class="grow"><b>Joined</b><span class="lwho">Renato Perez</span>
+        </span>
+    </button><button class="lrow" data-live="15">
+      <span class="lwhen" data-ts="2026-08-06T11:54:30.471Z">3d</span>
+      <span class="grow"><b>Joined</b><span class="lwho">Michael K</span>
+        </span>
+    </button></div>
+      </div>
       <div class="card"><h5>Put something on the calendar</h5>
         <input class="inp" id="tTitle" placeholder="Event">
         <input class="inp" id="tDate" type="date" value="">

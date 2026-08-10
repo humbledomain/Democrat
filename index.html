@@ -781,6 +781,13 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
   color:var(--live);flex:none;text-transform:uppercase}
+.livechip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:10px;font-weight:800;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--live);margin-left:-2px;
+  padding:3px 8px 3px 7px;border-radius:99px;background:rgba(229,53,43,.09)}
+.livechip i{width:6px;height:6px;border-radius:50%;background:var(--live);flex:none;
+  animation:livepulse 1.9s ease-in-out infinite}
+.livechip.off{color:var(--dim);background:var(--soft)}
+.livechip.off i{background:var(--dim);animation:none}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;
   animation:livepulse 1.9s ease-in-out infinite}
 @keyframes livepulse{
@@ -942,6 +949,22 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .rmsg.isbot .rtext{background:var(--soft);border-radius:0 12px 12px 0;padding:10px 14px;
   border-left:3px solid var(--blue)}
 .whoav.bot{font-weight:800;letter-spacing:.02em}
+.lfeed{display:flex;flex-direction:column;max-height:min(46vh,420px);overflow-y:auto;
+  margin:-6px -4px;scrollbar-width:none}
+.lfeed::-webkit-scrollbar{display:none}
+.lrow{display:flex;gap:10px;align-items:baseline;width:100%;border:0;background:none;cursor:pointer;
+  text-align:left;font-family:inherit;padding:8px 4px;border-radius:9px;color:inherit;
+  border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+.lrow:hover{background:var(--soft)}
+.lwhen{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);
+  flex:none;width:36px}
+.lrow .grow{min-width:0;flex:1;font-size:12.5px;line-height:1.45}
+.lrow b{font-weight:800;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);
+  margin-right:5px}
+.lrow.wire b{color:var(--ink2)}
+.lwho{font-weight:640;margin-right:5px}
+.ltext{color:var(--ink2)}
 .bots{display:flex;gap:6px;flex-wrap:wrap;flex:none}
 .botchip{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;background:var(--soft);
   border-radius:99px;padding:4px 13px 4px 4px;font-family:inherit;font-size:12px;font-weight:600;
@@ -1056,6 +1079,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
 <div class="ticker" id="ticker"><div class="ticks" id="ticks"></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
@@ -2048,7 +2072,7 @@ const LOADFAIL = {};
 async function loadPeople(){
   if(!ONLINE || G.people) return;
   const { data, error } = await sb.from('profiles')
-    .select('id,handle,name,photo_url,location,role')
+    .select('id,handle,name,photo_url,location,role,created_at')
     .not('handle','is',null).order('created_at',{ascending:false}).limit(60);
   if(error) throw error;
   G.people = data || [];
@@ -2993,6 +3017,22 @@ function matchesTopic(text, name){
   return wordsFor(name).some(w => t.includes(w));
 }
 
+let WIRET = null;
+function wireWatch(){
+  const pull = ()=> loadNews(true).then(()=>{
+    if(current === 'today') open_('today', true);
+    if(current === 'townhall') paintLiveFeed();
+    paintTicker();
+  });
+  try{ clearInterval(WIRET); WIRET = setInterval(()=>{ if(!document.hidden) pull() }, 150e3) }catch(e){}
+  try{
+    document.addEventListener('visibilitychange', ()=>{
+      if(!document.hidden && Date.now() - NEWSAT > 120e3) pull();
+    });
+    addEventListener('online', ()=>{ if(Date.now() - NEWSAT > 60e3) pull() });
+  }catch(e){}
+}
+
 async function loadNews(force){
   if(!force && NEWS && Date.now() - NEWSAT < 240e3) return;
   try{
@@ -3010,6 +3050,16 @@ async function loadNews(force){
       : 'Could not reach the wire just now.';
   }
 }
+
+/* anything with a data-ts keeps its own clock */
+function tickTimes(){
+  document.querySelectorAll('[data-ts]').forEach(el=>{
+    const ts = el.getAttribute('data-ts'); if(!ts) return;
+    const t = el.getAttribute('data-tsfmt') === 'news' ? newsWhen(ts) : ago(ts);
+    if(el.textContent !== t) el.textContent = t;
+  });
+}
+try{ setInterval(()=>{ if(!document.hidden) tickTimes() }, 30e3) }catch(e){}
 
 const newsWhen = ts =>{
   if(!ts) return '';
@@ -3088,7 +3138,8 @@ function readerOpen(link){
       <button class="pclose" id="rdClose" style="display:grid" aria-label="Close">&#10005;</button>
     </header>
     <div class="readbody">
-      ${it.image ? `<img class="readimg" src="${esc(it.image)}" alt="" onerror="this.remove()">` : ''}
+      ${it.image ? `<img class="readimg" src="${esc(it.image)}" alt=""
+           onload="imgOK(this,700)" onerror="this.remove()">` : ''}
       <h1>${esc(it.title)}</h1>
       ${it.summary ? `<p class="dek">${esc(it.summary)}</p>` : ''}
       <div class="ai" id="rdAi" hidden></div>
@@ -3147,12 +3198,13 @@ S.today = {
       ${it.when && Date.now() - new Date(it.when).getTime() < NEWSFRESH
         ? `<span class="live"><i></i>Just in</span><span class="sep">&middot;</span>` : ''}
       <b>${esc(it.source || 'Wire')}</b>
-      ${it.when ? `<span class="sep">&middot;</span><span class="place">${esc(newsWhen(it.when))}</span>` : ''}
+      ${it.when ? `<span class="sep">&middot;</span><span class="place" data-ts="${esc(it.when)}"
+           data-tsfmt="news">${esc(newsWhen(it.when))}</span>` : ''}
     </div>`;
     const story = (it, big)=>`
       <article class="story${big?' big':''}">
         ${big && it.image ? `<img class="hero" src="${esc(it.image)}" alt="" loading="lazy"
-             onerror="this.remove()">` : ''}
+             onload="imgOK(this,700)" onerror="this.remove()">` : ''}
         <div class="grow">
           ${kickOf(it)}
           <a class="hl" href="${esc(it.link)}" data-read="${esc(it.link)}"
@@ -3165,7 +3217,7 @@ S.today = {
           </div>
         </div>
         ${!big && it.image ? `<img class="thumb-s" src="${esc(it.image)}" alt="" loading="lazy"
-             onerror="this.remove()">` : ''}
+             onload="imgOK(this,560)" onerror="this.remove()">` : ''}
       </article>`;
 
     return `<div class="split"><div class="main">
@@ -3311,6 +3363,44 @@ function paintHere(){
     : `<span class="herecount">The floor is open</span>`;
 }
 
+/* everything happening on the site and on the wire, newest first */
+function liveFeed(){
+  const out = [];
+  const nm = p => (p && (p.name || (p.handle && '@' + p.handle))) || 'Someone';
+  unmuted(G.posts || []).slice(0, 14).forEach(p => out.push({
+    t:p.created_at, k:'Posted', who:nm(p.profiles), text:trim60(p.text), go:()=>openPost(p.id) }));
+  (G.issues || []).slice(0, 12).forEach(i => out.push({
+    t:i.created_at, k:i.stance === 'Support' ? 'Supports' : 'Opposes', who:nm(i.profiles),
+    text:i.title, go:()=>open_('issues') }));
+  (G.room || []).slice(-12).forEach(m => out.push({
+    t:m.created_at, k:'On the floor', who:botOf(m) ? botOf(m).name : nm(m.profiles),
+    text:trim60(m.text), go:null }));
+  (G.polls || []).slice(0, 6).forEach(q => out.push({
+    t:q.created_at, k:'Asked', who:nm(q.profiles), text:trim60(q.question), go:()=>open_('polls') }));
+  (G.people || []).slice(0, 8).forEach(p => { if(p.created_at) out.push({
+    t:p.created_at, k:'Joined', who:nm(p), text:'', go:()=>{ location.href = '/' + p.handle } }) });
+  (NEWS || []).slice(0, 10).forEach(n => { if(n.when) out.push({
+    t:n.when, k:n.source || 'Wire', wire:true, text:n.title, go:()=>readerOpen(n.link) }) });
+  return out.filter(x => x.t).sort((a,b)=> new Date(b.t) - new Date(a.t)).slice(0, 16);
+}
+function liveFeedHTML(){
+  const rows = liveFeed();
+  if(!rows.length) return `<p class="hint" style="text-align:left">Nothing has happened yet today.</p>`;
+  return rows.map((r,i)=>`<button class="lrow${r.wire?' wire':''}" data-live="${i}">
+      <span class="lwhen" data-ts="${esc(r.t)}">${esc(ago(r.t))}</span>
+      <span class="grow"><b>${esc(r.k)}</b>${r.who?`<span class="lwho">${esc(r.who)}</span>`:''}
+        ${r.text?`<span class="ltext">${esc(r.text)}</span>`:''}</span>
+    </button>`).join('');
+}
+function paintLiveFeed(){
+  const box = $('lfeed'); if(!box) return;
+  const rows = liveFeed();
+  box.innerHTML = liveFeedHTML();
+  box.querySelectorAll('[data-live]').forEach(b=>b.onclick = ()=>{
+    const r = rows[+b.dataset.live]; if(r && r.go) r.go();
+  });
+}
+
 const botOf = m => m.bot && BOTS[m.bot] ? BOTS[m.bot] : null;
 function roomHTML(){
   const msgs = (G.room || []).filter(m => m.bot || !isMuted(m.profiles && m.profiles.handle));
@@ -3335,7 +3425,7 @@ function roomHTML(){
               : `${m.profiles && m.profiles.handle
                    ? `<a class="rname" href="/${esc(m.profiles.handle)}"><b>${esc(nm)}</b></a>`
                    : `<b>${esc(nm)}</b>`}`}
-          <span class="rtime">${ago(m.created_at)}</span>
+          <span class="rtime" data-ts="${m.created_at}">${ago(m.created_at)}</span>
           ${(ME && m.author === ME.id) ? `<button class="rdel" data-rdel="${m.id}" aria-label="Delete">&#10005;</button>` : ''}
         </div>`}
         <div class="rtext"${b?` style="border-color:${b.color}"`:''}>${b ? md(m.text) : rich(m.text)}</div>
@@ -3436,6 +3526,9 @@ S.townhall = {
       </div>`}
     </div>
     <aside class="side">
+      <div class="card"><h5><span class="live"><i></i>Live</span> Right now</h5>
+        <div class="lfeed" id="lfeed">${liveFeedHTML()}</div>
+      </div>
       ${(RO||GUEST())?'':`<div class="card"><h5>Put something on the calendar</h5>
         <input class="inp" id="tTitle" placeholder="Event">
         <input class="inp" id="tDate" type="date" value="${CAL.pick||''}">
@@ -3474,7 +3567,11 @@ S.townhall = {
   },
   init(){
     ensure('events','townhall');
-    joinFloor(); paintHere();
+    ensure('posts','townhall');
+    ensure('issues','townhall');
+    ensure('people','townhall');
+    if(NEWS === null) loadNews().then(()=>{ if(current==='townhall') paintLiveFeed() });
+    joinFloor(); paintHere(); paintLiveFeed();
     if(ONLINE && G.room === null)
       loadRoom().then(()=>{ if(current==='townhall'){ paintRoom();
         const t = $('here'); if(t) paintHere(); } });
@@ -4074,7 +4171,10 @@ function goLive(){
   sb.channel('everything')
     .on('postgres_changes', {event:'*', schema:'public'}, payload => {
       if(payload.table === 'room_messages'){          /* the floor updates in place */
-        loadRoom().then(()=>{ if(current === 'townhall') paintRoom(); paintTicker() });
+        loadRoom().then(()=>{
+          if(current === 'townhall'){ paintRoom(); paintLiveFeed() }
+          paintTicker();
+        });
         return;
       }
       const kind = TABLE_KIND[payload.table];
@@ -4236,6 +4336,16 @@ function openTag(tag){
   if(SC.feed === 'mine' && !RO) SC.feed = 'all';
   if(ONLINE && !RO) loadGlobal('posts').then(()=>{ if(current==='feed') open_('feed', true) });
   open_('feed');
+}
+
+/* a soft, upscaled thumbnail looks worse than no picture at all */
+function imgOK(el, min){
+  try{
+    if(!el) return;
+    const w = el.naturalWidth || 0;
+    if(w && w < (min || 560)) el.remove();
+    else el.classList.add('ready');
+  }catch(e){}
 }
 
 /* ================================================================== lightbox */
@@ -4814,6 +4924,12 @@ document.addEventListener('click', ()=>killCard(), true);
 function netWatch(){
   const paint = ()=>{
     const off = typeof navigator !== 'undefined' && navigator.onLine === false;
+    const chip = $('liveChip');
+    if(chip){
+      chip.classList.toggle('off', off);
+      chip.lastChild.nodeValue = off ? 'Offline' : 'Live';
+      chip.title = off ? 'No connection' : 'This page updates as things happen';
+    }
     let el = document.getElementById('offline');
     if(!off){ if(el) el.remove(); return }
     if(el) return;
@@ -4879,6 +4995,8 @@ function wireTopbar(){
   } else { const m=$('mode'); m.hidden=false; m.textContent='Local mode'; }
   await load();
   goLive();
+  wireWatch();
+  loadNews().then(()=>{ paintTicker(); if(current === 'townhall') paintLiveFeed() });
   if(ONLINE){
     if(myState()) ['feed','polls'].forEach(k=>SC[k]='near');   /* People stays on Everyone */
     await Promise.all([loadGlobal('issues'), loadGlobal('events'), loadRoom()]);

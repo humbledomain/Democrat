@@ -3,18 +3,37 @@
    No key, no dependency, no database. A feed that is down is simply skipped. */
 
 const FEEDS = [
-  { name:'NPR',              url:'https://feeds.npr.org/1014/rss.xml' },
-  { name:'NPR',              url:'https://feeds.npr.org/1003/rss.xml' },
-  { name:'The Guardian',     url:'https://www.theguardian.com/us-news/us-politics/rss' },
-  { name:'ProPublica',       url:'https://www.propublica.org/feeds/propublica/main' },
-  { name:'The Hill',         url:'https://thehill.com/news/feed/' },
-  { name:'Politico',         url:'https://rss.politico.com/politics-news.xml' },
-  { name:'NBC News',         url:'https://feeds.nbcnews.com/nbcnews/public/politics' },
-  { name:'CBS News',         url:'https://www.cbsnews.com/latest/rss/politics' },
-  { name:'Democracy Docket', url:'https://www.democracydocket.com/feed/' }
+  { name:'NPR',               url:'https://feeds.npr.org/1014/rss.xml' },
+  { name:'NPR',               url:'https://feeds.npr.org/1003/rss.xml' },
+  { name:'NPR',               url:'https://feeds.npr.org/1012/rss.xml' },
+  { name:'The Guardian',      url:'https://www.theguardian.com/us-news/us-politics/rss' },
+  { name:'The Guardian',      url:'https://www.theguardian.com/us-news/rss' },
+  { name:'ProPublica',        url:'https://www.propublica.org/feeds/propublica/main' },
+  { name:'The Hill',          url:'https://thehill.com/news/feed/' },
+  { name:'The Hill',          url:'https://thehill.com/homenews/feed/' },
+  { name:'Politico',          url:'https://rss.politico.com/politics-news.xml' },
+  { name:'Politico',          url:'https://rss.politico.com/congress.xml' },
+  { name:'NBC News',          url:'https://feeds.nbcnews.com/nbcnews/public/politics' },
+  { name:'CBS News',          url:'https://www.cbsnews.com/latest/rss/politics' },
+  { name:'ABC News',          url:'https://abcnews.go.com/abcnews/politicsheadlines' },
+  { name:'PBS NewsHour',      url:'https://www.pbs.org/newshour/feeds/rss/politics' },
+  { name:'Democracy Docket',  url:'https://www.democracydocket.com/feed/' },
+  { name:'Courthouse News',   url:'https://www.courthousenews.com/feed/' },
+  { name:'Stateline',         url:'https://stateline.org/feed/' },
+  { name:'Talking Points Memo', url:'https://talkingpointsmemo.com/feed' },
+  { name:'Mother Jones',      url:'https://www.motherjones.com/politics/feed/' },
+  { name:'The American Prospect', url:'https://prospect.org/api/rss/content.rss' },
+  { name:'Vox',               url:'https://www.vox.com/rss/policy-and-politics/index.xml' },
+  { name:'Common Dreams',     url:'https://www.commondreams.org/feeds/news.rss' },
+  { name:'Roll Call',         url:'https://rollcall.com/feed/' },
+  { name:'The Atlantic',      url:'https://www.theatlantic.com/feed/channel/politics/' },
+  { name:'HuffPost',          url:'https://chaski.huffpost.com/us/auto/vertical/politics' },
+  { name:'Axios',             url:'https://api.axios.com/feed/politics' },
+  { name:'Reuters',           url:'https://www.reutersagency.com/feed/?best-topics=political-general' },
+  { name:'Associated Press',  url:'https://apnews.com/hub/politics.rss' }
 ];
 
-const TIMEOUT = 6000;
+const TIMEOUT = 4500;
 let CACHE = { at:0, body:null };
 
 /* ------------------------------------------------------------- tiny parsers */
@@ -32,20 +51,50 @@ const tag = (block, name) => {
   const m = block.match(new RegExp('<' + name + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + name + '>', 'i'));
   return m ? m[1] : '';
 };
-/* a picture if the feed carried one, ignoring tracking pixels */
-const IMGBAD = /pixel|tracking|1x1|spacer|blank\.|\.gif(\?|$)/i;
+/* a picture, but only a decent one. Tracking pixels, avatars, logos and
+   thumbnails are all worse than no picture at all. */
+const MINW = 600;
+const IMGBAD = /pixel|tracking|1x1|spacer|blank\.|\.gif(\?|$)|logo|avatar|favicon|sprite|icon[-_.]/i;
+const tooSmall = url => {
+  /* dimensions people put in the filename or the query string */
+  const dash = url.match(/[-_](\d{2,4})x(\d{2,4})\.(?:jpe?g|png|webp)/i);
+  if(dash && +dash[1] < MINW) return true;
+  const q = url.match(/[?&](?:w|width|s|size|mw)=(\d{2,4})\b/i);
+  if(q && +q[1] < MINW) return true;
+  const res = url.match(/resize[/=](\d{2,4})x/i);
+  if(res && +res[1] < MINW) return true;
+  if(/\/(?:thumb|thumbs|thumbnail|small|square)\//i.test(url)) return true;
+  return false;
+};
+const clean = u => u.replace(/&amp;/g,'&').trim();
+
 const image = block => {
+  /* media:content carries real dimensions often enough to be worth reading */
+  const withDims = [...block.matchAll(/<media:(?:content|thumbnail)[^>]*>/gi)]
+    .map(m => m[0])
+    .map(t => ({
+      url: (t.match(/url=["']([^"']+)["']/i) || [])[1] || '',
+      w:  +((t.match(/width=["'](\d+)["']/i) || [])[1] || 0),
+      h:  +((t.match(/height=["'](\d+)["']/i) || [])[1] || 0)
+    }))
+    .filter(x => x.url && !IMGBAD.test(x.url))
+    .sort((a,b) => b.w - a.w);
+
+  /* anything that states its width must state a big one */
+  const sized = withDims.find(x => x.w >= MINW);
+  if(sized) return clean(sized.url);
+  const unsized = withDims.find(x => !x.w && !tooSmall(x.url));
+  if(unsized) return clean(unsized.url);
+  if(withDims.length && withDims[0].w) return '';        /* it told us, and it was small */
+
   const tries = [
-    /<media:content[^>]+url=["']([^"']+)["']/i,
-    /<media:thumbnail[^>]+url=["']([^"']+)["']/i,
     /<enclosure[^>]+url=["']([^"']+\.(?:jpe?g|png|webp)[^"']*)["']/i,
     /<image[^>]*>\s*<url>([^<]+)<\/url>/i,
     /<img[^>]+src=["']([^"']+)["']/i
   ];
   for(const re of tries){
     const m = block.match(re);
-    if(m && m[1] && !IMGBAD.test(m[1]))
-      return m[1].replace(/&amp;/g,'&').trim();
+    if(m && m[1] && !IMGBAD.test(m[1]) && !tooSmall(m[1])) return clean(m[1]);
   }
   return '';
 };
@@ -76,7 +125,7 @@ function parse(xml, source){
       summary: summary && summary.toLowerCase() !== title.toLowerCase() ? summary : '',
       image: image(block)
     });
-    if(out.length >= 25) break;
+    if(out.length >= 16) break;
   }
   return out;
 }
@@ -99,8 +148,8 @@ async function pull(feed){
 
 module.exports = async (req, res) => {
   /* a warm function serves the same wire for four minutes */
-  if(CACHE.body && Date.now() - CACHE.at < 240e3){
-    res.setHeader('cache-control', 's-maxage=240, stale-while-revalidate=900');
+  if(CACHE.body && Date.now() - CACHE.at < 90e3){
+    res.setHeader('cache-control', 's-maxage=90, stale-while-revalidate=600');
     return res.status(200).json(CACHE.body);
   }
 
@@ -120,12 +169,12 @@ module.exports = async (req, res) => {
   items.sort((a,b)=> new Date(b.when || 0) - new Date(a.when || 0));
 
   const body = {
-    items: items.slice(0, 70),
+    items: items.slice(0, 90),
     sources: [...sources].sort(),
     fetched: new Date().toISOString()
   };
   if(body.items.length) CACHE = { at:Date.now(), body };
 
-  res.setHeader('cache-control', 's-maxage=240, stale-while-revalidate=900');
+  res.setHeader('cache-control', 's-maxage=90, stale-while-revalidate=600');
   return res.status(200).json(body);
 };

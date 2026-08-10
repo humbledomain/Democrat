@@ -1,5 +1,41 @@
 # What's new
 
+## Live, everywhere
+
+**LIVE is back on the logo** — red dot, pulsing, right after the wordmark. It's honest: it goes grey
+and reads OFFLINE the moment the connection drops, and lights again when it returns. The crawl stays
+where it is, to the right, still rotating.
+
+**A live column in the town hall.** Everything happening, newest first, in one stream: posts,
+positions taken, what's being said on the floor, questions asked, people joining, and the wire. Each
+row is timed and clickable — a wire row opens the reader, a post opens the post. It updates itself
+the moment anything lands.
+
+**Clocks tick.** Every timestamp on the page corrects itself every thirty seconds without a repaint,
+so "2m ago" doesn't sit there saying 2m for an hour.
+
+**The wire refreshes on its own** — every two and a half minutes while you're looking, immediately
+when you come back to the tab, and again when the connection returns. The server cache dropped from
+four minutes to ninety seconds.
+
+## Twenty-eight feeds
+
+Up from nine. NPR (politics, national, elections), The Guardian, ProPublica, The Hill, Politico
+(politics and congress), NBC, CBS, ABC, PBS NewsHour, AP, Reuters, Axios, Vox, The Atlantic,
+HuffPost, Mother Jones, The American Prospect, Common Dreams, Talking Points Memo, Roll Call,
+Democracy Docket, Courthouse News, Stateline. Any feed that's down is skipped; the page never waits
+more than four and a half seconds on one.
+
+## No soft pictures
+
+Two gates. The server refuses any image that declares a width under 600px, or admits to being small
+in its filename (`-150x150`), its query string (`?s=200`), its resize instruction, or its folder
+(`/thumbs/`) — plus logos, avatars and tracking pixels. Then the browser checks the real width once
+the image loads and removes anything under 700px on a hero and 560px on a thumbnail.
+
+A story with no good picture simply runs without one, which looks far better than a blurry one.
+
+
 ## This round
 
 **Today moved under People** in the rail, and the site opens on your profile again — it's a social

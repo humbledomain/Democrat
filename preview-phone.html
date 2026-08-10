@@ -772,6 +772,13 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
   color:var(--live);flex:none;text-transform:uppercase}
+.livechip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:10px;font-weight:800;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--live);margin-left:-2px;
+  padding:3px 8px 3px 7px;border-radius:99px;background:rgba(229,53,43,.09)}
+.livechip i{width:6px;height:6px;border-radius:50%;background:var(--live);flex:none;
+  animation:livepulse 1.9s ease-in-out infinite}
+.livechip.off{color:var(--dim);background:var(--soft)}
+.livechip.off i{background:var(--dim);animation:none}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;
   animation:livepulse 1.9s ease-in-out infinite}
 @keyframes livepulse{
@@ -933,6 +940,22 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .rmsg.isbot .rtext{background:var(--soft);border-radius:0 12px 12px 0;padding:10px 14px;
   border-left:3px solid var(--blue)}
 .whoav.bot{font-weight:800;letter-spacing:.02em}
+.lfeed{display:flex;flex-direction:column;max-height:min(46vh,420px);overflow-y:auto;
+  margin:-6px -4px;scrollbar-width:none}
+.lfeed::-webkit-scrollbar{display:none}
+.lrow{display:flex;gap:10px;align-items:baseline;width:100%;border:0;background:none;cursor:pointer;
+  text-align:left;font-family:inherit;padding:8px 4px;border-radius:9px;color:inherit;
+  border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+.lrow:hover{background:var(--soft)}
+.lwhen{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);
+  flex:none;width:36px}
+.lrow .grow{min-width:0;flex:1;font-size:12.5px;line-height:1.45}
+.lrow b{font-weight:800;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);
+  margin-right:5px}
+.lrow.wire b{color:var(--ink2)}
+.lwho{font-weight:640;margin-right:5px}
+.ltext{color:var(--ink2)}
 .bots{display:flex;gap:6px;flex-wrap:wrap;flex:none}
 .botchip{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;background:var(--soft);
   border-radius:99px;padding:4px 13px 4px 4px;font-family:inherit;font-size:12px;font-weight:600;
@@ -1047,7 +1070,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<span class="livechip" id="liveChip" title="This page updates as things happen"><i></i>Live</span>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="2"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="3"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
