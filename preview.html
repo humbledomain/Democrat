@@ -285,7 +285,7 @@ button.tag{cursor:pointer}
 
 /* ------------------------------------------------------------ profile page */
 .pwrap{display:flex;flex-direction:column;gap:0;max-width:900px}
-.phero{padding:4px 0 18px}
+.phero{padding:4px 0 16px;background:var(--bg);position:relative;z-index:1}
 .pheroin{display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start}
 .pav{--s:clamp(96px,11vw,128px);width:var(--s);height:var(--s);flex:none;border-radius:26px;
   position:relative;border:0;padding:0;overflow:hidden;cursor:pointer;display:block;
@@ -319,9 +319,13 @@ button.tag{cursor:pointer}
 .panel[data-edit="1"] .ploc2 input,.panel[data-edit="1"] .pbio{background:var(--soft)}
 .pflink2{font-size:13.5px;color:var(--blue);text-decoration:none;font-weight:560}
 .pflink2:hover{text-decoration:underline}
-.pstats2{position:sticky;top:0;z-index:6;margin-bottom:2px}
+/* one band, fully opaque, so nothing shows through as it scrolls under */
+.psticky{position:sticky;top:0;z-index:7;background:var(--bg);padding-top:2px;
+  box-shadow:0 10px 14px -14px rgba(8,26,72,.4)}
+.pstats2{margin-bottom:0;
+  background:linear-gradient(var(--soft),var(--soft)) var(--bg)}
 .ptabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);
-  margin-top:14px;position:sticky;top:74px;background:var(--bg);z-index:5}
+  margin-top:10px;background:var(--bg)}
 .ptabs::-webkit-scrollbar{display:none}
 .ptabs button{border:0;background:none;font-family:inherit;font-size:13.5px;font-weight:620;
   color:var(--muted);padding:12px 14px;cursor:pointer;white-space:nowrap;position:relative;
@@ -352,8 +356,7 @@ button.tag{cursor:pointer}
   .pheroin{gap:14px}
   .pav{--s:84px;border-radius:20px}
   .pfname{font-size:23px}
-  .ptabs{top:calc(var(--mast) + 108px)}
-  .pstats2{top:calc(var(--mast) + 52px)}
+  .psticky{top:calc(var(--mast) + 52px)}
   .ptabbody{padding-top:16px}
 }
 @media (max-width:460px){
@@ -365,10 +368,6 @@ button.tag{cursor:pointer}
 .pbody.pf{display:block;padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
 .pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
   align-items:start;max-width:1100px;margin:0 auto}
-.pcolL{display:flex;flex-direction:column;gap:13px;position:sticky;top:0}
-.pcolR{display:flex;flex-direction:column;gap:22px;min-width:0}
-.pcolR>.stats{position:sticky;top:0;z-index:6;background:var(--bg);
-  box-shadow:0 10px 16px -14px rgba(8,26,72,.35)}
 .photo{width:100%;aspect-ratio:1;border-radius:22px;position:relative;border:0;padding:0;overflow:hidden;
   background:rgba(10,63,214,.05);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;display:block;
   transition:box-shadow .2s}
@@ -795,6 +794,7 @@ button.tag{cursor:pointer}
   .newpill{top:calc(var(--mast) + 46px)}
   .story.big .hl{font-size:23px}
   .topicbar{position:sticky;top:calc(var(--mast) + 54px);z-index:6;background:var(--bg);padding:8px 0}
+  .shelf{background:var(--bg)}
   .dek{font-size:14px}
 
   /* one scroller per screen: the page. Composers stick above the tabs. */
@@ -808,7 +808,8 @@ button.tag{cursor:pointer}
     box-shadow:0 -6px 18px -12px rgba(8,26,72,.5), 0 0 0 1px var(--line)}
   .bots{position:sticky;bottom:calc(var(--tabs) + 62px);z-index:8;padding:6px 0;
     background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
-  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6}
+  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6;
+    background:linear-gradient(var(--soft),var(--soft)) var(--bg)}
 
   .split{gap:20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -1773,7 +1774,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Profile</h2><p>Your page, as everyone else sees it<span class="stamp">Updated 6:28 AM</span></p></div>
+      <div class="grow"><h2>Profile</h2><p>Your page, as everyone else sees it<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="pfShare">Share</button>
       <button class="btn ghost" id="pfEdit">Edit</button><button class="pclose" id="pclose">✕</button></div>
     </header>
@@ -1808,13 +1809,12 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
         </div>
       </div>
     </header>
-      <div class="stats pstats2">
+      <div class="psticky"><div class="stats pstats2">
       <button data-stat="followers"><b>1</b><span>Followers</span></button>
       <button data-stat="following"><b>1</b><span>Following</span></button>
       <button data-stat="posts"><b>1</b><span>Posts</span></button>
       <button data-stat="shares"><b>1</b><span>Shares</span></button>
-    </div>
-      <nav class="ptabs" id="pfTabs"><button class="on" data-ptab="overview">Overview</button><button class="" data-ptab="positions">Positions<i>1</i></button><button class="" data-ptab="posts">Posts<i>1</i></button><button class="" data-ptab="photos">Photos</button><button class="" data-ptab="events">Events<i>1</i></button></nav>
+    </div><nav class="ptabs" id="pfTabs"><button class="on" data-ptab="overview">Overview</button><button class="" data-ptab="positions">Positions<i>1</i></button><button class="" data-ptab="posts">Posts<i>1</i></button><button class="" data-ptab="photos">Photos</button><button class="" data-ptab="events">Events<i>1</i></button></nav></div>
       <div class="ptabbody">
         <section class="pfsetup">
           <div class="grow"><b>Your page is 67% there</b>
@@ -2099,7 +2099,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 5 stories from 4 newsrooms<span class="stamp">Updated 6:28 AM</span></p></div>
+      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 5 stories from 4 newsrooms<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="tdRefresh">Refresh</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -2122,7 +2122,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       <span class="live"><i></i>Just in</span><span class="sep">·</span>
       <b>NPR</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T10:20:47.784Z" data-tsfmt="news">8m ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T10:38:11.940Z" data-tsfmt="news">8m ago</span>
     </div>
           <a class="hl" href="https://npr.org/a" data-read="https://npr.org/a" target="_blank" rel="noopener noreferrer">Senate passes voting rights measure after all-night session</a>
           <p class="dek">The bill expands early voting and restores federal oversight of election law.</p>
@@ -2140,7 +2140,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>ProPublica</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T07:28:47.784Z" data-tsfmt="news">3h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T07:46:11.940Z" data-tsfmt="news">3h ago</span>
     </div>
           <a class="hl" href="https://propublica.org/b" data-read="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Medicaid cuts would close rural hospitals, study finds</a>
           
@@ -2158,7 +2158,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Guardian</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T06:28:47.784Z" data-tsfmt="news">4h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T06:46:11.940Z" data-tsfmt="news">4h ago</span>
     </div>
           <a class="hl" href="https://guardian.com/e" data-read="https://guardian.com/e" target="_blank" rel="noopener noreferrer">Centrist Democrats dismiss the winner ’as radical’</a>
           
@@ -2176,7 +2176,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Hill</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T05:28:47.784Z" data-tsfmt="news">5h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T05:46:11.940Z" data-tsfmt="news">5h ago</span>
     </div>
           <a class="hl" href="https://thehill.com/c" data-read="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Union files for election at third warehouse this month</a>
           
@@ -2194,7 +2194,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
           <div class="kick">
       
       <b>The Guardian</b>
-      <span class="sep">·</span><span class="place" data-ts="2026-08-10T01:28:47.784Z" data-tsfmt="news">9h ago</span>
+      <span class="sep">·</span><span class="place" data-ts="2026-08-10T01:46:11.940Z" data-tsfmt="news">9h ago</span>
     </div>
           <a class="hl" href="https://guardian.com/d" data-read="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Appeals court blocks deportation flights pending review</a>
           
@@ -2485,7 +2485,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="on" data-v="near">Near you</button><button class="" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -2604,7 +2604,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
         <span class="grow">
           <span class="trow">
             <b>Renato Perez</b>
-            <span class="twhen" data-ts="2026-08-10T09:29:17.644Z" data-noloc="">1h</span></span>
+            <span class="twhen" data-ts="2026-08-10T09:46:48.231Z" data-noloc="">1h</span></span>
           <span class="tprev">Are you going Saturday?</span>
         </span>
         
@@ -2619,7 +2619,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
         <span class="grow">
           <span class="trow">
             <b>Wallace Alphin</b>
-            <span class="twhen" data-ts="2026-08-08T09:29:17.644Z" data-noloc="">2d</span></span>
+            <span class="twhen" data-ts="2026-08-08T09:46:48.231Z" data-noloc="">2d</span></span>
           <span class="tprev">You: Sent it over</span>
         </span>
         <span class="tbadge">1</span>
@@ -2646,7 +2646,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="bub me last">
         
         <div class="btext">Planning on it. You?</div>
-        <div class="bmeta">4:29 AM · Seen</div>
+        <div class="bmeta">4:46 AM · Seen</div>
       </div>
       <div class="bacts">
         <button data-copy="m2" title="Copy" aria-label="Copy">
@@ -2658,7 +2658,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="bub them last">
         
         <div class="btext">Yes — bringing two friends</div>
-        <div class="bmeta">5:29 AM</div>
+        <div class="bmeta">5:46 AM</div>
       </div>
       <div class="bacts">
         <button data-copy="m3" title="Copy" aria-label="Copy">
@@ -2669,7 +2669,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="bub them last">
         
         <div class="btext">Are you going Saturday?</div>
-        <div class="bmeta">5:29 AM</div>
+        <div class="bmeta">5:46 AM</div>
       </div>
       <div class="bacts">
         <button data-copy="m1" title="Copy" aria-label="Copy">
@@ -2926,7 +2926,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Fundraise</h2><p>Where it can go, and what you have given<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Fundraise</h2><p>Where it can go, and what you have given<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="fLog">Log a gift</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -3081,12 +3081,12 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
         <div class="gift">
           <span>Fair Fight</span>
           <b>$25</b>
-          <small data-ts="2026-08-02T02:29:02.682Z" data-noloc="">Aug 1</small>
+          <small data-ts="2026-08-02T02:46:32.606Z" data-noloc="">Aug 1</small>
           <button class="linkbtn" data-ungift="g1">remove</button>
         </div><div class="gift">
           <span>ActBlue</span>
           <b>$50</b>
-          <small data-ts="2026-07-03T22:29:02.682Z" data-noloc="">Jul 3</small>
+          <small data-ts="2026-07-03T22:46:32.606Z" data-noloc="">Jul 3</small>
           <button class="linkbtn" data-ungift="g2">remove</button>
         </div>
       </div>
@@ -3344,7 +3344,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Reach</h2><p>Counted, not estimated<span class="stamp">Updated 6:28 AM</span></p></div>
+      <div class="grow"><h2>Reach</h2><p>Counted, not estimated<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><div class="seg tabs" id="rgRange"><button class="" data-r="7">7 days</button><button class="on" data-r="30">30 days</button><button class="" data-r="90">90 days</button></div><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -3798,7 +3798,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Issues</h2><p>1 of 63 taken · and anything else you add<span class="stamp">Updated 6:28 AM</span></p></div>
+      <div class="grow"><h2>Issues</h2><p>1 of 63 taken · and anything else you add<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="issues"><button class="on" data-v="browse">Browse</button><button class="" data-v="mine">Yours</button><button class="" data-v="all">Everyone</button></div>
       <button class="btn ghost" id="iOwn">Add your own</button><button class="pclose" id="pclose">✕</button></div>
     </header>
@@ -4169,7 +4169,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Polls</h2><p>Ask the room, then listen to it<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Polls</h2><p>Ask the room, then listen to it<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="polls"><button class="" data-v="open">Answer</button><button class="" data-v="mine">Yours</button><button class="on" data-v="all">Everyone</button></div>
       <button class="btn ghost" id="pAsk">Ask</button><button class="pclose" id="pclose">✕</button></div>
     </header>
@@ -4211,7 +4211,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <span class="whoav">R</span>
     <b>Renato Perez</b><span>@renato</span></a>
     <h3>Which race matters most where you live?</h3>
-    <small>1 answer · pick one to see the result · <span data-ts="2026-08-10T03:28:58.635Z" data-noloc="">7h</span></small>
+    <small>1 answer · pick one to see the result · <span data-ts="2026-08-10T03:46:28.878Z" data-noloc="">7h</span></small>
     <div class="pops"><button class="pop" data-opt="o3">
         <span class="pfill" style="width:0%"></span>
         <span class="ptext">Governor</span>
@@ -4236,7 +4236,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <span class="whoav">M</span>
     <b>Michael K</b><span>@michael</span></a>
     <h3>Should we canvass on Saturday?</h3>
-    <small>1 answer · <span data-ts="2026-08-09T22:28:58.635Z" data-noloc="">12h</span></small>
+    <small>1 answer · <span data-ts="2026-08-09T22:46:28.878Z" data-noloc="">12h</span></small>
     <div class="pops"><button class="pop shown lead" data-opt="o1">
         <span class="pfill" style="width:100%"></span>
         <span class="ptext">Yes</span>
@@ -4516,7 +4516,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="" data-v="near">Near you</button><button class="on" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -4856,7 +4856,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="thAsk">Ask the desk</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody chatbody"><div class="split"><div class="main room">
@@ -4870,7 +4870,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/renato"><b>Renato Perez</b></a>
-          <span class="rtime" data-ts="2026-08-10T07:29:10.224Z">3h</span>
+          <span class="rtime" data-ts="2026-08-10T07:46:40.259Z">3h</span>
           
         </div>
         <div class="rtext">Anyone going to the school board meeting?</div>
@@ -4879,7 +4879,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <a class="rname" href="/wallace"><b>Wallace Alphin</b></a>
-          <span class="rtime" data-ts="2026-08-10T08:29:10.224Z">2h</span>
+          <span class="rtime" data-ts="2026-08-10T08:46:40.259Z">2h</span>
           
         </div>
         <div class="rtext">I am. <a class="mention" href="/michael">@michael</a> you coming?</div>
@@ -4888,7 +4888,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
       <div class="grow">
         <div class="rwho">
           <b style="color:#0A3FD6">The Desk</b><span class="bottag">Anchor</span>
-          <span class="rtime" data-ts="2026-08-10T10:28:10.224Z">1m</span>
+          <span class="rtime" data-ts="2026-08-10T10:45:40.259Z">1m</span>
           <button class="rdel" data-rdel="r3" aria-label="Delete">✕</button>
         </div>
         <div class="rtext" style="border-color:#0A3FD6"><p>Three new positions today. Turnout is the story.</p></div>
@@ -4915,67 +4915,67 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <aside class="side">
       <div class="card"><h5><span class="live"><i></i>Live</span> Right now</h5>
         <div class="lfeed" id="lfeed"><button class="lrow" data-live="0">
-      <span class="lwhen" data-ts="2026-08-10T10:28:10.224Z">1m</span>
+      <span class="lwhen" data-ts="2026-08-10T10:45:40.259Z">1m</span>
       <span class="grow"><b>On the floor</b><span class="lwho">The Desk</span>
         <span class="ltext">Three new positions today. Turnout is the story.</span></span>
     </button><button class="lrow wire" data-live="1">
-      <span class="lwhen" data-ts="2026-08-10T10:21:10.458Z">8m</span>
+      <span class="lwhen" data-ts="2026-08-10T10:38:40.509Z">8m</span>
       <span class="grow"><b>NPR</b>
         <span class="ltext">Senate passes voting rights measure after all-night session</span></span>
     </button><button class="lrow" data-live="2">
-      <span class="lwhen" data-ts="2026-08-10T08:29:10.224Z">2h</span>
+      <span class="lwhen" data-ts="2026-08-10T08:46:40.259Z">2h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Michael K</span>
         <span class="ltext">Knocked 40 doors today. #canvassing with @renato</span></span>
     </button><button class="lrow" data-live="3">
-      <span class="lwhen" data-ts="2026-08-10T08:29:10.224Z">2h</span>
+      <span class="lwhen" data-ts="2026-08-10T08:46:40.259Z">2h</span>
       <span class="grow"><b>On the floor</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">I am. @michael you coming?</span></span>
     </button><button class="lrow wire" data-live="4">
-      <span class="lwhen" data-ts="2026-08-10T07:29:10.458Z">3h</span>
+      <span class="lwhen" data-ts="2026-08-10T07:46:40.509Z">3h</span>
       <span class="grow"><b>ProPublica</b>
         <span class="ltext">Medicaid cuts would close rural hospitals, study finds</span></span>
     </button><button class="lrow" data-live="5">
-      <span class="lwhen" data-ts="2026-08-10T07:29:10.224Z">3h</span>
+      <span class="lwhen" data-ts="2026-08-10T07:46:40.259Z">3h</span>
       <span class="grow"><b>On the floor</b><span class="lwho">Renato Perez</span>
         <span class="ltext">Anyone going to the school board meeting?</span></span>
     </button><button class="lrow wire" data-live="6">
-      <span class="lwhen" data-ts="2026-08-10T06:29:10.458Z">4h</span>
+      <span class="lwhen" data-ts="2026-08-10T06:46:40.509Z">4h</span>
       <span class="grow"><b>The Guardian</b>
         <span class="ltext">Centrist Democrats dismiss the winner ’as radical’</span></span>
     </button><button class="lrow wire" data-live="7">
-      <span class="lwhen" data-ts="2026-08-10T05:29:10.458Z">5h</span>
+      <span class="lwhen" data-ts="2026-08-10T05:46:40.509Z">5h</span>
       <span class="grow"><b>The Hill</b>
         <span class="ltext">Union files for election at third warehouse this month</span></span>
     </button><button class="lrow" data-live="8">
-      <span class="lwhen" data-ts="2026-08-10T05:29:10.224Z">5h</span>
+      <span class="lwhen" data-ts="2026-08-10T05:46:40.259Z">5h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Renato Perez</span>
         <span class="ltext">School board meeting was packed. #schools</span></span>
     </button><button class="lrow wire" data-live="9">
-      <span class="lwhen" data-ts="2026-08-10T01:29:10.458Z">9h</span>
+      <span class="lwhen" data-ts="2026-08-10T01:46:40.509Z">9h</span>
       <span class="grow"><b>The Guardian</b>
         <span class="ltext">Appeals court blocks deportation flights pending review</span></span>
     </button><button class="lrow" data-live="10">
-      <span class="lwhen" data-ts="2026-08-10T01:29:10.224Z">9h</span>
+      <span class="lwhen" data-ts="2026-08-10T01:46:40.259Z">9h</span>
       <span class="grow"><b>Posted</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">Ballot drop box opened downtown</span></span>
     </button><button class="lrow" data-live="11">
-      <span class="lwhen" data-ts="2026-08-09T16:29:10.224Z">18h</span>
+      <span class="lwhen" data-ts="2026-08-09T16:46:40.259Z">18h</span>
       <span class="grow"><b>Opposes</b><span class="lwho">Wallace Alphin</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="12">
-      <span class="lwhen" data-ts="2026-08-09T15:29:10.224Z">19h</span>
+      <span class="lwhen" data-ts="2026-08-09T15:46:40.259Z">19h</span>
       <span class="grow"><b>Supports</b><span class="lwho">Renato Perez</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="13">
-      <span class="lwhen" data-ts="2026-08-09T14:29:10.224Z">20h</span>
+      <span class="lwhen" data-ts="2026-08-09T14:46:40.259Z">20h</span>
       <span class="grow"><b>Supports</b><span class="lwho">Michael K</span>
         <span class="ltext">Expand early voting</span></span>
     </button><button class="lrow" data-live="14">
-      <span class="lwhen" data-ts="2026-08-09T04:29:10.224Z">1d</span>
+      <span class="lwhen" data-ts="2026-08-09T04:46:40.259Z">1d</span>
       <span class="grow"><b>Joined</b><span class="lwho">Wallace Alphin</span>
         </span>
     </button><button class="lrow" data-live="15">
-      <span class="lwhen" data-ts="2026-08-07T22:29:10.224Z">2d</span>
+      <span class="lwhen" data-ts="2026-08-07T22:46:40.259Z">2d</span>
       <span class="grow"><b>Joined</b><span class="lwho">Renato Perez</span>
         </span>
     </button></div>

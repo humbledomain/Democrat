@@ -285,7 +285,7 @@ button.tag{cursor:pointer}
 
 /* ------------------------------------------------------------ profile page */
 .pwrap{display:flex;flex-direction:column;gap:0;max-width:900px}
-.phero{padding:4px 0 18px}
+.phero{padding:4px 0 16px;background:var(--bg);position:relative;z-index:1}
 .pheroin{display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start}
 .pav{--s:clamp(96px,11vw,128px);width:var(--s);height:var(--s);flex:none;border-radius:26px;
   position:relative;border:0;padding:0;overflow:hidden;cursor:pointer;display:block;
@@ -319,9 +319,13 @@ button.tag{cursor:pointer}
 .panel[data-edit="1"] .ploc2 input,.panel[data-edit="1"] .pbio{background:var(--soft)}
 .pflink2{font-size:13.5px;color:var(--blue);text-decoration:none;font-weight:560}
 .pflink2:hover{text-decoration:underline}
-.pstats2{position:sticky;top:0;z-index:6;margin-bottom:2px}
+/* one band, fully opaque, so nothing shows through as it scrolls under */
+.psticky{position:sticky;top:0;z-index:7;background:var(--bg);padding-top:2px;
+  box-shadow:0 10px 14px -14px rgba(8,26,72,.4)}
+.pstats2{margin-bottom:0;
+  background:linear-gradient(var(--soft),var(--soft)) var(--bg)}
 .ptabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);
-  margin-top:14px;position:sticky;top:74px;background:var(--bg);z-index:5}
+  margin-top:10px;background:var(--bg)}
 .ptabs::-webkit-scrollbar{display:none}
 .ptabs button{border:0;background:none;font-family:inherit;font-size:13.5px;font-weight:620;
   color:var(--muted);padding:12px 14px;cursor:pointer;white-space:nowrap;position:relative;
@@ -352,8 +356,7 @@ button.tag{cursor:pointer}
   .pheroin{gap:14px}
   .pav{--s:84px;border-radius:20px}
   .pfname{font-size:23px}
-  .ptabs{top:calc(var(--mast) + 108px)}
-  .pstats2{top:calc(var(--mast) + 52px)}
+  .psticky{top:calc(var(--mast) + 52px)}
   .ptabbody{padding-top:16px}
 }
 @media (max-width:460px){
@@ -365,10 +368,6 @@ button.tag{cursor:pointer}
 .pbody.pf{display:block;padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
 .pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
   align-items:start;max-width:1100px;margin:0 auto}
-.pcolL{display:flex;flex-direction:column;gap:13px;position:sticky;top:0}
-.pcolR{display:flex;flex-direction:column;gap:22px;min-width:0}
-.pcolR>.stats{position:sticky;top:0;z-index:6;background:var(--bg);
-  box-shadow:0 10px 16px -14px rgba(8,26,72,.35)}
 .photo{width:100%;aspect-ratio:1;border-radius:22px;position:relative;border:0;padding:0;overflow:hidden;
   background:rgba(10,63,214,.05);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;display:block;
   transition:box-shadow .2s}
@@ -795,6 +794,7 @@ button.tag{cursor:pointer}
   .newpill{top:calc(var(--mast) + 46px)}
   .story.big .hl{font-size:23px}
   .topicbar{position:sticky;top:calc(var(--mast) + 54px);z-index:6;background:var(--bg);padding:8px 0}
+  .shelf{background:var(--bg)}
   .dek{font-size:14px}
 
   /* one scroller per screen: the page. Composers stick above the tabs. */
@@ -808,7 +808,8 @@ button.tag{cursor:pointer}
     box-shadow:0 -6px 18px -12px rgba(8,26,72,.5), 0 0 0 1px var(--line)}
   .bots{position:sticky;bottom:calc(var(--tabs) + 62px);z-index:8;padding:6px 0;
     background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
-  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6}
+  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6;
+    background:linear-gradient(var(--soft),var(--soft)) var(--bg)}
 
   .split{gap:20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -1769,7 +1770,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Profile</h2><p>Who you are<span class="stamp">Updated 6:29 AM</span></p></div>
+      <div class="grow"><h2>Profile</h2><p>Who you are<span class="stamp">Updated 6:46 AM</span></p></div>
       <div class="acts"><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="gate">
