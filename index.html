@@ -45,7 +45,7 @@ try{var _t=localStorage.getItem('dai.theme')||'auto';
 :root{
   --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
   --line:rgba(10,32,90,.10); --soft:rgba(10,32,90,.05);
-  --tile:clamp(34px,2.6vw,40px); --pad:clamp(20px,3.2vw,44px);
+  --tile:clamp(30px,2.4vw,38px); --pad:clamp(20px,3.2vw,44px);
   /* surfaces and text tones, so the whole app can turn dark in one place */
   --bg:#fff; --card:#fff; --panelbg:rgba(255,255,255,.9); --raise:rgba(255,255,255,.78);
   --ink2:#39415a; --ink3:#28304a; --dim:#8b93a8; --ph:#9aa3b8; --faint:#c9d2e6;
@@ -92,8 +92,8 @@ button,input,textarea{font:inherit;color:inherit}
 .rail{display:flex;flex-direction:column;min-width:0}
 .nav{display:flex;flex-direction:column;gap:1px}
 .rail.settled .app{animation:none;opacity:1;transform:none}
-.app{display:flex;align-items:center;gap:11px;background:none;border:0;width:100%;
-  padding:6px 14px 6px 6px;border-radius:14px;position:relative;cursor:pointer;text-align:left;
+.app{display:flex;align-items:center;gap:10px;background:none;border:0;width:100%;
+  padding:5px 12px 5px 5px;border-radius:13px;position:relative;cursor:pointer;text-align:left;
   -webkit-tap-highlight-color:transparent;transition:background .16s;
   opacity:0;transform:translateY(8px);animation:pop .45s cubic-bezier(.2,.9,.25,1) forwards}
 @keyframes pop{to{opacity:1;transform:none}}
@@ -106,7 +106,7 @@ button,input,textarea{font:inherit;color:inherit}
 .app:active .tile{transform:scale(.92);filter:brightness(.88);transition-duration:.09s}
 .app:focus-visible{outline:none;background:var(--soft)}
 .app:focus-visible .tile{filter:drop-shadow(0 0 3px rgba(10,63,214,.9))}
-.label{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;line-height:1.2;
+.label{font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;line-height:1.2;
   letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .app.on .label{font-weight:700}
 .app.on::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
@@ -119,21 +119,22 @@ button,input,textarea{font:inherit;color:inherit}
   box-shadow:0 0 0 2.5px var(--bg)}
 
 /* the foot of the nav: one primary action and who you are */
-.navfoot{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:flex;
-  flex-direction:column;gap:8px}
-.navpost{border:0;border-radius:14px;padding:12px 16px;font-family:inherit;font-size:14.5px;font-weight:640;
+.navfoot{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;
+  flex-direction:column;gap:7px;flex:none}
+.navpost{border:0;border-radius:13px;padding:11px 16px;font-family:inherit;font-size:14.5px;font-weight:640;
   background:var(--blue);color:#fff;cursor:pointer;width:100%;
   box-shadow:0 10px 22px -14px rgba(10,63,214,.95);transition:transform .16s,box-shadow .16s,opacity .16s}
 .navpost:hover{transform:translateY(-1px);box-shadow:0 14px 26px -14px rgba(10,63,214,1)}
 .navpost:active{transform:translateY(0)}
 .acct{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;cursor:pointer;
-  padding:7px 8px;border-radius:14px;text-align:left;font-family:inherit;transition:background .16s}
+  padding:6px 8px;border-radius:13px;text-align:left;font-family:inherit;transition:background .16s;
+  flex:none}
 .acct:hover{background:var(--soft)}
 .acct .grow{min-width:0;flex:1}
 .acct b{display:block;font-size:13.5px;font-weight:640;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .acct small{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;
   white-space:nowrap}
-.acct .whoav{width:32px;height:32px;font-size:12.5px}
+.acct .whoav{width:30px;height:30px;font-size:12px}
 .acct .chev{color:var(--faint);font-size:15px;flex:none}
 .menu{display:flex;flex-direction:column;gap:1px;margin:-6px 0}
 .menu button{display:flex;align-items:center;gap:11px;border:0;background:none;font-family:inherit;
@@ -296,6 +297,8 @@ button.tag{cursor:pointer}
   align-items:start;max-width:1100px;margin:0 auto}
 .pcolL{display:flex;flex-direction:column;gap:13px;position:sticky;top:0}
 .pcolR{display:flex;flex-direction:column;gap:22px;min-width:0}
+.pcolR>.stats{position:sticky;top:0;z-index:6;background:var(--bg);
+  box-shadow:0 10px 16px -14px rgba(8,26,72,.35)}
 .photo{width:100%;aspect-ratio:1;border-radius:22px;position:relative;border:0;padding:0;overflow:hidden;
   background:rgba(10,63,214,.05);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;display:block;
   transition:box-shadow .2s}
@@ -317,6 +320,28 @@ button.tag{cursor:pointer}
 .pfield.loc{color:var(--muted);font-size:13.5px;margin-top:-6px}
 .pfield.bio{resize:none;line-height:1.55}
 .pfield.link{color:var(--blue);font-size:13.5px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.gshot{position:relative;display:block;aspect-ratio:1;border-radius:11px;overflow:hidden;
+  background:var(--soft)}
+.gshot .pimg{width:100%;height:100%;object-fit:cover;margin:0;border:0;border-radius:11px}
+.gx,.gmain{position:absolute;border:0;cursor:pointer;font-family:inherit;opacity:0;transition:opacity .14s}
+.gx{top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(8,14,30,.72);
+  color:#fff;font-size:10px;display:grid;place-items:center;line-height:1}
+.gmain{left:4px;bottom:4px;border-radius:7px;background:rgba(8,14,30,.72);color:#fff;
+  font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px}
+.gshot:hover .gx,.gshot:hover .gmain{opacity:1}
+.gadd{aspect-ratio:1;border:1px dashed var(--line);background:none;border-radius:11px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:600;transition:.15s}
+.gadd svg{width:17px;height:17px}
+.gadd:hover{border-color:rgba(10,63,214,.45);color:var(--blue)}
+.bioaid{display:flex;flex-direction:column;gap:8px}
+.biotips{display:flex;flex-wrap:wrap;gap:5px}
+.biotips .topic{font-size:11.5px;padding:5px 10px}
+@media (max-width:900px){
+  .gx,.gmain{opacity:1}
+  .pcolR>.stats{top:calc(var(--mast) + 52px)}
+}
 .pflink{display:block;text-align:center;text-decoration:none;padding:11px;border-radius:12px;background:var(--soft);
   color:var(--blue);font-size:13.5px;font-weight:590;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .prow{display:flex;gap:8px}
@@ -603,8 +628,9 @@ button.tag{cursor:pointer}
   .stage{height:100svh;min-height:0;gap:0}
   /* one surface: the rail and the content are two regions of the same app,
      divided by a single line that the header rule runs into */
-  .rail{width:clamp(178px,15vw,224px);padding-right:var(--gutter);border-right:1px solid var(--line);
-    justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+  .rail{width:clamp(172px,15vw,220px);padding-right:var(--gutter);padding-bottom:14px;
+    border-right:1px solid var(--line);justify-content:flex-start;overflow-y:auto;
+    overscroll-behavior:contain;scrollbar-width:none}
   .rail::-webkit-scrollbar{display:none}
   .stage>.rail{padding-top:2px}
   .panel{height:100%;min-height:0;background:none;border:0;border-radius:0;box-shadow:none;
@@ -1020,8 +1046,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 
 /* ---------------------------------------------------------------- messages */
-.navmsg{display:flex;align-items:center;gap:9px;width:100%;border:0;border-radius:14px;
-  padding:11px 14px;font-family:inherit;font-size:14.5px;font-weight:620;background:var(--soft);
+.navmsg{display:flex;align-items:center;gap:9px;width:100%;border:0;border-radius:13px;
+  padding:10px 14px;font-family:inherit;font-size:14.5px;font-weight:620;background:var(--soft);
   color:var(--ink);cursor:pointer;position:relative;transition:background .16s,color .16s}
 .navmsg:hover{background:rgba(10,63,214,.10);color:var(--blue)}
 .navmsg svg{width:18px;height:18px;flex:none}
@@ -1116,6 +1142,92 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .navdot{position:absolute;top:-4px;right:-4px}
 }
 
+
+.hubfilters{display:flex;gap:4px;padding:0 14px 10px 18px;flex:none}
+.hubfilters button{border:0;background:none;font-family:inherit;font-size:12.5px;font-weight:620;
+  color:var(--muted);padding:5px 11px;border-radius:99px;cursor:pointer;transition:.14s}
+.hubfilters button:hover{color:var(--blue)}
+.hubfilters button.on{background:var(--soft);color:var(--ink)}
+.threadwrap{position:relative}
+.tpin{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;
+  background:none;color:var(--faint);cursor:pointer;border-radius:8px;display:grid;place-items:center;
+  opacity:0;transition:opacity .14s,color .14s}
+.tpin svg{width:15px;height:15px}
+.threadwrap:hover .tpin{opacity:1}
+.tpin:hover{color:var(--blue);background:var(--soft)}
+.tpin.on{opacity:1;color:var(--blue)}
+.pinned{font-style:normal;font-size:8px;color:var(--blue);flex:none;line-height:1}
+.tav{position:relative;flex:none;display:block}
+.tav.here::after{content:"";position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;
+  border-radius:50%;background:#16A34A;box-shadow:0 0 0 2.5px var(--card)}
+.startrow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.startchip{display:inline-flex;align-items:center;gap:7px;border:0;background:var(--soft);
+  border-radius:99px;padding:5px 13px 5px 5px;font-family:inherit;font-size:12.5px;font-weight:600;
+  color:var(--ink2);cursor:pointer}
+.startchip:hover{color:var(--blue)}
+.startchip .whoav{width:22px;height:22px;font-size:10px}
+.bubrow{display:flex;align-items:center;gap:6px}
+.bubrow.me{flex-direction:row-reverse;justify-content:flex-start}
+.bubrow.them{justify-content:flex-start}
+.bacts{display:flex;gap:2px;opacity:0;transition:opacity .14s;flex:none}
+.bubrow:hover .bacts{opacity:1}
+.bacts button{width:26px;height:26px;border:0;background:none;color:var(--faint);cursor:pointer;
+  border-radius:7px;display:grid;place-items:center}
+.bacts button svg{width:14px;height:14px}
+.bacts button:hover{color:var(--blue);background:var(--soft)}
+.bub.pending{opacity:.65}
+.bimg{max-width:260px;width:100%;border-radius:12px;display:block;margin:-2px 0 6px;cursor:zoom-in}
+.bub mark{background:rgba(255,214,0,.42);color:inherit;border-radius:3px;padding:0 1px}
+.bub.me mark{background:rgba(255,255,255,.32);color:#fff}
+.daysep.new span{color:var(--live)}
+.daysep.new::before,.daysep.new::after{background:rgba(229,53,43,.35)}
+.hubmedia{display:flex;align-items:center;gap:10px;padding:10px 18px 0;flex:none}
+.hubphoto{width:38px;height:38px;flex:none;border:0;background:none;color:var(--muted);cursor:pointer;
+  border-radius:50%;display:grid;place-items:center;transition:.14s}
+.hubphoto:hover{background:var(--soft);color:var(--blue)}
+.hubphoto svg{width:19px;height:19px}
+@media (max-width:900px){
+  .tpin{opacity:1}
+  .bacts{opacity:1}
+  .bimg{max-width:70vw}
+}
+
+
+/* --------------------------------------------------------------- fundraise */
+.gives{display:flex;flex-direction:column}
+.giverow{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line);
+  flex-wrap:wrap}
+.giverow:first-child{border-top:0}
+.giverow .grow{flex:1;min-width:min(240px,100%)}
+.giverow b{display:block;font-size:15px;font-weight:620;letter-spacing:-.01em}
+.giverow small{display:block;font-size:13px;line-height:1.45;color:var(--ink2);margin:3px 0 6px;
+  max-width:60ch}
+.giveacts{display:flex;gap:7px;flex:none;align-items:center}
+.giveacts .btn{text-decoration:none;padding:9px 20px}
+.ringrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.ring{width:120px;height:120px;flex:none;transform:rotate(-90deg)}
+.ring .rbg{fill:none;stroke:var(--soft);stroke-width:11}
+.ring .rfg{fill:none;stroke:var(--blue);stroke-width:11;stroke-linecap:round;
+  transition:stroke-dasharray .6s cubic-bezier(.2,.9,.25,1)}
+.ring .rnum,.ring .rlab{transform:rotate(90deg);transform-origin:60px 60px}
+.ring .rnum{font-size:21px;font-weight:700;fill:var(--ink);letter-spacing:-.02em}
+.ring .rlab{font-size:9.5px;font-weight:700;fill:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.ringside{flex:1;min-width:130px;display:flex;flex-direction:column;gap:2px}
+.mchart{display:flex;align-items:flex-end;gap:3px;height:56px;margin-top:4px}
+.mbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;
+  justify-content:flex-end}
+.mbar i{display:block;width:100%;background:rgba(10,63,214,.28);border-radius:3px 3px 0 0;min-height:2px}
+.mbar em{font-style:normal;font-size:8.5px;font-weight:700;color:var(--dim)}
+.gift{display:grid;grid-template-columns:1fr auto auto auto;gap:9px;align-items:baseline;
+  padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.gift:first-of-type{border-top:0}
+.gift small{font-size:11px;color:var(--muted)}
+.gift .linkbtn{font-size:11.5px;padding:2px 6px;margin:0}
+@media (max-width:900px){
+  .giveacts{width:100%}
+  .giveacts .btn,.giveacts .sbtn{flex:1;text-align:center}
+}
+
 /* ------------------------------------------------------------------- reach */
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .metric{position:relative;background:var(--soft);border-radius:16px;padding:14px 15px 12px;overflow:hidden;
@@ -1193,17 +1305,21 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 /* ------------------------------------------------------------------- polls */
 .shelf{display:flex;flex-direction:column;gap:10px;padding-bottom:16px;margin-bottom:4px;
   border-bottom:1px solid var(--line)}
-.shelfhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.shelfhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .shelfhead h4{font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
   color:var(--dim);flex:none}
 .shelfhead .topicbar{flex:1;min-width:0;padding-bottom:0}
-.shelfrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
-  -webkit-overflow-scrolling:touch}
+.shelfrow{display:flex;gap:10px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);
+  mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}
 .shelfrow::-webkit-scrollbar{display:none}
-.askcard{flex:0 0 clamp(230px,26vw,282px);background:var(--soft);border-radius:16px;padding:14px;
-  display:flex;flex-direction:column;gap:7px}
-.askcard b{font-size:14.5px;font-weight:620;line-height:1.35}
-.askcard small{font-size:12.5px;line-height:1.45;color:var(--ink2);flex:1}
+.askcard{flex:0 0 clamp(212px,24vw,258px);background:var(--soft);border-radius:15px;padding:12px 13px;
+  display:flex;flex-direction:column;gap:6px}
+.askcard b{font-size:14px;font-weight:620;line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.askcard small{font-size:12px;line-height:1.4;color:var(--ink2);flex:1;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .askopts{display:flex;flex-wrap:wrap;gap:4px}
 .askopts span{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);
   background:var(--card);border-radius:5px;padding:2px 7px}
@@ -1238,7 +1354,9 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 /* ------------------------------------------------------------------- today */
 .topicbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
-  -webkit-overflow-scrolling:touch}
+  -webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);
+  mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
 .topicbar::-webkit-scrollbar{display:none}
 .tchip{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--soft);border-radius:99px;
   padding:7px 14px;font-family:inherit;font-size:12.5px;font-weight:640;color:var(--ink3);cursor:pointer;
@@ -1552,7 +1670,7 @@ function meContext(){
   const bits = [];
   bits.push(`Handle: @${V.handle||'not set'}${V.name?` (${V.name})`:''}`);
   if(V.location) bits.push(`Votes in: ${V.location}`);
-  if(V.role) bits.push(`Cares most about: ${V.role}`);
+  if(V.bio) bits.push(trim60(V.bio));
   if(V.ballot && V.ballot.date) bits.push(`Their next election: ${V.ballot.date}`);
   if(D.issues.length) bits.push('Positions they hold: ' + D.issues.slice(0,10)
     .map(i=>`${i.stance} ${i.title}`).join('; '));
@@ -1969,6 +2087,24 @@ function wireTabs(){
 /* ============================================================== screens === */
 const S = {};
 
+/* the extra photos live on the profile row as a list of urls */
+function photosOf(p){
+  try{
+    const raw = p && p.photos;
+    const arr = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    return Array.isArray(arr) ? arr.filter(u => typeof u === 'string' && u).slice(0,8) : [];
+  }catch(e){ return [] }
+}
+/* one tap each, so a blank bio box is never the whole job */
+const BIOTIPS = [
+  ['Why I am here',      'I am here because '],
+  ['What I do',          'By day I '],
+  ['Where I am',         'I live in '],
+  ['What I am working on','Right now I am working on '],
+  ['What I want',        'What I want to see change is '],
+  ['Ask me about',       'Ask me about ']
+];
+
 /* ------------------------------------------------------------------ profile */
 S.profile = {
   sub:'Who you are',
@@ -1989,7 +2125,7 @@ S.profile = {
   },
   view(){
     if(!V) return authView();
-    const steps = [!!V.photo_url, !!V.name, !!V.handle, !!V.bio, !!(V.role||V.location)];
+    const steps = [!!V.photo_url, !!V.name, !!V.handle, !!V.bio, !!V.location];
     const done  = steps.filter(Boolean).length;
     const link  = (V.link||'').trim();
     const href  = link && !/^https?:/i.test(link) ? 'https://'+link : link;
@@ -2023,15 +2159,37 @@ S.profile = {
           ${RO?'':`<span class="cam">${cam}</span>`}
         </button>
 
+        ${(()=>{ const gal = photosOf(V);
+          if(!gal.length && RO) return '';
+          return `<div class="gallery">
+            ${gal.map((u,i)=>`<span class="gshot">
+              <img class="pimg" src="${esc(u)}" alt="" loading="lazy" onload="imgOK(this,240)">
+              ${RO?'':`<button class="gx" data-shot="${i}" aria-label="Remove photo">&#10005;</button>
+                       <button class="gmain" data-main="${i}" title="Make this the main photo">Main</button>`}
+            </span>`).join('')}
+            ${RO?'':`<button class="gadd" id="pfAdd" aria-label="Add a photo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              <span>Add a photo</span></button>`}
+          </div>`;
+        })()}
+
         <div>
-          <input id="pfRole" class="pfield role" placeholder="What you care about most" value="${esc(V.role)}" ${RO?'readonly':''}>
           <div class="tahead"><input id="pfLoc" class="pfield loc" placeholder="Where you vote"
             value="${esc(V.location)}" ${RO?'readonly':''} autocomplete="off"></div>
         </div>
 
-        <textarea id="pfBio" class="pfield bio" rows="4" placeholder="Write a short bio." ${RO?'readonly':''}>${esc(V.bio)}</textarea>
-        ${RO?'':`<button class="linkbtn" id="pfTighten" hidden style="align-self:flex-start">Tighten this</button>
-                 <div class="ai" id="pfAi" hidden></div>`}
+        <textarea id="pfBio" class="pfield bio" rows="6" maxlength="600"
+          placeholder="Who you are, what you are working on, what brought you here."
+          ${RO?'readonly':''}>${esc(V.bio)}</textarea>
+        ${RO?'':`<div class="bioaid">
+            <div class="biotips">${BIOTIPS.map((t,i)=>
+              `<button class="topic" data-bio="${i}">${esc(t[0])}</button>`).join('')}</div>
+            <div class="frow">
+              <button class="linkbtn" id="pfDraft">Help me write it</button>
+              <button class="linkbtn" id="pfTighten" hidden style="margin-left:auto">Tighten this</button>
+            </div>
+            <div class="ai" id="pfAi" hidden></div>
+          </div>`}
 
         ${RO?'':`${done<5?`<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
             <span>${done} of 5 done — ${nextStep(steps)}</span></div>`:''}`}
@@ -2086,7 +2244,7 @@ S.profile = {
       };
       return;
     }
-    const fields = {pfName:'name', pfHandle:'handle', pfRole:'role', pfLoc:'location', pfBio:'bio'};
+    const fields = {pfName:'name', pfHandle:'handle', pfLoc:'location', pfBio:'bio'};
     const els = Object.keys(fields).map($).filter(Boolean);
     const edit = $('pfEdit'), tight = $('pfTighten');
 
@@ -2128,8 +2286,80 @@ S.profile = {
     }
 
     $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut(); location.href = '/' });
-    if($('pfLoc')) placeahead($('pfLoc'), ()=>{ if(ONLINE && myState())
-      ['feed','polls','townhall'].forEach(k=>SC[k]='near'); });
+    if($('pfLoc')) placeahead($('pfLoc'), ()=>{ if(ONLINE && myState()) SC.feed = 'near'; });
+
+    /* ---- the bio, made easier to fill ---- */
+    const bio = $('pfBio');
+    document.querySelectorAll('[data-bio]').forEach(b=>b.onclick = ()=>{
+      if(panel.dataset.edit !== '1') setEdit(true);
+      const [, seed] = BIOTIPS[+b.dataset.bio];
+      const cur = bio.value.replace(/\s+$/,'');
+      if(cur.toLowerCase().includes(seed.trim().toLowerCase())){ bio.focus(); return }
+      bio.value = (cur ? cur + '\n' : '') + seed;
+      bio.focus();
+      bio.setSelectionRange(bio.value.length, bio.value.length);
+      put();
+    });
+    const draft = $('pfDraft');
+    if(draft) draft.onclick = ()=>{
+      const facts = [
+        V.name ? `Name: ${V.name}` : '',
+        V.location ? `Votes in: ${V.location}` : '',
+        (D.issues||[]).length ? `Positions taken: ${(D.issues||[]).slice(0,6)
+          .map(i=>`${i.stance} ${i.title}`).join('; ')}` : '',
+        (D.posts||[]).length ? `Recent post: ${trim60((D.posts[0]||{}).text)}` : '',
+        bio.value.trim() ? `Their own words so far: ${bio.value.trim()}` : ''
+      ].filter(Boolean).join('\n');
+      if(!facts) return toast('Add your name or a position first');
+      if(panel.dataset.edit !== '1') setEdit(true);
+      suggest('pfAi', draft, 'distil', facts, {
+        apply: out => { bio.value = out.replace(/^["']|["']$/g,''); put() },
+        note:'A first draft from what is already on your page. Change every word of it.' });
+    };
+
+    /* ---- more than one photo ---- */
+    const shots = ()=> photosOf(V);
+    const putShots = async list =>{
+      if(!ONLINE){ const db = localDB(); db.profile.photos = list; localSave(db); V.photos = list;
+                   render(); return }
+      const { error } = await sb.from('profiles').update({photos:list}).eq('id', ME.id);
+      if(error) return toast(/photos/.test(error.message||'')
+        ? 'Run the latest update.sql to add more photos' : friendly(error));
+      V.photos = ME.photos = list; render();
+    };
+    if($('pfAdd')) $('pfAdd').onclick = ()=>{
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'image/*'; inp.multiple = true;
+      inp.onchange = async e =>{
+        const files = [...(e.target.files||[])].slice(0, 8 - shots().length);
+        if(!files.length) return toast('Eight photos is plenty');
+        toast(files.length > 1 ? `Uploading ${files.length} photos…` : 'Uploading photo…');
+        const urls = [];
+        for(const f of files){
+          const url = await new Promise(res => shrink(f, 1400, async (blob, dataUrl)=>{
+            if(!ONLINE) return res(dataUrl);
+            res(await uploadPhoto(blob));
+          }));
+          if(url) urls.push(url);
+        }
+        if(urls.length) await putShots([...shots(), ...urls].slice(0,8));
+      };
+      inp.click();
+    };
+    document.querySelectorAll('[data-shot]').forEach(b=>b.onclick = ()=>{
+      const list = shots(); list.splice(+b.dataset.shot, 1); putShots(list);
+    });
+    document.querySelectorAll('[data-main]').forEach(b=>b.onclick = async ()=>{
+      const list = shots(), i = +b.dataset.main, pick = list[i];
+      if(!pick) return;
+      list.splice(i, 1);
+      if(V.photo_url) list.unshift(V.photo_url);
+      if(!ONLINE){ const db = localDB(); db.profile.photo_url = pick; db.profile.photos = list;
+                   localSave(db); V.photo_url = pick; V.photos = list; render(); return }
+      const { error } = await sb.from('profiles').update({photo_url:pick, photos:list}).eq('id', ME.id);
+      if(error) return toast(friendly(error));
+      V.photo_url = ME.photo_url = pick; V.photos = ME.photos = list; render();
+    });
 
     if($('pfAv')) $('pfAv').onclick = ()=>$('pfFile').click();
     if($('pfFile')) $('pfFile').onchange = e => {
@@ -2276,7 +2506,7 @@ function shareLine(){
   return bits.join(' ');
 }
 function nextStep(steps){
-  const labels = ['add a photo','add your name','pick a handle','write a bio','say what you care about'];
+  const labels = ['add a photo','add your name','pick a handle','write a bio','say where you vote'];
   return labels[steps.findIndex(x=>!x)] || '';
 }
 let AUTHMODE = 'in';
@@ -2530,9 +2760,13 @@ function threads(){
 }
 
 /* ----------------------------------------------------------------- messages
-   One window, opened over everything: the list of conversations on the left,
-   the one you are in on the right. On a phone it is one at a time. */
-let HUB = null, HUBWITH = null, HUBFIND = '';
+   One window over everything: conversations on the left, the one you are in on
+   the right, one at a time on a phone. Pinning and filtering live in this
+   browser; everything else is a row in the database. */
+let HUB = null, HUBWITH = null, HUBFIND = '', HUBFILTER = 'all', HUBIMG = null, HUBSENDING = 0;
+let PINS = new Set((()=>{ try{ return JSON.parse(localStorage.getItem('dai.pins') || '[]') }
+                          catch(e){ return [] } })());
+const savePins = ()=>{ try{ localStorage.setItem('dai.pins', JSON.stringify([...PINS])) }catch(e){} };
 
 const dayLabel = ts =>{
   const d = new Date(ts), t = new Date();
@@ -2545,6 +2779,17 @@ const dayLabel = ts =>{
     : {month:'long', day:'numeric', year: d.getFullYear() === t.getFullYear() ? undefined : 'numeric'});
 };
 const clockOf = ts => new Date(ts).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'});
+const hereNow = id => (HERE || []).some(p => p && p.handle && p.id !== (ME||{}).id
+  && ((G.people||[]).find(x=>x.handle === p.handle)||{}).id === id);
+
+/* highlight what you searched for, on top of the usual linking */
+function markHits(html, q){
+  if(!q) return html;
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
+  /* walk tags and text separately, so nothing inside an attribute is touched */
+  return html.replace(/(<[^>]*>)|([^<]+)/g,
+    (m, tag, txt)=> tag ? tag : txt.replace(re, '<mark>$1</mark>'));
+}
 
 function hubThreads(){
   const q = HUBFIND.trim().toLowerCase();
@@ -2553,29 +2798,61 @@ function hubThreads(){
     (t.who.name || '').toLowerCase().includes(q) ||
     (t.who.handle || '').toLowerCase().includes(q) ||
     t.msgs.some(m => (m.text || '').toLowerCase().includes(q)));
-  return list;
+  if(HUBFILTER === 'unread') list = list.filter(t => t.unread);
+  if(HUBFILTER === 'pinned') list = list.filter(t => PINS.has(t.who.id));
+  return list.sort((a,b)=>{
+    const pa = PINS.has(a.who.id) ? 1 : 0, pb = PINS.has(b.who.id) ? 1 : 0;
+    if(pa !== pb) return pb - pa;
+    return new Date((b.last||{}).created_at || 0) - new Date((a.last||{}).created_at || 0);
+  });
 }
 
 function hubListHTML(){
   const list = hubThreads();
-  if(!list.length) return `<div class="hubempty">
-    <b>${HUBFIND ? 'Nothing matches' : 'No conversations yet'}</b>
-    ${HUBFIND ? 'Try another name or word.' : 'Start one with anybody on the network.'}</div>`;
+  if(!list.length){
+    const suggest = (G.people || []).filter(p => p.handle && (!ME || p.id !== ME.id)
+      && MYFOLLOWS.has(p.id) && !threads().some(t => t.who.id === p.id)).slice(0,4);
+    return `<div class="hubempty">
+      <b>${HUBFIND ? 'Nothing matches'
+        : HUBFILTER === 'unread' ? 'Nothing unread'
+        : HUBFILTER === 'pinned' ? 'Nothing pinned yet'
+        : 'No conversations yet'}</b>
+      ${HUBFIND ? 'Try another name or word.'
+        : HUBFILTER === 'pinned' ? 'Pin a conversation to keep it at the top.'
+        : HUBFILTER === 'unread' ? 'You are all caught up.'
+        : 'Start one with anybody on the network.'}
+      ${suggest.length && HUBFILTER === 'all' && !HUBFIND ? `<div class="startrow">${suggest.map(p=>
+        `<button class="startchip" data-thread="${p.id}">
+          <span class="whoav sm">${p.photo_url ? `<img src="${p.photo_url}" alt="">`
+            : esc(initials(p))}</span>${esc(p.name || '@'+p.handle)}</button>`).join('')}</div>` : ''}
+    </div>`;
+  }
   return list.map(t=>{
     const last = t.msgs[t.msgs.length - 1] || {};
     const mine = ME && last.sender === ME.id;
-    return `<button class="thread${HUBWITH === t.who.id ? ' on' : ''}${t.unread ? ' unread' : ''}"
-        data-thread="${t.who.id}">
-      <span class="whoav">${t.who.photo_url ? `<img src="${t.who.photo_url}" alt="">`
-        : esc(initials(t.who))}</span>
-      <span class="grow">
-        <span class="trow"><b>${esc(t.who.name || '@' + t.who.handle)}</b>
-          <span class="twhen" data-ts="${last.created_at || ''}" data-noloc>${
-            last.created_at ? ago(last.created_at) : ''}</span></span>
-        <span class="tprev">${mine ? 'You: ' : ''}${esc(trim60(last.text || ''))}</span>
-      </span>
-      ${t.unread ? `<span class="tbadge">${t.unread}</span>` : ''}
-    </button>`;
+    const pinned = PINS.has(t.who.id);
+    return `<div class="threadwrap">
+      <button class="thread${HUBWITH === t.who.id ? ' on' : ''}${t.unread ? ' unread' : ''}"
+          data-thread="${t.who.id}">
+        <span class="tav${hereNow(t.who.id) ? ' here' : ''}">
+          <span class="whoav">${t.who.photo_url ? `<img src="${t.who.photo_url}" alt="">`
+            : esc(initials(t.who))}</span></span>
+        <span class="grow">
+          <span class="trow">${pinned ? '<i class="pinned" title="Pinned">&#9679;</i>' : ''}
+            <b>${esc(t.who.name || '@' + t.who.handle)}</b>
+            <span class="twhen" data-ts="${last.created_at || ''}" data-noloc>${
+              last.created_at ? ago(last.created_at) : ''}</span></span>
+          <span class="tprev">${mine ? 'You: ' : ''}${last.image_url && !last.text ? 'Photo'
+            : esc(trim60(last.text || ''))}</span>
+        </span>
+        ${t.unread ? `<span class="tbadge">${t.unread}</span>` : ''}
+      </button>
+      <button class="tpin${pinned ? ' on' : ''}" data-pin="${t.who.id}"
+        title="${pinned ? 'Unpin' : 'Pin to the top'}" aria-label="Pin">
+        <svg viewBox="0 0 24 24" fill="${pinned ? 'currentColor' : 'none'}" stroke="currentColor"
+          stroke-width="1.9" stroke-linejoin="round"><path d="M9 4h6l-1 6 3.5 3H6.5L10 10Z"/><path d="M12 13v7"/></svg>
+      </button>
+    </div>`;
   }).join('');
 }
 
@@ -2586,40 +2863,64 @@ function hubPaneHTML(){
   const who = t ? t.who : (G.people || []).find(p => p.id === HUBWITH);
   if(!who) return `<div class="hubempty big"><b>That person is not here</b>They may have left.</div>`;
   const msgs = t ? t.msgs : [];
+  const q = HUBFIND.trim().toLowerCase();
+  const firstUnread = msgs.findIndex(m => ME && m.recipient === ME.id && !m.read_at);
 
   let day = '', out = '';
   msgs.forEach((m, i)=>{
+    if(i === firstUnread && firstUnread > 0)
+      out += `<div class="daysep new"><span>New messages</span></div>`;
     const d = dayLabel(m.created_at);
     if(d !== day){ day = d; out += `<div class="daysep"><span>${esc(d)}</span></div>` }
     const mine = ME && m.sender === ME.id;
     const prev = msgs[i-1], next = msgs[i+1];
     const run = prev && prev.sender === m.sender
       && new Date(m.created_at) - new Date(prev.created_at) < 5 * 60e3
-      && dayLabel(prev.created_at) === d;
+      && dayLabel(prev.created_at) === d && i !== firstUnread;
     const last = !next || next.sender !== m.sender
       || new Date(next.created_at) - new Date(m.created_at) >= 5 * 60e3
       || dayLabel(next.created_at) !== d;
-    out += `<div class="bub ${mine ? 'me' : 'them'}${run ? ' run' : ''}${last ? ' last' : ''}">
-      <div class="btext">${rich(m.text)}</div>
-      ${last ? `<div class="bmeta">${clockOf(m.created_at)}${
-        mine && m.read_at ? ' &middot; Seen' : ''}</div>` : ''}
+    const pending = String(m.id).slice(0,3) === 'tmp';
+    out += `<div class="bubrow ${mine ? 'me' : 'them'}" data-msg="${m.id}">
+      <div class="bub ${mine ? 'me' : 'them'}${run ? ' run' : ''}${last ? ' last' : ''}${
+        pending ? ' pending' : ''}">
+        ${m.image_url ? `<img class="bimg pimg" src="${esc(m.image_url)}" alt="" loading="lazy">` : ''}
+        ${m.text ? `<div class="btext">${markHits(rich(m.text), q)}</div>` : ''}
+        ${last ? `<div class="bmeta">${pending ? 'Sending' : clockOf(m.created_at)}${
+          mine && m.read_at && !pending ? ' &middot; Seen' : ''}</div>` : ''}
+      </div>
+      <div class="bacts">
+        <button data-copy="${m.id}" title="Copy" aria-label="Copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
+        ${mine && !pending ? `<button data-del="${m.id}" title="Delete" aria-label="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7h14M10 7V5h4v2M8 7l.8 12.1a1 1 0 0 0 1 .9h4.4a1 1 0 0 0 1-.9L16 7"/></svg></button>` : ''}
+      </div>
     </div>`;
   });
 
   return `<header class="hubtop">
       <button class="hubback" id="hubBack" aria-label="Back">&#8249;</button>
-      <a class="whoav" href="/${esc(who.handle || '')}">${who.photo_url
-        ? `<img src="${who.photo_url}" alt="">` : esc(initials(who))}</a>
+      <a class="tav${hereNow(who.id) ? ' here' : ''}" href="/${esc(who.handle || '')}">
+        <span class="whoav">${who.photo_url ? `<img src="${who.photo_url}" alt="">`
+          : esc(initials(who))}</span></a>
       <div class="grow">
         <b>${esc(who.name || '@' + who.handle)}</b>
-        <small>@${esc(who.handle || '')}</small>
+        <small>@${esc(who.handle || '')}${hereNow(who.id) ? ' &middot; here now' : ''}</small>
       </div>
+      <button class="tbtn" id="hubPin" title="${PINS.has(who.id)?'Unpin':'Pin'}" aria-label="Pin">
+        <svg viewBox="0 0 24 24" fill="${PINS.has(who.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M9 4h6l-1 6 3.5 3H6.5L10 10Z"/><path d="M12 13v7"/></svg>
+      </button>
       <a class="mini-btn" href="/${esc(who.handle || '')}">View page</a>
     </header>
     <div class="hubmsgs" id="hubMsgs">${msgs.length ? out
       : `<div class="hubempty"><b>Say something</b>This is the beginning of your conversation
          with ${esc(who.name || '@' + who.handle)}.</div>`}</div>
+    <div class="hubmedia" id="hubMedia" ${HUBIMG ? '' : 'hidden'}></div>
     <div class="hubbar">
+      <button class="hubphoto" id="hubPhoto" title="Send a photo" aria-label="Send a photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.6" cy="10" r="1.6"/><path d="m3.6 17.4 4.8-4.2 4 3.4 3-2.4 5 4"/></svg>
+      </button>
+      <input type="file" id="hubFile" accept="image/*" hidden>
       <textarea id="hubText" rows="1" maxlength="2000"
         placeholder="Message ${esc(who.name || '@' + (who.handle||''))}"></textarea>
       <button class="sendbtn" id="hubSend" aria-label="Send" disabled>
@@ -2640,22 +2941,70 @@ function paintHub(){
     if(box && stick) box.scrollTop = box.scrollHeight;
   }
   HUB.classList.toggle('inthread', !!HUBWITH);
-  wireHub();
-  const n = DMUNREAD;
   const c = $('hubCount');
-  if(c) c.textContent = n ? `${n} unread` : '';
+  if(c) c.textContent = DMUNREAD ? `${DMUNREAD} unread` : '';
+  HUB.querySelectorAll('[data-filter]').forEach(b=>
+    b.classList.toggle('on', b.dataset.filter === HUBFILTER));
+  paintHubMedia();
+  wireHub();
+}
+function paintHubMedia(){
+  const box = $('hubMedia'); if(!box) return;
+  box.hidden = !HUBIMG;
+  box.innerHTML = HUBIMG ? `<span class="thumbwrap"><img class="thumb" src="${HUBIMG.url}" alt="">
+    <button class="thumbx" id="hubDrop" aria-label="Remove photo">&#10005;</button></span>
+    <span class="meta">Photo ready to send</span>` : '';
+  const d = $('hubDrop');
+  if(d) d.onclick = ()=>{ HUBIMG = null; paintHubMedia();
+    const s = $('hubSend'), t = $('hubText'); if(s && t) s.disabled = !t.value.trim() };
 }
 
 function wireHub(){
   if(!HUB) return;
   HUB.querySelectorAll('[data-thread]').forEach(b=>b.onclick = ()=> openThread(b.dataset.thread));
-  const back = $('hubBack');
-  if(back) back.onclick = ()=>{ HUBWITH = null; paintHub() };
-  const t = $('hubText'), send = $('hubSend');
+  HUB.querySelectorAll('[data-pin]').forEach(b=>b.onclick = e=>{
+    e.stopPropagation();
+    const id = b.dataset.pin;
+    if(PINS.has(id)) PINS.delete(id); else PINS.add(id);
+    savePins(); paintHub();
+  });
+  HUB.querySelectorAll('[data-filter]').forEach(b=>b.onclick = ()=>{
+    HUBFILTER = b.dataset.filter; paintHub();
+  });
+  const pin = $('hubPin');
+  if(pin) pin.onclick = ()=>{
+    if(PINS.has(HUBWITH)) PINS.delete(HUBWITH); else PINS.add(HUBWITH);
+    savePins(); paintHub();
+  };
+  HUB.querySelectorAll('[data-copy]').forEach(b=>b.onclick = async ()=>{
+    const m = DMS.find(x => String(x.id) === b.dataset.copy);
+    try{ await navigator.clipboard.writeText((m && m.text) || ''); toast('Copied') }
+    catch(e){ toast('Could not copy') }
+  });
+  HUB.querySelectorAll('[data-del]').forEach(b=>b.onclick = async ()=>{
+    const id = b.dataset.del;
+    DMS = DMS.filter(x => String(x.id) !== String(id));
+    paintHub();
+    const r = await sb.from('messages').delete().eq('id', id);
+    if(r.error) toast(/policy|row-level/i.test(r.error.message)
+      ? 'Run the latest update.sql to delete messages' : friendly(r.error));
+    await loadDMs(); paintHub();
+  });
+
+  const t = $('hubText'), send = $('hubSend'), photo = $('hubPhoto'), file = $('hubFile');
+  if(photo && file){
+    photo.onclick = ()=>file.click();
+    file.onchange = e=>{
+      const f = e.target.files[0]; if(!f) return;
+      shrink(f, 1400, (blob, url)=>{ HUBIMG = {blob, url}; paintHubMedia();
+        if(send) send.disabled = false });
+      file.value = '';
+    };
+  }
   if(t){
     const grow = ()=>{ t.style.height = 'auto';
       t.style.height = Math.min(t.scrollHeight, 150) + 'px';
-      send.disabled = !t.value.trim() };
+      send.disabled = !t.value.trim() && !HUBIMG };
     t.oninput = grow; grow();
     mentionable(t);
     send.onclick = sendHub;
@@ -2670,8 +3019,8 @@ function wireHub(){
 
 async function openThread(id){
   HUBWITH = id;
+  HUBIMG = null;
   paintHub();
-  /* mark what they sent you as read */
   if(!ONLINE || !ME) return;
   const unread = DMS.filter(m => m.sender === id && m.recipient === ME.id && !m.read_at);
   if(!unread.length) return;
@@ -2680,28 +3029,45 @@ async function openThread(id){
       .eq('sender', id).eq('recipient', ME.id).is('read_at', null);
     unread.forEach(m => m.read_at = new Date().toISOString());
     DMUNREAD = DMS.filter(m => m.recipient === ME.id && !m.read_at).length;
-    renderRail(); paintHub();
+    renderRail();
+    const c = $('hubCount'); if(c) c.textContent = DMUNREAD ? `${DMUNREAD} unread` : '';
+    const l = $('hubList'); if(l){ l.innerHTML = hubListHTML(); wireHub() }
   }catch(e){}
 }
 
 async function sendHub(){
   const t = $('hubText'); if(!t || !HUBWITH) return;
-  const text = t.value.trim(); if(!text) return;
+  const text = t.value.trim();
+  if(!text && !HUBIMG) return;
   if(!await needAuth()) return;
-  t.value = ''; t.style.height = 'auto';
+  const img = HUBIMG;
+  t.value = ''; t.style.height = 'auto'; HUBIMG = null;
   const send = $('hubSend'); if(send) send.disabled = true;
-  /* show it immediately, then let the database confirm */
-  const now = new Date().toISOString();
+
+  const tmp = 'tmp' + uid();
   const me = {id:ME.id, handle:ME.handle, name:ME.name, photo_url:ME.photo_url};
   const other = (threads().find(x=>x.who.id === HUBWITH) || {}).who
     || (G.people || []).find(p=>p.id === HUBWITH) || {id:HUBWITH};
-  DMS.unshift({id:'tmp'+uid(), sender:ME.id, recipient:HUBWITH, text, created_at:now,
-               read_at:null, sender_p:me, recipient_p:other});
+  DMS.unshift({id:tmp, sender:ME.id, recipient:HUBWITH, text, image_url:img ? img.url : null,
+               created_at:new Date().toISOString(), read_at:null, sender_p:me, recipient_p:other});
+  HUBSENDING++;
   paintHub();
-  const r = await sb.from('messages').insert({sender:ME.id, recipient:HUBWITH, text});
+
+  let image_url = null;
+  if(img){
+    image_url = await uploadPhoto(img.blob);
+    if(!image_url && !text){
+      DMS = DMS.filter(m => m.id !== tmp); HUBSENDING--; paintHub(); return;
+    }
+  }
+  const row = {sender:ME.id, recipient:HUBWITH, text: text || '\u{1F4F7}'};
+  if(image_url) row.image_url = image_url;
+  const r = await sb.from('messages').insert(row);
+  HUBSENDING--;
   if(r.error){
-    DMS = DMS.filter(m => String(m.id).slice(0,3) !== 'tmp');
-    toast(friendly(r.error));
+    DMS = DMS.filter(m => m.id !== tmp);
+    toast(/image_url/.test(r.error.message || '')
+      ? 'Run the latest update.sql to send photos' : friendly(r.error));
   }
   await loadDMs(); paintHub(); renderRail();
 }
@@ -2725,11 +3091,13 @@ function newThreadSheet(){
     const people = (G.people || [])
       .filter(p => p.handle && (!ME || p.id !== ME.id))
       .filter(p => !q || (p.name||'').toLowerCase().includes(q) || p.handle.toLowerCase().includes(q))
+      .sort((a,b)=> (MYFOLLOWS.has(b.id) ? 1 : 0) - (MYFOLLOWS.has(a.id) ? 1 : 0))
       .slice(0, 30);
     $('ntList').innerHTML = people.length
       ? people.map(p=>`<button class="noterow" data-new="${p.id}">
           <span class="whoav">${p.photo_url ? `<img src="${p.photo_url}" alt="">` : esc(initials(p))}</span>
-          <span class="grow"><span class="notewhat"><b>${esc(p.name || '@'+p.handle)}</b></span>
+          <span class="grow"><span class="notewhat"><b>${esc(p.name || '@'+p.handle)}</b>${
+            MYFOLLOWS.has(p.id) ? ' <span class="tag b">Following</span>' : ''}</span>
             <small class="notewhen">@${esc(p.handle)}${p.location ? ' &middot; ' + esc(p.location) : ''}</small>
           </span></button>`).join('')
       : `<p class="sheetmsg">${q ? 'Nobody by that name.' : 'Nobody else has joined yet.'}</p>`;
@@ -2747,7 +3115,7 @@ async function msgHub(withId){
   if(!await needAuth()) return;
   if(HUB){ if(withId) openThread(withId); return }
   HUBWITH = withId || HUBWITH || null;
-  HUBFIND = '';
+  HUBFIND = ''; HUBIMG = null;
   const wrap = document.createElement('div');
   wrap.className = 'hub';
   wrap.innerHTML = `<div class="hubbox">
@@ -2762,6 +3130,11 @@ async function msgHub(withId){
       </header>
       <div class="hubfind"><input class="inp" id="hubFind" placeholder="Search messages"
         autocomplete="off"></div>
+      <div class="hubfilters">
+        <button data-filter="all" class="on">All</button>
+        <button data-filter="unread">Unread</button>
+        <button data-filter="pinned">Pinned</button>
+      </div>
       <div class="hublist" id="hubList"></div>
     </aside>
     <section class="hubpane" id="hubPane"></section>
@@ -2772,18 +3145,20 @@ async function msgHub(withId){
   $('hubClose').onclick = closeHub;
   $('hubNew').onclick = newThreadSheet;
   const find = $('hubFind');
-  find.oninput = ()=>{ HUBFIND = find.value; const l = $('hubList'); if(l) l.innerHTML = hubListHTML();
-    wireHub() };
+  find.oninput = ()=>{ HUBFIND = find.value;
+    const l = $('hubList'); if(l) l.innerHTML = hubListHTML();
+    if(HUBWITH){ const p = $('hubPane'); if(p){ p.innerHTML = hubPaneHTML() } }
+    wireHub();
+  };
   if(ONLINE) await loadDMs();
   loadPeople().then(()=>paintHub(), ()=>{});
-  /* land in the newest conversation on a wide screen */
   if(!HUBWITH && !phone()){
-    const first = threads()[0];
+    const first = hubThreads()[0];
     if(first) return openThread(first.who.id);
   }
   paintHub();
 }
-function closeHub(){ if(HUB){ HUB.remove(); HUB = null } }
+function closeHub(){ if(HUB){ HUB.remove(); HUB = null; HUBIMG = null } }
 
 /* everything that used to open a little sheet now opens the hub */
 function dmSheet(who){ return msgHub(who && who.id) }
@@ -4940,72 +5315,281 @@ function askSheet(){
 }
 
 /* ---------------------------------------------------------------- fundraise */
+/* ---------------------------------------------------------------- fundraise
+   Where the money can go, and what you have given. Every link goes straight to
+   the organisation's own site — democrat.ai takes nothing, tracks nothing, and
+   is not affiliated with any of them. */
+const GIVE = [
+ {c:'The party', items:[
+  {n:'Democratic National Committee', u:'https://democrats.org/', w:'The national party: staff, data and organising in every state.'},
+  {n:'DCCC', u:'https://dccc.org/', w:'Electing Democrats to the House of Representatives.'},
+  {n:'DSCC', u:'https://www.dscc.org/', w:'Electing Democrats to the Senate.'},
+  {n:'Democratic Governors Association', u:'https://democraticgovernors.org/', w:'Governors decide vetoes, maps and whether a legislature is checked.'},
+  {n:'DLCC', u:'https://www.dlcc.org/', w:'State legislatures — where most law that touches you is actually written.'},
+  {n:'Find your state party', u:'https://democrats.org/who-we-are/state-parties/', w:'The closest thing to giving locally. Usually the least funded.'}]},
+
+ {c:'Candidates and field', items:[
+  {n:'ActBlue', u:'https://secure.actblue.com/', w:'The platform almost every Democratic campaign uses. Give to anyone directly.'},
+  {n:'Swing Left', u:'https://swingleft.org/', w:'Puts money and volunteers where the margin is thinnest.'},
+  {n:'Sister District', u:'https://sisterdistrict.com/', w:'Pairs volunteers with state legislative races that flip.'},
+  {n:'Run for Something', u:'https://runforsomething.net/', w:'Recruits and backs first-time young candidates down the ballot.'},
+  {n:'EMILYs List', u:'https://www.emilyslist.org/', w:'Elects Democratic women who support abortion rights.'},
+  {n:'Working Families Party', u:'https://workingfamilies.org/', w:'Runs and backs candidates on an explicitly working-class programme.'},
+  {n:'Collective PAC', u:'https://collectivepac.org/', w:'Builds Black political power at every level of the ballot.'},
+  {n:'Latino Victory Fund', u:'https://latinovictory.org/', w:'Recruits and elects Latino candidates nationally.'}]},
+
+ {c:'Voting and democracy', items:[
+  {n:'Fair Fight', u:'https://fairfight.com/', w:'Fights voter suppression and funds voter protection programmes.'},
+  {n:'Black Voters Matter', u:'https://blackvotersmatterfund.org/', w:'Year-round organising in Black communities across the South.'},
+  {n:'Vote.org', u:'https://www.vote.org/', w:'Registration, reminders and ballot tools, at scale, for anyone.'},
+  {n:'When We All Vote', u:'https://whenweallvote.org/', w:'Closes the race and age gaps in turnout.'},
+  {n:'Campaign Legal Center', u:'https://campaignlegal.org/', w:'Litigates on voting rights, redistricting and money in politics.'},
+  {n:'Brennan Center for Justice', u:'https://www.brennancenter.org/', w:'The research and legal work behind most voting rights arguments.'},
+  {n:'Common Cause', u:'https://www.commoncause.org/', w:'Redistricting reform and election protection, state by state.'},
+  {n:'NAACP Legal Defense Fund', u:'https://www.naacpldf.org/', w:'The oldest civil rights law firm in the country.'},
+  {n:'Democracy Docket', u:'https://www.democracydocket.com/', w:'Tracks and fights the cases that decide how elections run.'}]},
+
+ {c:'Rights and freedoms', items:[
+  {n:'Planned Parenthood', u:'https://www.plannedparenthood.org/', w:'Care for millions, and the fight to keep it legal.'},
+  {n:'National Network of Abortion Funds', u:'https://abortionfunds.org/', w:'Pays for the appointment, the travel and the childcare.'},
+  {n:'ACLU', u:'https://www.aclu.org/', w:'Litigates on speech, privacy, protest and due process.'},
+  {n:'Human Rights Campaign', u:'https://www.hrc.org/', w:'LGBTQ+ equality in law and in the states.'},
+  {n:'Trevor Project', u:'https://www.thetrevorproject.org/', w:'Crisis support for LGBTQ+ young people.'},
+  {n:'National Immigration Law Center', u:'https://www.nilc.org/', w:'Defends the rights of low-income immigrants in court.'},
+  {n:'RAICES', u:'https://www.raicestexas.org/', w:'Free and low-cost legal aid at the border and beyond.'}]},
+
+ {c:'Climate and labour', items:[
+  {n:'NRDC', u:'https://www.nrdc.org/', w:'Sues polluters and writes the rules they end up following.'},
+  {n:'Sierra Club', u:'https://www.sierraclub.org/', w:'Chapters in every state, fighting plants and pipelines locally.'},
+  {n:'Evergreen Action', u:'https://www.evergreenaction.com/', w:'Turns climate policy into bills that can pass.'},
+  {n:'Sunrise Movement', u:'https://www.sunrisemovement.org/', w:'Young organisers pushing climate up the agenda.'},
+  {n:'AFL-CIO', u:'https://aflcio.org/', w:'The federation behind most of the labour movement.'},
+  {n:'Strike funds and solidarity', u:'https://aflcio.org/what-unions-do/social-economic-justice', w:'Money for workers who are out and unpaid.'}]},
+
+ {c:'Guns and safety', items:[
+  {n:'Everytown for Gun Safety', u:'https://www.everytown.org/', w:'Research, litigation and state-level gun laws.'},
+  {n:'Giffords', u:'https://giffords.org/', w:'Founded by a survivor; works the legislatures and the courts.'},
+  {n:'Community Justice', u:'https://cjaction.org/', w:'Funds the violence interruption programmes that work.'}]}
+];
+const GIVECOUNT = GIVE.reduce((n,g)=>n + g.items.length, 0);
+let GIVECAT = GIVE[0].c, GIVEFIND = '';
+
+const money0 = n => '$' + Math.round(n || 0).toLocaleString();
+function giveRows(){
+  const q = GIVEFIND.trim().toLowerCase();
+  if(q) return GIVE.flatMap(g => g.items
+    .filter(i => (i.n + ' ' + i.w).toLowerCase().includes(q))
+    .map(i => ({...i, c:g.c})));
+  return (GIVE.find(g => g.c === GIVECAT) || GIVE[0]).items.map(i => ({...i, c:GIVECAT}));
+}
+
 S.fundraise = {
-  sub(){ return RO ? `What @${V.handle} is raising for` : 'Put money behind it' },
+  sub(){ return RO ? `Support @${V.handle}` : 'Where it can go, and what you have given' },
+  acts(){
+    if(RO || GUEST()) return '';
+    return `<button class="btn ghost" id="fLog">Log a gift</button>`;
+  },
   view(){
-    const gifts = [...D.gifts].sort((a,b)=> (b.created_at||'').localeCompare(a.created_at||''));
-    const raised = gifts.reduce((s,g)=>s+Number(g.amount),0),
-          goal = Number(V&&V.goal||0), pct = goal?Math.min(100,raised/goal*100):0,
-          link = (V&&V.donate_link||'').trim(),
-          href = link && !/^https?:/i.test(link) ? 'https://'+link : link,
-          avg = gifts.length ? raised/gifts.length : 0;
-    if(GUEST()) return `<div class="screen">${joinBar('Sign in to track what you give and set a goal.')}</div>`;
-    if(RO) return `<div class="screen">${href
-      ? `<a class="btn" style="text-align:center;padding:14px;max-width:320px" href="${esc(href)}" target="_blank" rel="noopener">Chip in</a>
-         <p class="hint" style="text-align:left">Goes to a page @${esc(V.handle)} chose. Check it before you give.</p>`
-      : `<div class="empty"><b>No link yet</b>@${esc(V.handle)} is not collecting anything.</div>`}</div>`;
+    const gifts = (D.gifts || []).slice().sort((a,b)=>
+      new Date(b.created_at||0) - new Date(a.created_at||0));
+    const raised = gifts.reduce((s,g)=>s + (+g.amount || 0), 0);
+    const goal = +(V && V.goal) || 0;
+    const pct = goal ? Math.min(100, raised / goal * 100) : 0;
+    const year = new Date().getFullYear();
+    const thisYear = gifts.filter(g => new Date(g.created_at || 0).getFullYear() === year);
+    const ytd = thisYear.reduce((s,g)=>s + (+g.amount || 0), 0);
+    const avg = gifts.length ? raised / gifts.length : 0;
+
+    /* twelve months of giving */
+    const months = [...Array(12)].map((_,i)=>{
+      const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - (11 - i));
+      const key = d.toISOString().slice(0,7);
+      return {key, label: d.toLocaleDateString(undefined,{month:'short'}),
+              v: gifts.filter(g => (g.created_at||'').slice(0,7) === key)
+                      .reduce((s,g)=>s + (+g.amount||0), 0)};
+    });
+    const peak = Math.max(1, ...months.map(m=>m.v));
+
+    const rows = giveRows();
+    const shelf = `<section class="shelf">
+      <div class="shelfhead">
+        <h4>Where to give</h4>
+        <div class="topicbar">${GIVE.map(g=>
+          `<button class="tchip${!GIVEFIND && GIVECAT===g.c?' on':''}" data-give="${esc(g.c)}">
+            ${esc(g.c)}<i>${g.items.length}</i></button>`).join('')}</div>
+      </div>
+      <input class="inp" id="giveFind" placeholder="Search ${GIVECOUNT} places to give"
+        value="${esc(GIVEFIND)}">
+    </section>`;
 
     return `<div class="split"><div class="main">
-      <div class="stats">
-        <div><b>${money(raised)}</b><span>Given</span></div>
-        <div><b>${gifts.length}</b><span>Gifts</span></div>
-        <div><b>${money(avg)}</b><span>Average</span></div>
-        <div><b>${goal?Math.round(pct)+'%':'—'}</b><span>Of goal</span></div>
-      </div>
-      ${goal?`<div><div class="bar" style="height:10px"><i style="width:${pct}%"></i></div>
-        <div class="legend"><span>${money(raised)} given</span><span>${money(goal)} goal</span></div></div>`:''}
-      ${gifts.length?`<div><div class="sect">What you have given</div>
-        ${gifts.slice(0,20).map(g=>`<div class="gift"><span>${g.created_at?ago(g.created_at):'logged'}</span>
-          <b>${money(g.amount)}</b></div>`).join('')}</div>`
-        :`<div class="empty"><b>Nothing logged yet</b>Keep your own record of what you gave and to whom.</div>`}
+      ${GUEST() ? joinBar('Sign in to keep a record of what you give.') : ''}
+      ${shelf}
+      ${rows.length ? `<div class="gives">${rows.map(it=>`
+        <article class="giverow">
+          <div class="grow">
+            <b>${esc(it.n)}</b>
+            <small>${esc(it.w)}</small>
+            <span class="lvl topic">${esc(it.c)}</span>
+          </div>
+          <div class="giveacts">
+            <a class="btn" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer">Give</a>
+            ${(RO||GUEST())?'':`<button class="sbtn" data-log="${esc(it.n)}">Log it</button>`}
+          </div>
+        </article>`).join('')}</div>`
+      : `<div class="empty"><b>Nothing matches</b>Try another word.</div>`}
+      <p class="readnote">Every link goes to the organisation's own site. democrat.ai is not
+        affiliated with any of them, takes no cut, and never sees what you give. Political
+        donations above certain amounts are public record — the organisation's own site will
+        tell you where that line sits.</p>
     </div>
     <aside class="side">
-      <div class="card"><h5>Log a gift</h5>
-        <div class="frow"><input class="inp" id="fGift" type="number" min="1" placeholder="Amount">
-          <button class="btn" id="fAdd">Add</button></div>
-        <span class="ainote">Private to you. Nobody else can see this.</span>
+      ${(RO||GUEST())?'':`
+      <div class="card"><h5>What you have given</h5>
+        <div class="ringrow">
+          <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="Progress toward your goal">
+            <circle class="rbg" cx="60" cy="60" r="50"/>
+            <circle class="rfg" cx="60" cy="60" r="50"
+              stroke-dasharray="${(pct/100*314).toFixed(1)} 314"/>
+            <text class="rnum" x="60" y="57" text-anchor="middle">${money0(raised)}</text>
+            <text class="rlab" x="60" y="76" text-anchor="middle">${goal ? Math.round(pct)+'% of goal' : 'given'}</text>
+          </svg>
+          <div class="ringside">
+            <div class="row"><span>This year</span><b>${money0(ytd)}</b></div>
+            <div class="row"><span>Gifts</span><b>${gifts.length}</b></div>
+            <div class="row"><span>Average</span><b>${money0(avg)}</b></div>
+          </div>
+        </div>
+        ${gifts.length ? `<div class="mchart">${months.map(m=>`
+          <span class="mbar" title="${m.label}: ${money0(m.v)}">
+            <i style="height:${Math.max(2, m.v / peak * 100)}%"></i>
+            <em>${m.label[0]}</em></span>`).join('')}</div>` : ''}
+        <div class="frow">
+          <input class="inp" id="fGoal" type="number" min="0" step="10" placeholder="Goal for the year"
+            value="${goal || ''}">
+          <button class="mini-btn" id="fGoalSave">Set</button>
+        </div>
+        <p class="hint" style="text-align:left;color:var(--dim)">Only you can see this. It is a
+          record you keep, not a claim anyone can check.</p>
       </div>
-      <div class="card"><h5>Your goal for the year</h5>
-        <input class="inp" id="fGoal" type="number" min="0" placeholder="0" value="${goal||''}" style="max-width:none">
-      </div>
-      <div class="card"><h5>Where others can give</h5>
-        <input class="inp" id="fLink" placeholder="Paste a link" value="${esc(V&&V.donate_link)}" style="max-width:none">
-        <button class="mini-btn" id="fShare" style="align-self:flex-start">Share it</button>
-        <span class="ainote">This one is public, on your page.</span>
+
+      ${gifts.length ? `<div class="card"><h5>Your log</h5>
+        ${gifts.slice(0,8).map(g=>`<div class="gift">
+          <span>${esc(g.recipient || 'A gift')}</span>
+          <b>${money0(g.amount)}</b>
+          <small data-ts="${g.created_at||''}" data-noloc>${g.created_at ? ago(g.created_at) : ''}</small>
+          <button class="linkbtn" data-ungift="${g.id}">remove</button>
+        </div>`).join('')}
+      </div>` : ''}`}
+
+      <div class="card"><h5>${RO ? `Support @${esc(V.handle||'')}` : 'Your own donate link'}</h5>
+        ${RO
+          ? (V.donate_link
+              ? `<a class="btn" href="${esc(V.donate_link)}" target="_blank" rel="noopener noreferrer">
+                   Give to @${esc(V.handle)}</a>`
+              : `<p class="hint" style="text-align:left">No link on this page yet.</p>`)
+          : `<input class="inp" id="fLink" placeholder="https://secure.actblue.com/..."
+               value="${esc((V && V.donate_link) || '')}">
+             <div class="frow"><button class="mini-btn" id="fLinkSave">Save</button>
+               ${(V && V.donate_link) ? `<button class="mini-btn" id="fLinkShare">Share it</button>` : ''}</div>
+             <p class="hint" style="text-align:left;color:var(--dim)">Anyone who opens your page
+               sees a Give button pointing here.</p>`}
       </div>
     </aside></div>`;
   },
   init(){
-    if(RO || GUEST()) return;
-    let t;
-    const put = patch => { clearTimeout(t); t=setTimeout(()=>{
-      if(!ONLINE){ const db=localDB(); Object.assign(db.profile,patch); localSave(db); Object.assign(V,patch) }
-      else sb.from('profiles').update(patch).eq('id',ME.id)
-        .then(({error})=>{ error?toast(friendly(error)):Object.assign(V,patch) });
-    },500) };
-    $('fGoal').oninput = e=>put({goal:Number(e.target.value)||0});
-    $('fLink').oninput = e=>put({donate_link:e.target.value.trim()});
-    $('fAdd').onclick = async ()=>{
-      const amount=Number($('fGift').value); if(!amount) return;
-      if(!await needAuth()) return;
-      mutate({ local:db=>db.gifts.push({id:uid(),amount,created_at:new Date().toISOString()}),
-        remote:async()=>(await sb.from('gifts').insert({author:ME.id,amount})).error });
+    document.querySelectorAll('[data-give]').forEach(b=>b.onclick = ()=>{
+      GIVECAT = b.dataset.give; GIVEFIND = ''; open_('fundraise', true);
+    });
+    const find = $('giveFind');
+    if(find){
+      let t = null;
+      find.oninput = ()=>{ clearTimeout(t); t = setTimeout(()=>{
+        GIVEFIND = find.value; open_('fundraise', true);
+        const f2 = $('giveFind'); if(f2){ f2.focus();
+          f2.setSelectionRange(f2.value.length, f2.value.length) }
+      }, 250) };
+    }
+    document.querySelectorAll('[data-log]').forEach(b=>b.onclick = ()=>giftSheet(b.dataset.log));
+    const log = $('fLog'); if(log) log.onclick = ()=>giftSheet('');
+
+    const gs = $('fGoalSave');
+    if(gs) gs.onclick = async ()=>{
+      const goal = Math.max(0, +($('fGoal').value || 0));
+      if(!ONLINE){ const db = localDB(); db.profile.goal = goal; localSave(db); V.goal = goal;
+                   render(); return }
+      const { error } = await sb.from('profiles').update({goal}).eq('id', ME.id);
+      if(error) return toast(friendly(error));
+      V.goal = ME.goal = goal; render(); toast('Goal set');
     };
-    $('fShare').onclick = ()=>share(V.donate_link || 'Chip in:');
+    const ls = $('fLinkSave');
+    if(ls) ls.onclick = async ()=>{
+      let link = ($('fLink').value || '').trim();
+      if(link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
+      if(link && !/^https:\/\/[\w.-]+\.[a-z]{2,}/i.test(link)) return toast('That does not look like a link');
+      if(!ONLINE){ const db = localDB(); db.profile.donate_link = link; localSave(db);
+                   V.donate_link = link; render(); return }
+      const { error } = await sb.from('profiles').update({donate_link:link}).eq('id', ME.id);
+      if(error) return toast(friendly(error));
+      V.donate_link = ME.donate_link = link; render(); toast(link ? 'Link saved' : 'Link removed');
+    };
+    const lsh = $('fLinkShare');
+    if(lsh) lsh.onclick = ()=>share(
+      `${(V && V.name) || 'I'} could use a hand — every dollar goes to the campaign.`, V && V.handle);
+
+    document.querySelectorAll('[data-ungift]').forEach(b=>b.onclick = ()=>{
+      const id = b.dataset.ungift;
+      mutate({ local: db => db.gifts = (db.gifts||[]).filter(g=>String(g.id) !== String(id)),
+        remote: async ()=>(await sb.from('gifts').delete().eq('id', id)).error });
+    });
   }
 };
 
-/* -------------------------------------------------------------------- reach */
+/* what you gave, kept to yourself */
+function giftSheet(to){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>Log a gift</h3>
+    <p class="sheetmsg">Only you can see this. It is here so you can keep track, not so anyone
+      can check up on you.</p>
+    <input class="inp" id="gTo" placeholder="Who you gave to" value="${esc(to||'')}" maxlength="80">
+    <div class="frow">
+      ${[10,25,50,100,250].map(a=>`<button class="sbtn" data-amt="${a}">$${a}</button>`).join('')}
+    </div>
+    <input class="inp" id="gAmt" type="number" min="1" step="1" placeholder="Amount">
+    <div class="sheetfoot">
+      <button class="btn" id="gAdd">Log it</button>
+      <button class="btn ghost" id="gClose">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('gClose').onclick = close;
+  wrap.querySelectorAll('[data-amt]').forEach(b=>b.onclick = ()=>{ $('gAmt').value = b.dataset.amt });
+  (to ? $('gAmt') : $('gTo')).focus();
+  $('gAdd').onclick = async ()=>{
+    const amount = +($('gAmt').value || 0), recipient = ($('gTo').value || '').trim();
+    if(!(amount > 0)) return toast('How much?');
+    if(!await needAuth()) return;
+    close();
+    await mutate({
+      local: db => db.gifts.unshift({id:uid(), amount, recipient,
+        created_at:new Date().toISOString()}),
+      remote: async ()=>{
+        const row = {author:ME.id, amount};
+        if(recipient) row.recipient = recipient;
+        const r = await sb.from('gifts').insert(row);
+        if(r.error && /recipient/.test(r.error.message||''))
+          return (await sb.from('gifts').insert({author:ME.id, amount})).error;
+        return r.error;
+      }});
+    toast('Logged');
+  };
+  $('gAmt').onkeydown = e=>{ if(e.key === 'Enter') $('gAdd').click() };
+}
+
 /* -------------------------------------------------------------------- reach
    Every number here is counted from rows in the database — no estimates, no
    modelling. The charts are hand-drawn SVG so there is no library to load and

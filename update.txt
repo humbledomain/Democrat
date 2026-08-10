@@ -169,3 +169,14 @@ end $$;
 -- 11. let someone change their mind on a poll
 drop policy if exists self_delete on poll_votes;
 create policy self_delete on poll_votes for delete using (auth.uid() = user_id);
+
+-- 12. photos in a message, and the right to delete your own
+alter table messages add column if not exists image_url text;
+drop policy if exists dm_delete on messages;
+create policy dm_delete on messages for delete using (auth.uid() = sender);
+
+-- 13. more than one photo on a profile
+alter table profiles add column if not exists photos jsonb not null default '[]'::jsonb;
+
+-- 14. remember who a logged gift went to
+alter table gifts add column if not exists recipient text;

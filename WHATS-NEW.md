@@ -1,5 +1,58 @@
 # What's new
 
+> **Run `update.txt` again.** It adds photos in messages, deleting your own messages, extra profile
+> photos, and a note of who a logged gift went to.
+
+## Nothing cut off
+
+The nav was overflowing on shorter windows and clipping your account row. Tiles, rows, the Post
+button and the account chip are all a few pixels tighter, and the rail has breathing room at the
+bottom. The sideways scrollers — topic chips, the ask shelf — now fade out at the right edge so it's
+obvious there's more, and the ask cards clamp their text to two lines so they stay level.
+
+## Messages, properly built
+
+- **Filters**: All · Unread · Pinned.
+- **Pin a conversation** and it stays at the top. Kept in your browser, not on a server.
+- **Send a photo** — same resizing as posts, tap to view full size.
+- **Delete your own messages**, or copy any of them, from a hover row beside the bubble.
+- **A green dot** on anyone who's on the site right now, in the list and in the header.
+- **A "New messages" line** where you left off.
+- **Search highlights the words** inside the open conversation, not just in the list.
+- **Sending** shows the message greyed until it lands.
+- The empty state offers people you follow that you haven't written to yet.
+
+## The profile page
+
+**The numbers stay put.** Followers, Following, Posts and Shares are pinned to the top of the column
+while everything beneath them scrolls.
+
+**More than one photo.** A gallery under your main picture — add up to eight, remove any, promote any
+one to be your main photo. Same resizing as everywhere else.
+
+**"What you care about most" is gone.** It duplicated Issues, which does the job properly.
+
+**The bio does more.** Six prompts that seed a line each — *Why I am here*, *What I do*, *Where I am*,
+*What I am working on*, *What I want*, *Ask me about* — plus a **Help me write it** that drafts from
+what's already on your page and asks you to change every word.
+
+## Fundraise
+
+**Forty-one places to give, with direct links** — the national party, the House, Senate, governors and
+state legislature committees, your own state party, ActBlue, Swing Left, Sister District, Run for
+Something, EMILYs List, Working Families, Collective PAC, Latino Victory, Fair Fight, Black Voters
+Matter, Vote.org, Campaign Legal Center, Brennan Center, NAACP LDF, Planned Parenthood, abortion
+funds, ACLU, HRC, RAICES, NRDC, Sierra Club, Sunrise, AFL-CIO, Everytown, Giffords and more —
+grouped by what they do, each with a line on what your money buys, and searchable.
+
+Every link goes to the organisation's own site. The page says plainly that democrat.ai isn't
+affiliated with any of them, takes no cut, and never sees what you give.
+
+**Your log** is private and now records *who* you gave to, with a progress ring against your goal,
+this year's total, and twelve months of giving as a bar chart. One tap logs a gift straight from any
+organisation in the list.
+
+
 ## Six fixes
 
 **The blank Polls page.** A real bug, and a nasty one. At startup, if you'd set a location, the app
