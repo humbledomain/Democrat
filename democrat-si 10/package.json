@@ -1,0 +1,7 @@
+{
+  "name": "democrat-si",
+  "private": true,
+  "dependencies": {
+    "@vercel/og": "^0.6.4"
+  }
+}
