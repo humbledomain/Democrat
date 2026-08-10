@@ -1,5 +1,30 @@
 # What's new
 
+## The profile page, rebuilt
+
+It was two columns with everything competing for the same space. It's a page now.
+
+**A hero header.** Big rounded photo, your name at headline size, then one line: `@handle ·
+Richmond, VA · Joined August 2026`. The bio sits under it at reading size. That's the whole
+identity, in the first four inches, the way a profile should read.
+
+**Editing is a mode.** Out of edit, the fields look like text — no boxes, no placeholders shouting at
+you. Press Edit and they fill in, the bio grows, and the writing help appears: six prompts, *Help me
+write it*, *Tighten this*, and a field for your link. Press Done and it's a page again.
+
+**The numbers stay put.** Followers, Following, Posts, Shares pinned below the header, with the tabs
+pinned under them.
+
+**Five tabs** — Overview, Positions, Posts, Photos, Events — each with its count. Overview is the
+summary you had; the others are the full list, which the old page had nowhere to put. Positions now
+show the network's split on each one. Events split into coming up and been to.
+
+**A setup meter** while your page is unfinished: how far along it is, and one button for the next
+thing — which focuses the right field, opens the photo picker, or takes you to Issues.
+
+Photos moved to their own tab with a proper grid, and your main photo is marked.
+
+
 > **Run `update.txt` again.** It adds photos in messages, deleting your own messages, extra profile
 > photos, and a note of who a logged gift went to.
 

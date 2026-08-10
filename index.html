@@ -291,6 +291,85 @@ button.tag{cursor:pointer}
 .pfbio:focus{outline:none;border-color:rgba(10,63,214,.5)}
 .pfbio[readonly]{border-color:transparent;background:none}
 
+
+/* ------------------------------------------------------------ profile page */
+.pwrap{display:flex;flex-direction:column;gap:0;max-width:900px}
+.phero{padding:4px 0 18px}
+.pheroin{display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start}
+.pav{--s:clamp(96px,11vw,128px);width:var(--s);height:var(--s);flex:none;border-radius:26px;
+  position:relative;border:0;padding:0;overflow:hidden;cursor:pointer;display:block;
+  background:rgba(10,63,214,.06);box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .2s}
+.pav[disabled]{cursor:default}
+.pav img{width:100%;height:100%;object-fit:cover;display:block}
+.pav .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--blue);opacity:.45}
+.pav .ph svg{width:38%;height:38%}
+.pav .cam{position:absolute;right:7px;bottom:7px;width:30px;height:30px;border-radius:50%;
+  background:var(--blue);display:grid;place-items:center;box-shadow:0 2px 8px rgba(8,26,72,.35)}
+.pav .cam svg{width:16px;height:16px}
+.pav:not([disabled]):hover{box-shadow:inset 0 0 0 2px rgba(10,63,214,.4)}
+.pwho{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.pfname{border:0;background:none;font-size:clamp(24px,2.8vw,33px);font-weight:690;
+  letter-spacing:-.035em;padding:2px 8px;margin:-2px -8px;border-radius:10px;width:100%}
+.pfname::placeholder{color:var(--ph);font-weight:560}
+.pline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:13.5px;color:var(--muted)}
+.psep{color:var(--faint)}
+.phandle{display:inline-flex;align-items:center}
+.phandle input{border:0;background:none;font-size:13.5px;color:var(--muted);padding:2px 4px;
+  margin:-2px -4px;border-radius:7px;width:11ch}
+.ploc2 input{border:0;background:none;font-size:13.5px;color:var(--muted);padding:2px 4px;
+  margin:-2px -4px;border-radius:7px;width:16ch}
+.pjoined{white-space:nowrap}
+.pbio{border:0;background:none;width:100%;font-size:15px;line-height:1.55;resize:none;
+  padding:6px 8px;margin:2px -8px 0;border-radius:11px;color:var(--ink2);font-family:inherit}
+.pbio::placeholder{color:var(--ph)}
+.pfname:focus,.phandle input:focus,.ploc2 input:focus,.pbio:focus{outline:none;
+  background:rgba(10,63,214,.06)}
+.panel[data-edit="1"] .pfname,.panel[data-edit="1"] .phandle input,
+.panel[data-edit="1"] .ploc2 input,.panel[data-edit="1"] .pbio{background:var(--soft)}
+.pflink2{font-size:13.5px;color:var(--blue);text-decoration:none;font-weight:560}
+.pflink2:hover{text-decoration:underline}
+.pstats2{position:sticky;top:0;z-index:6;margin-bottom:2px}
+.ptabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);
+  margin-top:14px;position:sticky;top:74px;background:var(--bg);z-index:5}
+.ptabs::-webkit-scrollbar{display:none}
+.ptabs button{border:0;background:none;font-family:inherit;font-size:13.5px;font-weight:620;
+  color:var(--muted);padding:12px 14px;cursor:pointer;white-space:nowrap;position:relative;
+  display:inline-flex;align-items:center;gap:6px}
+.ptabs button i{font-style:normal;font-size:11px;font-weight:700;color:var(--dim)}
+.ptabs button:hover{color:var(--ink)}
+.ptabs button.on{color:var(--ink)}
+.ptabs button.on::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2.5px;
+  border-radius:2px;background:var(--blue)}
+.ptabbody{display:flex;flex-direction:column;gap:22px;padding-top:20px;min-height:220px}
+.pfsetup{display:flex;align-items:center;gap:16px;background:var(--soft);border-radius:16px;
+  padding:14px 16px;flex-wrap:wrap}
+.pfsetup .grow{flex:1;min-width:180px}
+.pfsetup b{display:block;font-size:14px;font-weight:640;margin-bottom:7px}
+.stand2{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.stand2:first-child{border-top:0}
+.stand2 .grow{flex:1;min-width:0}
+.stand2 b{display:block;font-size:14.5px;font-weight:600;line-height:1.4}
+.stand2 small{display:block;font-size:12px;color:var(--muted);margin:4px 0 5px}
+.stand2 .tag{flex:none}
+.gallery.big{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.gallery.big .gshot{border-radius:14px}
+.gallery.big .gmain.on{opacity:1;background:var(--blue)}
+.pfoot{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;
+  padding:20px 0 4px;border-top:1px solid var(--line);margin-top:8px}
+.pfoot .hint{text-align:left}
+@media (max-width:900px){
+  .pheroin{gap:14px}
+  .pav{--s:84px;border-radius:20px}
+  .pfname{font-size:23px}
+  .ptabs{top:calc(var(--mast) + 108px)}
+  .pstats2{top:calc(var(--mast) + 52px)}
+  .ptabbody{padding-top:16px}
+}
+@media (max-width:460px){
+  .pheroin{flex-direction:column}
+  .pav{--s:76px}
+}
+
 /* profile page layout */
 .pbody.pf{display:block;padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
 .pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
@@ -2106,12 +2185,23 @@ const BIOTIPS = [
 ];
 
 /* ------------------------------------------------------------------ profile */
+/* ------------------------------------------------------------------ profile
+   A page, not a form: a header you read at a glance, one row of numbers that
+   stays put, and tabs for the things there are more than a few of. Editing is
+   a mode you turn on, not a permanent state of half-filled boxes. */
+let PFTAB = 'overview';
+const PFTABS = [['overview','Overview'],['positions','Positions'],['posts','Posts'],
+                ['photos','Photos'],['events','Events']];
+const joinedOn = p => {
+  if(!p || !p.created_at) return '';
+  return new Date(p.created_at).toLocaleDateString(undefined, {month:'long', year:'numeric'});
+};
+const CAMSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3.2L9 6h6l1.8 2.5H20A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.5"/></svg>`;
+
 S.profile = {
-  sub:'Who you are',
-  head(){
-    if(!V) return `<h2>democrat.ai</h2>`;
-    return `<input id="pfName" class="pfname" placeholder="Type your name" value="${esc(V.name)}" ${RO?'readonly':''}>
-      <div class="pfhandle"><span>@</span><input id="pfHandle" placeholder="handle" value="${esc(V.handle)}" ${RO?'readonly':''}></div>`;
+  sub(){
+    if(!V) return 'Who you are';
+    return RO ? `@${V.handle}` : 'Your page, as everyone else sees it';
   },
   acts(){
     if(!V) return '';
@@ -2119,120 +2209,191 @@ S.profile = {
       (ME ? `<button class="btn ghost" id="pfDM">Message</button>
              <button class="btn" id="pfFollow">${D.isFollowing?'Following':'Follow'}</button>`
           : `<a class="btn" href="/">Sign in</a>`);
-    return `${ONLINE?`<button class="btn ghost" id="pfOut">Sign out</button>`:''}
-      <button class="btn ghost" id="pfShare">Share</button>
+    return `<button class="btn ghost" id="pfShare">Share</button>
       <button class="btn" id="pfEdit">Edit</button>`;
   },
   view(){
     if(!V) return authView();
-    const steps = [!!V.photo_url, !!V.name, !!V.handle, !!V.bio, !!V.location];
-    const done  = steps.filter(Boolean).length;
-    const link  = (V.link||'').trim();
-    const href  = link && !/^https?:/i.test(link) ? 'https://'+link : link;
-    const cam   = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3.2L9 6h6l1.8 2.5H20A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.5"/></svg>`;
 
-    const sec = (title, go, inner) => inner ? `<section class="sec">
-      <div class="sechead"><h4>${title}</h4>${go?`<button class="linkbtn" data-go="${go}">Open</button>`:''}</div>
-      ${inner}</section>` : '';
+    const steps = [['photo', !!V.photo_url, 'Add a photo'], ['name', !!V.name, 'Add your name'],
+                   ['handle', !!V.handle, 'Pick a handle'], ['bio', !!V.bio, 'Write a bio'],
+                   ['place', !!V.location, 'Say where you vote'],
+                   ['stand', !!(D.issues||[]).length, 'Take a position']];
+    const done = steps.filter(s=>s[1]).length;
+    const next = steps.find(s=>!s[1]);
+    const link = (V.link || '').trim();
+    const href = link && !/^https?:/i.test(link) ? 'https://' + link : link;
+    const gal  = photosOf(V);
+    const today = new Date().toISOString().slice(0,10);
+    const soon = (D.events||[]).filter(e=>e.date >= today);
+    const past = (D.events||[]).filter(e=>e.date <  today);
 
-    const stands = D.issues.slice(0,5).map(i=>`<div class="stand">
-        <span>${esc(i.title)}</span>
-        <span class="tag ${i.stance==='Support'?'b':''}" style="flex:none">${i.stance}</span></div>`).join('');
-
-    const posts = D.posts.slice(0,3).map(p=>`<div class="qpost">
-        <p>${rich(p.text)}</p>${p.image_url?`<img class="pimg" src="${esc(p.image_url)}" alt="" loading="lazy">`:''}
-        <small>${ago(p.created_at)}${p.likes?` · ${p.likes} like${p.likes===1?'':'s'}`:''}</small></div>`).join('');
-
-    const soon = D.events.filter(e=>e.date >= new Date().toISOString().slice(0,10)).slice(0,2)
-      .map(e=>{ const [y,m,d]=e.date.split('-');
-        const mon=new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short'}).toUpperCase();
-        return `<div class="next"><div class="datechip"><i>${mon}</i><b>${+d}</b></div>
-          <div><b>${esc(e.title)}</b><small>${esc(e.place||'')}${e.going?` · ${e.going} going`:''}</small></div></div>`}).join('');
-
-    const nothing = !D.issues.length && !D.posts.length && !D.events.length;
-
-    return `<div class="pgrid">
-      <aside class="pcolL">
-        <button class="photo" id="pfAv" ${RO?'disabled':''} aria-label="Change photo">
-          ${V.photo_url ? `<img src="${V.photo_url}" alt="">`
+    /* ---------------------------------------------------------- the header */
+    const header = `<header class="phero">
+      <div class="pheroin">
+        <button class="pav" id="pfAv" ${RO?'disabled':''} aria-label="Change photo">
+          ${V.photo_url ? `<img src="${esc(V.photo_url)}" alt="">`
             : `<span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="4"/><path d="M4.5 20c1.2-4.2 4-6.3 7.5-6.3s6.3 2.1 7.5 6.3"/></svg></span>`}
-          ${RO?'':`<span class="cam">${cam}</span>`}
+          ${RO?'':`<span class="cam">${CAMSVG}</span>`}
         </button>
-
-        ${(()=>{ const gal = photosOf(V);
-          if(!gal.length && RO) return '';
-          return `<div class="gallery">
-            ${gal.map((u,i)=>`<span class="gshot">
-              <img class="pimg" src="${esc(u)}" alt="" loading="lazy" onload="imgOK(this,240)">
-              ${RO?'':`<button class="gx" data-shot="${i}" aria-label="Remove photo">&#10005;</button>
-                       <button class="gmain" data-main="${i}" title="Make this the main photo">Main</button>`}
-            </span>`).join('')}
-            ${RO?'':`<button class="gadd" id="pfAdd" aria-label="Add a photo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              <span>Add a photo</span></button>`}
-          </div>`;
-        })()}
-
-        <div>
-          <div class="tahead"><input id="pfLoc" class="pfield loc" placeholder="Where you vote"
-            value="${esc(V.location)}" ${RO?'readonly':''} autocomplete="off"></div>
-        </div>
-
-        <textarea id="pfBio" class="pfield bio" rows="6" maxlength="600"
-          placeholder="Who you are, what you are working on, what brought you here."
-          ${RO?'readonly':''}>${esc(V.bio)}</textarea>
-        ${RO?'':`<div class="bioaid">
+        <div class="pwho">
+          <input id="pfName" class="pfname" placeholder="Type your name" value="${esc(V.name)}"
+            ${RO?'readonly':''} maxlength="60">
+          <div class="pline">
+            <span class="phandle">@<input id="pfHandle" placeholder="handle" value="${esc(V.handle)}"
+              ${RO?'readonly':''} maxlength="20"></span>
+            <span class="psep">&middot;</span>
+            <span class="tahead ploc2"><input id="pfLoc" placeholder="Where you vote"
+              value="${esc(V.location)}" ${RO?'readonly':''} autocomplete="off"></span>
+            ${joinedOn(V) ? `<span class="psep">&middot;</span>
+              <span class="pjoined">Joined ${esc(joinedOn(V))}</span>` : ''}
+          </div>
+          <textarea id="pfBio" class="pbio" rows="2" maxlength="600"
+            placeholder="Who you are, what you are working on, what brought you here."
+            ${RO?'readonly':''}>${esc(V.bio)}</textarea>
+          ${RO?'':`<div class="bioaid" id="pfAid" hidden>
             <div class="biotips">${BIOTIPS.map((t,i)=>
               `<button class="topic" data-bio="${i}">${esc(t[0])}</button>`).join('')}</div>
             <div class="frow">
               <button class="linkbtn" id="pfDraft">Help me write it</button>
               <button class="linkbtn" id="pfTighten" hidden style="margin-left:auto">Tighten this</button>
             </div>
+            <input class="inp" id="pfLink" placeholder="A link — your campaign, your union, anything"
+              value="${esc(link)}">
             <div class="ai" id="pfAi" hidden></div>
           </div>`}
-
-        ${RO?'':`${done<5?`<div class="pfprog"><div class="bar"><i style="width:${done/5*100}%"></i></div>
-            <span>${done} of 5 done — ${nextStep(steps)}</span></div>`:''}`}
-      </aside>
-
-      <div class="pcolR">
-        <div class="stats">
-          <button data-stat="followers"><b>${D.followers}</b><span>Followers</span></button>
-          <button data-stat="following"><b>${D.following}</b><span>Following</span></button>
-          <button data-stat="posts"><b>${D.posts.length}</b><span>Posts</span></button>
-          <button data-stat="shares"><b>${D.shares}</b><span>Shares</span></button>
+          ${(RO && href) ? `<a class="pflink2" href="${esc(href)}" target="_blank"
+            rel="noopener noreferrer">${esc(href.replace(/^https?:\/\//,''))}</a>` : ''}
+          ${(RO && V.donate_link) ? `<a class="btn" style="align-self:flex-start;margin-top:8px"
+            href="${esc(V.donate_link)}" target="_blank" rel="noopener noreferrer">
+            Give to @${esc(V.handle)}</a>` : ''}
         </div>
-
-        ${sec('Where '+(RO?'they stand':'I stand'), 'issues', stands)}
-        ${sec('Latest', 'feed', posts)}
-        ${sec('Coming up', 'townhall', soon)}
-
-        ${nothing ? (RO
-          ? `<div class="empty"><b>Nothing here yet</b>@${esc(V.handle)} has not posted anything.</div>`
-          : `<section class="sec"><div class="sechead"><h4>Start here</h4></div>
-             <div class="start">
-               <button data-go="endorsed"><b>Find people</b><small>See who else is here and follow them.</small></button>
-               <button data-go="issues"><b>Take a position</b><small>Say where you stand on one thing.</small></button>
-               <button data-go="compose"><b>Write a post</b><small>Something happening where you live.</small></button>
-               <button data-go="polls"><b>Ask a question</b><small>Find out what people think.</small></button>
-               <button data-go="ballot"><b>Sort your ballot</b><small>Registration and your election date.</small></button>
-             </div></section>`) : ''}
-
-        ${RO ? `<p class="hint"><a href="/" style="color:var(--blue);font-weight:590">${ME?'Back to your page':'Make your own page'}</a></p>`
-             : `<p class="hint" style="text-align:left">${V.handle?`Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`:'Pick a handle to get your link'}</p>`}
       </div>
+    </header>`;
+
+    /* ------------------------------------------------------- the numbers */
+    const stats = `<div class="stats pstats2">
+      <button data-stat="followers"><b>${D.followers}</b><span>Followers</span></button>
+      <button data-stat="following"><b>${D.following}</b><span>Following</span></button>
+      <button data-stat="posts"><b>${(D.posts||[]).length}</b><span>Posts</span></button>
+      <button data-stat="shares"><b>${D.shares}</b><span>Shares</span></button>
+    </div>`;
+
+    const counts = {overview:0, positions:(D.issues||[]).length, posts:(D.posts||[]).length,
+                    photos: gal.length + (V.photo_url?1:0), events:(D.events||[]).length};
+    const tabs = `<nav class="ptabs" id="pfTabs">${PFTABS.map(([v,l])=>
+      `<button class="${PFTAB===v?'on':''}" data-ptab="${v}">${l}${
+        counts[v] ? `<i>${counts[v]}</i>` : ''}</button>`).join('')}</nav>`;
+
+    /* --------------------------------------------------------- the pieces */
+    const standList = (n)=> (D.issues||[]).slice(0, n || 99).map(i=>{
+      const a = ONLINE ? agree(i.title) : {s:0,o:0};
+      return `<div class="stand2">
+        <div class="grow"><b>${esc(i.title)}</b>
+          ${(a.s+a.o) ? `<small>${a.s} support &middot; ${a.o} oppose</small>${splitbar(a.s,a.o)}` : ''}</div>
+        <span class="tag ${i.stance==='Support'?'b':''}">${i.stance}</span>
+      </div>`}).join('');
+
+    const postList = (n)=> (D.posts||[]).slice(0, n || 99).map(p=>`<article class="qpost">
+        <p>${rich(p.text)}</p>
+        ${p.image_url?`<img class="pimg" src="${esc(p.image_url)}" alt="" loading="lazy">`:''}
+        <small>${ago(p.created_at)}${p.likes?` &middot; ${p.likes} like${p.likes===1?'':'s'}`:''}${
+          (p.comments||[]).length?` &middot; ${(p.comments||[]).length} repl${
+            (p.comments||[]).length===1?'y':'ies'}`:''}</small>
+      </article>`).join('');
+
+    const evList = list => list.map(e=>{
+      const [y,m,d] = e.date.split('-');
+      const mon = new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short'}).toUpperCase();
+      return `<div class="next"><div class="datechip"><i>${mon}</i><b>${+d}</b></div>
+        <div class="grow"><b>${esc(e.title)}</b>
+          <small>${esc(e.place||'')}${e.going?` &middot; ${e.going} going`:''}</small></div></div>`;
+    }).join('');
+
+    const photoGrid = `<div class="gallery big">
+      ${V.photo_url ? `<span class="gshot"><img class="pimg" src="${esc(V.photo_url)}" alt=""
+        loading="lazy"><span class="gmain on">Main</span></span>` : ''}
+      ${gal.map((u,i)=>`<span class="gshot">
+        <img class="pimg" src="${esc(u)}" alt="" loading="lazy" onload="imgOK(this,240)">
+        ${RO?'':`<button class="gx" data-shot="${i}" aria-label="Remove photo">&#10005;</button>
+                 <button class="gmain" data-main="${i}" title="Make this the main photo">Make main</button>`}
+      </span>`).join('')}
+      ${RO?'':`<button class="gadd" id="pfAdd" aria-label="Add a photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Add photos</span></button>`}
+    </div>`;
+
+    const sec = (title, go, inner, empty) => `<section class="sec">
+      <div class="sechead"><h4>${title}</h4>${go?`<button class="linkbtn" data-go="${go}">Open</button>`:''}</div>
+      ${inner || `<p class="hint" style="text-align:left">${empty}</p>`}</section>`;
+
+    let body = '';
+    if(PFTAB === 'overview'){
+      const nothing = !(D.issues||[]).length && !(D.posts||[]).length && !(D.events||[]).length;
+      body = `
+        ${(!RO && done < steps.length) ? `<section class="pfsetup">
+          <div class="grow"><b>Your page is ${Math.round(done/steps.length*100)}% there</b>
+            <div class="bar"><i style="width:${done/steps.length*100}%"></i></div></div>
+          ${next ? `<button class="btn" id="pfNext">${esc(next[2])}</button>` : ''}
+        </section>` : ''}
+        ${sec('Where '+(RO?'they stand':'I stand'), 'issues', standList(4),
+              RO ? 'No positions yet.' : 'Take a position and it shows up here.')}
+        ${sec('Latest', 'feed', postList(3), RO ? 'Nothing posted yet.' : 'Your posts appear here.')}
+        ${soon.length ? sec('Coming up', 'townhall', evList(soon.slice(0,2))) : ''}
+        ${(gal.length || V.photo_url) ? sec('Photos', '', `<div class="gallery">
+          ${[V.photo_url, ...gal].filter(Boolean).slice(0,6).map(u=>`<span class="gshot">
+            <img class="pimg" src="${esc(u)}" alt="" loading="lazy"></span>`).join('')}</div>`) : ''}
+        ${(nothing && !RO) ? `<section class="sec"><div class="sechead"><h4>Start here</h4></div>
+          <div class="start">
+            <button data-go="issues"><b>Take a position</b><small>Say where you stand on one thing.</small></button>
+            <button data-go="feed"><b>Write a post</b><small>Something happening where you live.</small></button>
+            <button data-go="endorsed"><b>Find people</b><small>See who else is here.</small></button>
+            <button data-go="ballot"><b>Sort your ballot</b><small>Registration and your election date.</small></button>
+          </div></section>` : ''}`;
+    }
+    if(PFTAB === 'positions')
+      body = standList() || `<div class="empty"><b>No positions yet</b>${RO ? 'Nothing on the record.'
+        : 'Open Issues and take a side — it takes one tap.'}</div>`;
+    if(PFTAB === 'posts')
+      body = postList() || `<div class="empty"><b>Nothing posted yet</b>${RO ? '' : 'Say something.'}</div>`;
+    if(PFTAB === 'photos')
+      body = (gal.length || V.photo_url || !RO) ? photoGrid
+        : `<div class="empty"><b>No photos</b>Nothing here yet.</div>`;
+    if(PFTAB === 'events')
+      body = `${soon.length ? sec('Coming up', 'townhall', evList(soon)) : ''}
+        ${past.length ? sec('Been to', '', evList(past.slice(0,10))) : ''}
+        ${(!soon.length && !past.length) ? `<div class="empty"><b>No events</b>${
+          RO ? '' : 'Put something on the calendar in Town Hall.'}</div>` : ''}`;
+
+    return `<div class="pwrap">
+      ${header}
+      ${stats}
+      ${tabs}
+      <div class="ptabbody">${body}</div>
+      ${RO ? `<p class="hint"><a href="/" style="color:var(--blue);font-weight:590">${
+        ME?'Back to your page':'Make your own page'}</a></p>`
+      : `<div class="pfoot">
+          <span class="hint">${V.handle ? `Your page: ${publicUrl(V.handle).replace(/^https?:\/\//,'')}`
+            : 'Pick a handle to get your link'}</span>
+          ${ONLINE ? `<button class="linkbtn" id="pfOut">Sign out</button>` : ''}
+        </div>`}
       <input type="file" id="pfFile" accept="image/*" hidden>
     </div>`;
   },
+
   init(){
     if(!V){ authInit(); return; }
     document.querySelector('.pbody').classList.add('pf');
     $('pfShare') && ($('pfShare').onclick = ()=>share(shareLine()));
-
     wireStats();
 
+    document.querySelectorAll('[data-ptab]').forEach(b=>b.onclick = ()=>{
+      PFTAB = b.dataset.ptab; open_('profile', true);
+    });
+
     if(RO){
-      if($('pfDM')) $('pfDM').onclick = ()=> dmSheet({id:V.id, handle:V.handle, name:V.name, photo_url:V.photo_url});
+      if($('pfDM')) $('pfDM').onclick = ()=> dmSheet({id:V.id, handle:V.handle, name:V.name,
+                                                      photo_url:V.photo_url});
       if(!$('pfFollow')) return;
       $('pfFollow').onclick = async ()=>{
         if(!await needAuth()) return;
@@ -2244,52 +2405,72 @@ S.profile = {
       };
       return;
     }
-    const fields = {pfName:'name', pfHandle:'handle', pfLoc:'location', pfBio:'bio'};
+
+    const fields = {pfName:'name', pfHandle:'handle', pfLoc:'location', pfBio:'bio', pfLink:'link'};
     const els = Object.keys(fields).map($).filter(Boolean);
-    const edit = $('pfEdit'), tight = $('pfTighten');
+    const edit = $('pfEdit'), tight = $('pfTighten'), aid = $('pfAid'), bio = $('pfBio');
 
     const setEdit = on => {
-      panel.dataset.edit = on?'1':'0';
+      panel.dataset.edit = on ? '1' : '0';
       els.forEach(el=>el.readOnly = !on);
-      edit.textContent = on?'Done':'Edit'; edit.className = on?'btn':'btn ghost';
-      if(tight) tight.hidden = !(on && $('pfBio').value.trim().length>60);
+      if(aid) aid.hidden = !on;
+      if(bio){ bio.rows = on ? 5 : 2 }
+      edit.textContent = on ? 'Done' : 'Edit';
+      edit.className = on ? 'btn' : 'btn ghost';
+      if(tight) tight.hidden = !(on && bio.value.trim().length > 60);
       if(on) $('pfName').focus();
     };
     setEdit(!V.name);
     edit.onclick = async ()=>{
-      const on = panel.dataset.edit!=='1';
-      if(!on){ await put(); render(); return; }
+      const on = panel.dataset.edit !== '1';
+      if(!on){ await put(); render(); return }
       setEdit(true);
     };
     let t;
-    els.forEach(el=>el.addEventListener('input',()=>{
-      clearTimeout(t); t=setTimeout(put,700);
-      if(tight) tight.hidden = !(panel.dataset.edit==='1' && $('pfBio').value.trim().length>60);
+    els.forEach(el=>el.addEventListener('input', ()=>{
+      clearTimeout(t); t = setTimeout(put, 700);
+      if(tight) tight.hidden = !(panel.dataset.edit === '1' && bio.value.trim().length > 60);
     }));
-    $('pfName').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('pfHandle').focus() } });
+    $('pfName').addEventListener('keydown', e=>{
+      if(e.key === 'Enter'){ e.preventDefault(); $('pfHandle').focus() } });
 
-    if(tight) tight.onclick = ()=> suggest('pfAi', tight, 'tighten', $('pfBio').value,
-      { apply: out => { $('pfBio').value = out; put(); } });
+    if(tight) tight.onclick = ()=> suggest('pfAi', tight, 'tighten', bio.value,
+      { apply: out => { bio.value = out; put() } });
 
     async function put(){
       const patch = {};
       for(const [id,col] of Object.entries(fields)){
         const el = $(id); if(!el) continue;
         let v = el.value.trim();
-        if(col==='handle') v = v.toLowerCase().replace(/^@/,'').replace(/[^a-z0-9_]/g,'');
-        patch[col] = v || (col==='handle' ? null : '');
+        if(col === 'handle') v = v.toLowerCase().replace(/^@/,'').replace(/[^a-z0-9_]/g,'');
+        if(col === 'link' && v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+        patch[col] = v || (col === 'handle' ? null : '');
       }
-      if(!ONLINE){ const db=localDB(); Object.assign(db.profile,patch); localSave(db); Object.assign(V,patch); return }
-      const { error } = await sb.from('profiles').update(patch).eq('id',ME.id);
+      if(!ONLINE){ const db = localDB(); Object.assign(db.profile, patch); localSave(db);
+                   Object.assign(V, patch); return }
+      const { error } = await sb.from('profiles').update(patch).eq('id', ME.id);
       if(error) return toast(friendly(error));
-      Object.assign(V,patch); Object.assign(ME,patch);
+      Object.assign(V, patch); Object.assign(ME, patch);
     }
 
-    $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut(); location.href = '/' });
-    if($('pfLoc')) placeahead($('pfLoc'), ()=>{ if(ONLINE && myState()) SC.feed = 'near'; });
+    $('pfOut') && ($('pfOut').onclick = async ()=>{ chatReset(true); await sb.auth.signOut();
+      location.href = '/' });
+    if($('pfLoc')) placeahead($('pfLoc'), ()=>{ if(ONLINE && myState()) SC.feed = 'near' });
+
+    const nx = $('pfNext');
+    if(nx) nx.onclick = ()=>{
+      const key = (steps => steps)(0);
+      const label = nx.textContent.toLowerCase();
+      if(/photo/.test(label)) return $('pfAv').click();
+      if(/position/.test(label)) return open_('issues');
+      setEdit(true);
+      if(/name/.test(label)) $('pfName').focus();
+      else if(/handle/.test(label)) $('pfHandle').focus();
+      else if(/bio/.test(label)) bio.focus();
+      else if(/vote/.test(label)) $('pfLoc').focus();
+    };
 
     /* ---- the bio, made easier to fill ---- */
-    const bio = $('pfBio');
     document.querySelectorAll('[data-bio]').forEach(b=>b.onclick = ()=>{
       if(panel.dataset.edit !== '1') setEdit(true);
       const [, seed] = BIOTIPS[+b.dataset.bio];
@@ -2317,7 +2498,21 @@ S.profile = {
         note:'A first draft from what is already on your page. Change every word of it.' });
     };
 
-    /* ---- more than one photo ---- */
+    /* ---- photos ---- */
+    if($('pfAv')) $('pfAv').onclick = ()=>$('pfFile').click();
+    if($('pfFile')) $('pfFile').onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      toast('Uploading photo…');
+      crop(f, 640, async (blob, dataUrl)=>{
+        if(!ONLINE){ const db = localDB(); db.profile.photo_url = dataUrl; localSave(db);
+          V.photo_url = dataUrl; render(); toast('Photo saved'); return }
+        const url = await uploadPhoto(blob);
+        if(!url) return;
+        const { error } = await sb.from('profiles').update({photo_url:url}).eq('id', ME.id);
+        if(error) return toast(friendly(error));
+        V.photo_url = ME.photo_url = url; render(); toast('Photo saved');
+      });
+    };
     const shots = ()=> photosOf(V);
     const putShots = async list =>{
       if(!ONLINE){ const db = localDB(); db.profile.photos = list; localSave(db); V.photos = list;
@@ -2360,23 +2555,6 @@ S.profile = {
       if(error) return toast(friendly(error));
       V.photo_url = ME.photo_url = pick; V.photos = ME.photos = list; render();
     });
-
-    if($('pfAv')) $('pfAv').onclick = ()=>$('pfFile').click();
-    if($('pfFile')) $('pfFile').onchange = e => {
-      const f = e.target.files[0]; if(!f) return;
-      toast('Uploading photo…');
-      crop(f, 640, async (blob, dataUrl)=>{
-        if(!ONLINE){ const db=localDB(); db.profile.photo_url=dataUrl; localSave(db); V.photo_url=dataUrl;
-          render(); toast('Photo saved'); return; }
-        const path = `${ME.id}/${Date.now()}.jpg`;
-        const up = await sb.storage.from('avatars').upload(path, blob, {contentType:'image/jpeg', upsert:true});
-        if(up.error) return toast(up.error.message);
-        const { data:{ publicUrl:url } } = sb.storage.from('avatars').getPublicUrl(path);
-        const { error } = await sb.from('profiles').update({photo_url:url}).eq('id',ME.id);
-        if(error) return toast(friendly(error));
-        V.photo_url = ME.photo_url = url; render(); toast('Photo saved');
-      });
-    };
   }
 };
 
