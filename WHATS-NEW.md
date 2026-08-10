@@ -1,5 +1,38 @@
 # What's new
 
+## Today — the front page
+
+A new first screen, and the one the site now opens on. Two halves.
+
+**The wire.** Real headlines, newest first, merged from nine politics newsrooms — NPR, The Guardian,
+ProPublica, The Hill, Politico, NBC, CBS, Democracy Docket. The top story runs at headline size with
+its summary; anything under forty-five minutes old carries a red **JUST IN**. Every headline links
+straight to the outlet that reported it. Nothing is rewritten, nothing is republished — the reporting
+stays theirs.
+
+This runs through `api/news.js`, a new function that fetches the feeds server-side and caches them for
+four minutes. **No API key, no account, no cost.** A feed that's down is skipped rather than breaking
+the page.
+
+**Topics.** The chips across the top aren't a fixed menu — they're worked out from today's actual
+headlines, against fifteen subjects (healthcare, voting rights, immigration, climate, labor, courts,
+cost of living, housing, education, democracy, Congress, LGBTQ+ rights, money in politics, guns,
+reproductive rights). Each shows how many of today's stories touch it. Tap one and the wire filters,
+the sidebar switches to what people *here* have posted and where they stand on that same subject, and
+the daily brief narrows to it.
+
+**Two ways in.** Every story has *Post about this* — which opens the composer with the headline, the
+link and a topic tag already in it — and *Take it to the floor*, which opens the town hall with the
+story and The Desk called in. News to conversation in one tap.
+
+**Today, in a paragraph.** One button writes a short read on what the day adds up to, from the
+headlines on screen, ending with one concrete thing worth doing this week. It can only use the
+headlines it was handed — it isn't allowed to add an event that isn't there.
+
+The wire also feeds the crawl at the top of every screen, and the site now opens on Today rather than
+your profile — unless someone followed a shared profile link, which still lands where it should.
+
+
 ## A phone gets a real app
 
 The bottom sheet is gone. On a phone this is now built like an app you'd download:

@@ -639,9 +639,9 @@ button.tag{cursor:pointer}
   .livedot{position:absolute;top:6px;right:calc(50% - 16px)}
   /* the five that do not fit live behind More */
   .app[data-id="issues"],.app[data-id="ballot"],.app[data-id="polls"],
-  .app[data-id="fundraise"],.app[data-id="reach"]{display:none}
-  .app[data-id="feed"]{order:1}.app[data-id="townhall"]{order:2}
-  .app[data-id="compose"]{order:3}.app[data-id="endorsed"]{order:4}
+  .app[data-id="fundraise"],.app[data-id="reach"],.app[data-id="endorsed"]{display:none}
+  .app[data-id="today"]{order:1}.app[data-id="feed"]{order:2}
+  .app[data-id="townhall"]{order:3}.app[data-id="compose"]{order:4}
   .app[data-id="profile"]{order:5}
   .app.more{display:flex;order:6}
 
@@ -683,6 +683,9 @@ button.tag{cursor:pointer}
   .btn{padding:11px 16px}
   .linkbtn{padding:8px 10px;margin-left:-10px}
   .newpill{top:calc(var(--mast) + 46px)}
+  .story.big .hl{font-size:23px}
+  .topicbar{position:sticky;top:calc(var(--mast) + 54px);z-index:6;background:var(--bg);padding:8px 0}
+  .dek{font-size:14px}
 
   /* one scroller per screen: the page. Composers stick above the tabs. */
   .pbody.chatbody{overflow:visible;display:block}
@@ -943,6 +946,28 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .botchip .whoav{width:20px;height:20px;font-size:9.5px}
 }
 
+/* ------------------------------------------------------------------- today */
+.topicbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.topicbar::-webkit-scrollbar{display:none}
+.tchip{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--soft);border-radius:99px;
+  padding:7px 14px;font-family:inherit;font-size:12.5px;font-weight:640;color:var(--ink3);cursor:pointer;
+  white-space:nowrap;flex:none;transition:background .14s,color .14s}
+.tchip i{font-style:normal;font-size:10.5px;font-weight:800;color:var(--dim)}
+.tchip:hover{color:var(--blue)}
+.tchip.on{background:var(--blue);color:#fff}
+.tchip.on i{color:rgba(255,255,255,.72)}
+.storylist{display:flex;flex-direction:column}
+.story{padding:15px 0;border-top:1px solid var(--line)}
+.story.big{padding:2px 0 15px;border-top:0}
+.hl{display:block;font-size:16px;line-height:1.34;font-weight:620;letter-spacing:-.018em;color:inherit;
+  text-decoration:none}
+.hl:hover{color:var(--blue)}
+.story.big .hl{font-size:clamp(21px,2.2vw,28px);line-height:1.18;letter-spacing:-.032em;font-weight:690}
+.dek{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:9px;max-width:64ch}
+.story .rowacts{margin-top:7px}
+.story .kick{margin-bottom:7px}
+
 /* ------------------------------------------------------- loading and motion */
 .sk .skline{height:11px;border-radius:6px;margin:7px 0;
   background:linear-gradient(90deg,var(--soft) 25%,rgba(140,160,200,.16) 37%,var(--soft) 63%);
@@ -1039,6 +1064,14 @@ const SITE_DOMAIN = 'https://www.democrat.si';
 const SITE = SITE_DOMAIN || location.origin;
 const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
 const APPS = [
+{id:'today',name:'Today',art:`<rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"/>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="${BLUE}"/>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="${BLUE}"/>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="${BLUE}"/>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="${BLUE}"/>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="${BLUE}"/>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="${BLUE}"/>
+       <circle cx="97" cy="30" r="11" fill="#fff"/><circle cx="97" cy="30" r="8" fill="#E5352B"/>`},
 {id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
        <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"/>
        <circle cx="88" cy="60" r="16" fill="${BLUE}"/>
@@ -2343,7 +2376,8 @@ S.feed = {
         file.value = '';
       };
       let draft = ''; try{ draft = localStorage.getItem('dai.draft') || '' }catch(e){}
-      if(draft && !q.value){ q.value = draft }
+      if(PREFILL.feed){ q.value = PREFILL.feed; PREFILL.feed = '' }
+      else if(draft && !q.value){ q.value = draft }
       const count = $('qCount');
       const tally = ()=>{
         if(!count) return;
@@ -2862,6 +2896,200 @@ S.endorsed = {
   }
 };
 
+/* -------------------------------------------------------------------- today
+   The front page: the wire on the left, what it means here on the right.
+   Headlines come from /api/news, which merges a handful of politics feeds.
+   Topics are worked out from the headlines themselves, then matched against
+   what people on this site have posted and taken positions on. */
+let NEWS = null, NEWSAT = 0, NEWSFAIL = '', NEWSSRC = [], NEWSN = 18, TOPIC = '';
+const PREFILL = { feed:'', room:'' };
+
+const TOPICMAP = [
+  ['Healthcare',   ['health care','healthcare','medicaid','medicare','affordable care','obamacare',
+                    'insulin','hospital','premiums','uninsured','prescription']],
+  ['Reproductive rights', ['abortion','roe','reproductive','ivf','contraception','planned parenthood']],
+  ['Voting rights',['voting','voter','ballot','election','gerrymander','redistrict','turnout',
+                    'registration','poll worker','early vote']],
+  ['Immigration',  ['immigra','border','asylum','deportation','detention',' ice ','visa','refugee','daca']],
+  ['Climate',      ['climate','emissions','clean energy','solar','wind power','fossil','drilling',
+                    'heat wave','wildfire','flood']],
+  ['Labor',        ['union','strike','worker','wages','labor','minimum wage','organizing','layoff']],
+  ['Guns',         ['gun','firearm','shooting','assault weapon','background check']],
+  ['Courts',       ['supreme court','appeals court','judge','justice department','ruling','lawsuit',
+                    'indict','attorney general','doj']],
+  ['Cost of living',['inflation','prices','grocer','rent ','tariff','cost of living','economy',
+                    'jobs report','wallet','affordab']],
+  ['Housing',      ['housing','homeless','zoning','eviction','mortgage','rent control']],
+  ['Education',    ['school','teacher','student','university','curriculum','book ban','tuition']],
+  ['Democracy',    ['democracy','authoritarian','press freedom','january 6','disinformation',
+                    'rule of law','norms','oversight']],
+  ['Congress',     ['congress','senate','house of representatives','shutdown','filibuster','speaker',
+                    'appropriations','subpoena']],
+  ['LGBTQ+ rights',['lgbtq','transgender','trans ','marriage equality','gender-affirming']],
+  ['Money in politics',['super pac','dark money','lobby','donor','campaign finance','citizens united']]
+];
+
+const hay = it => (String(it.title||'') + ' ' + String(it.summary||'')).toLowerCase();
+function topicsOf(it){
+  const t = ' ' + hay(it) + ' ';
+  return TOPICMAP.filter(([, words]) => words.some(w => t.includes(w))).map(([name]) => name);
+}
+function topicCounts(items){
+  const n = new Map();
+  (items||[]).forEach(it => topicsOf(it).forEach(t => n.set(t, (n.get(t)||0) + 1)));
+  return [...n.entries()].sort((a,b)=>b[1]-a[1]);
+}
+const wordsFor = name => (TOPICMAP.find(t=>t[0]===name) || [null,[]])[1];
+function matchesTopic(text, name){
+  const t = ' ' + String(text||'').toLowerCase() + ' ';
+  return wordsFor(name).some(w => t.includes(w));
+}
+
+async function loadNews(force){
+  if(!force && NEWS && Date.now() - NEWSAT < 240e3) return;
+  try{
+    const r = await fetch('/api/news', {headers:{'accept':'application/json'}});
+    if(r.status === 404 || r.status === 501) throw new Error('not deployed');
+    if(!r.ok) throw new Error('the wire did not answer');
+    const d = await r.json();
+    NEWS = Array.isArray(d.items) ? d.items : [];
+    NEWSSRC = d.sources || [];
+    NEWSAT = Date.now(); NEWSFAIL = '';
+  }catch(e){
+    if(!NEWS) NEWS = [];
+    NEWSFAIL = /not deployed/.test(e.message)
+      ? 'The wire is not switched on yet — upload api/news.js and redeploy.'
+      : 'Could not reach the wire just now.';
+  }
+}
+
+const newsWhen = ts =>{
+  if(!ts) return '';
+  const s = (Date.now() - new Date(ts).getTime()) / 1e3;
+  if(s < 60) return 'just now';
+  if(s < 3600) return Math.floor(s/60) + 'm ago';
+  if(s < 86400) return Math.floor(s/3600) + 'h ago';
+  return new Date(ts).toLocaleDateString(undefined, {month:'short', day:'numeric'});
+};
+const NEWSFRESH = 45 * 60e3;
+
+S.today = {
+  sub(){
+    const n = (NEWS || []).length;
+    return `<span class="live"><i></i>The wire</span> ${
+      n ? `${n} stor${n===1?'y':'ies'} from ${NEWSSRC.length || 'several'} newsroom${
+        NEWSSRC.length===1?'':'s'}` : 'Politics, as it lands'}`;
+  },
+  acts(){ return `<button class="btn ghost" id="tdRefresh">Refresh</button>` },
+  view(){
+    const all = NEWS || [];
+    const counts = topicCounts(all);
+    const list = (TOPIC ? all.filter(it => topicsOf(it).includes(TOPIC)) : all).slice(0, NEWSN);
+    const lead = list[0];
+    const rest = list.slice(1);
+
+    /* what this site has been doing about the chosen topic */
+    const posts = unmuted(G.posts || []).filter(p => !TOPIC || matchesTopic(p.text, TOPIC)).slice(0,4);
+    const stands = issueTally('all').filter(h => !TOPIC || matchesTopic(h.title, TOPIC)).slice(0,4);
+
+    const story = (it, big)=>`
+      <article class="story${big?' big':''}">
+        <div class="kick">
+          ${it.when && Date.now() - new Date(it.when).getTime() < NEWSFRESH
+            ? `<span class="live"><i></i>Just in</span><span class="sep">&middot;</span>` : ''}
+          <b>${esc(it.source || 'Wire')}</b>
+          ${it.when ? `<span class="sep">&middot;</span><span class="place">${esc(newsWhen(it.when))}</span>` : ''}
+        </div>
+        <a class="hl" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">${esc(it.title)}</a>
+        ${big && it.summary ? `<p class="dek">${esc(it.summary)}</p>` : ''}
+        <div class="rowacts">
+          <a class="iconbtn" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">Read</a>
+          ${(RO||GUEST())?'':`<button class="iconbtn" data-post="${esc(it.link)}">${ico.talk}<span>Post about this</span></button>
+          <button class="iconbtn" data-floor="${esc(it.link)}">${ico.spark}<span>Take it to the floor</span></button>`}
+        </div>
+      </article>`;
+
+    return `<div class="split"><div class="main">
+      ${counts.length ? `<div class="topicbar">
+        <button class="tchip${TOPIC?'':' on'}" data-topic="">All</button>
+        ${counts.slice(0,9).map(([t,n])=>`<button class="tchip${TOPIC===t?' on':''}" data-topic="${esc(t)}">
+          ${esc(t)}<i>${n}</i></button>`).join('')}
+      </div>` : ''}
+
+      ${NEWS === null ? skel(5)
+        : !all.length ? `<div class="empty"><b>${NEWSFAIL ? 'The wire is quiet' : 'Nothing on the wire'}</b>${
+            esc(NEWSFAIL || 'No headlines came back. Try again in a minute.')}</div>`
+        : !list.length ? `<div class="empty"><b>Nothing on ${esc(TOPIC)} today</b>Pick another topic, or see everything.</div>`
+        : `${story(lead, true)}<div class="storylist">${rest.map(it=>story(it)).join('')}</div>
+           ${(TOPIC ? all.filter(it=>topicsOf(it).includes(TOPIC)) : all).length > NEWSN
+             ? `<button class="mini-btn" id="tdMore" style="align-self:center">More stories</button>` : ''}`}
+    </div>
+    <aside class="side">
+      <div class="card"><h5>Today, in a paragraph</h5>
+        <div id="tdBrief" class="briefout">A short read on what the day adds up to.</div>
+        <button class="mini-btn" id="tdBriefGo" style="align-self:flex-start">Write it</button>
+      </div>
+      ${stands.length ? `<div class="card"><h5>${TOPIC ? esc(TOPIC)+' here' : 'Where people here stand'}</h5>
+        ${stands.map(h=>`<div><div class="row"><span>${esc(h.title)}</span><b>${h.s+h.o}</b></div>
+          ${splitbar(h.s,h.o)}</div>`).join('')}
+        <button class="mini-btn" data-go="issues" style="align-self:flex-start">Open Issues</button>
+      </div>` : ''}
+      ${posts.length ? `<div class="card"><h5>People here are saying</h5>
+        ${posts.map(p=>`<button class="qpost" data-open="${p.id}" style="text-align:left;border:0;background:none;
+            font-family:inherit;cursor:pointer;width:100%">
+          <p>${esc(trim60(p.text))}</p>
+          <small>@${esc((p.profiles&&p.profiles.handle)||'')} · ${ago(p.created_at)}</small></button>`).join('')}
+      </div>` : ''}
+      ${NEWSSRC.length ? `<div class="card"><h5>Sources</h5>
+        <p class="hint" style="text-align:left">${esc(NEWSSRC.join(' · '))}</p>
+        <p class="hint" style="text-align:left;color:var(--dim)">Headlines are linked, never rewritten.
+          Opinions on this page are ours; the reporting is theirs.</p>
+      </div>` : ''}
+    </aside></div>`;
+  },
+  init(){
+    ensure('posts','today');
+    ensure('issues','today');
+    if(NEWS === null) loadNews().then(()=>{ if(current==='today'){ open_('today', true); paintTicker() } });
+    const r = $('tdRefresh');
+    if(r) r.onclick = async ()=>{
+      r.disabled = true; r.textContent = 'Checking…';
+      await loadNews(true);
+      if(current==='today') open_('today', true);
+      paintTicker();
+    };
+    const more = $('tdMore');
+    if(more) more.onclick = ()=>{ NEWSN += 18; open_('today', true) };
+    document.querySelectorAll('[data-topic]').forEach(b=>b.onclick = ()=>{
+      TOPIC = b.dataset.topic; NEWSN = 18; open_('today', true);
+    });
+    document.querySelectorAll('[data-post]').forEach(b=>b.onclick = ()=>{
+      const it = (NEWS||[]).find(x=>x.link === b.dataset.post); if(!it) return;
+      const tag = (topicsOf(it)[0] || '').replace(/[^a-z0-9]+/gi,'').toLowerCase();
+      PREFILL.feed = `${it.title}\n${it.link}${tag?`\n#${tag}`:''}\n\n`;
+      open_('feed');
+    });
+    document.querySelectorAll('[data-floor]').forEach(b=>b.onclick = ()=>{
+      const it = (NEWS||[]).find(x=>x.link === b.dataset.floor); if(!it) return;
+      PREFILL.room = `${it.title} — ${it.link}\n@desk what should we make of this?`;
+      open_('townhall');
+    });
+    document.querySelectorAll('[data-open]').forEach(b=>b.onclick = ()=>openPost(b.dataset.open));
+
+    const go = $('tdBriefGo');
+    if(go) go.onclick = async ()=>{
+      const heads = (TOPIC ? (NEWS||[]).filter(it=>topicsOf(it).includes(TOPIC)) : (NEWS||[])).slice(0,14);
+      if(!heads.length) return toast('Nothing on the wire to read yet');
+      const text = heads.map(it=>`${it.source}: ${it.title}${it.summary?` — ${it.summary}`:''}`).join('\n');
+      const out = $('tdBrief');
+      go.disabled = true; go.textContent = 'Reading…';
+      const said = await ai('today', text, {topic:TOPIC || ''});
+      go.disabled = false; go.textContent = 'Write it again';
+      if(said) out.innerHTML = md(said);
+    };
+  }
+};
+
 /* ---------------------------------------------------------------- town hall
    The floor: one room everyone is in, live. Five voices from the desk can be
    pulled in by name — they read the room and the database before they speak. */
@@ -3093,6 +3321,7 @@ S.townhall = {
     const t = $('roomText'), send = $('roomSend');
     if(t){
       mentionable(t);
+      if(PREFILL.room){ t.value = PREFILL.room; PREFILL.room = '' }
       const grow = ()=>{ t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,150)+'px';
                          send.disabled = !t.value.trim() };
       t.oninput = grow; grow();
@@ -3519,7 +3748,7 @@ function railFoot(){
     ${acct}</div>`;
 }
 /* everything that does not fit on a phone's tab bar */
-const MORE_IDS = ['issues','ballot','polls','fundraise','reach'];
+const MORE_IDS = ['endorsed','issues','ballot','polls','fundraise','reach'];
 function moreSheet(){
   const wrap = document.createElement('div');
   wrap.className = 'sheet';
@@ -4268,6 +4497,9 @@ const FRESH = 15 * 60e3;                       /* what counts as happening now *
 const isFresh = ts => ts && Date.now() - new Date(ts).getTime() < FRESH;
 function tickerLines(){
   const out = [];
+  const wire = (NEWS || [])[0];
+  if(wire) out.push({k:'Wire', live:isFresh(wire.when),
+    t:`${wire.source ? wire.source + ': ' : ''}${trim60(wire.title)}`, go:()=>open_('today')});
   const posts = (G.posts || []).slice();
   if(posts.length){
     const p = posts[0];
@@ -4444,6 +4676,7 @@ function wireTopbar(){
 
 /* --------------------------------------------------------------------- boot */
 (async function boot(){
+  if(!qHandle()) current = 'today';        /* the front page, unless a profile was shared */
   wireTopbar();
   renderRail();
   panel.innerHTML = '<div class="spin"></div>';

@@ -307,7 +307,37 @@ module.exports = async (req, res) => {
   });
   const textOf = data => (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
 
-  const { task, input, messages, context, bot, ask } = req.body || {};
+  const { task, input, messages, context, bot, ask, topic } = req.body || {};
+
+  /* ---------------- the day, read from the wire ---------------- */
+  if(task === 'today'){
+    const heads = String(input || '').trim().slice(0, MAX_IN);
+    if(heads.length < 10) return res.status(400).json({ error:'nothing to read' });
+    const system = CHAT_SYSTEM + `
+
+YOU ARE WRITING THE DAILY READ
+- You are handed today's headlines from several newsrooms, as a list of "Source: headline — summary".
+- Write one short paragraph, 70 to 110 words, on what the day adds up to${
+  topic ? ' for ' + String(topic).slice(0,40).toLowerCase() : ''}. Then one line beginning
+  "Worth doing:" naming a single concrete thing a person could do this week.
+- Say what these stories have in common, or say plainly that they do not have much in common.
+- Refer only to what is in the headlines you were given. Do not add a fact, a number or an event that
+  is not there. Do not guess at what happened next.
+- Attribute anything specific to the outlet that reported it.
+- No headings, no bullet points, no "in conclusion". Level and unhurried, the way an anchor closes a
+  segment. Not breathless, not doom.`;
+    try{
+      const r = await call({ model:CHAT_MODEL, max_tokens:420, system,
+                             messages:[{ role:'user', content:heads }] });
+      if(!r.ok){
+        const detail = await r.text();
+        return res.status(502).json({ error:'upstream', detail: detail.slice(0,300) });
+      }
+      return res.status(200).json({ text: textOf(await r.json()) });
+    }catch(e){
+      return res.status(500).json({ error:'request failed' });
+    }
+  }
 
   /* ---------------- a voice from the desk, in the room ---------------- */
   if(task === 'room'){

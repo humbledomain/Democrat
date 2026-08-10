@@ -630,9 +630,9 @@ button.tag{cursor:pointer}
   .livedot{position:absolute;top:6px;right:calc(50% - 16px)}
   /* the five that do not fit live behind More */
   .app[data-id="issues"],.app[data-id="ballot"],.app[data-id="polls"],
-  .app[data-id="fundraise"],.app[data-id="reach"]{display:none}
-  .app[data-id="feed"]{order:1}.app[data-id="townhall"]{order:2}
-  .app[data-id="compose"]{order:3}.app[data-id="endorsed"]{order:4}
+  .app[data-id="fundraise"],.app[data-id="reach"],.app[data-id="endorsed"]{display:none}
+  .app[data-id="today"]{order:1}.app[data-id="feed"]{order:2}
+  .app[data-id="townhall"]{order:3}.app[data-id="compose"]{order:4}
   .app[data-id="profile"]{order:5}
   .app.more{display:flex;order:6}
 
@@ -674,6 +674,9 @@ button.tag{cursor:pointer}
   .btn{padding:11px 16px}
   .linkbtn{padding:8px 10px;margin-left:-10px}
   .newpill{top:calc(var(--mast) + 46px)}
+  .story.big .hl{font-size:23px}
+  .topicbar{position:sticky;top:calc(var(--mast) + 54px);z-index:6;background:var(--bg);padding:8px 0}
+  .dek{font-size:14px}
 
   /* one scroller per screen: the page. Composers stick above the tabs. */
   .pbody.chatbody{overflow:visible;display:block}
@@ -934,6 +937,28 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .botchip .whoav{width:20px;height:20px;font-size:9.5px}
 }
 
+/* ------------------------------------------------------------------- today */
+.topicbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.topicbar::-webkit-scrollbar{display:none}
+.tchip{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--soft);border-radius:99px;
+  padding:7px 14px;font-family:inherit;font-size:12.5px;font-weight:640;color:var(--ink3);cursor:pointer;
+  white-space:nowrap;flex:none;transition:background .14s,color .14s}
+.tchip i{font-style:normal;font-size:10.5px;font-weight:800;color:var(--dim)}
+.tchip:hover{color:var(--blue)}
+.tchip.on{background:var(--blue);color:#fff}
+.tchip.on i{color:rgba(255,255,255,.72)}
+.storylist{display:flex;flex-direction:column}
+.story{padding:15px 0;border-top:1px solid var(--line)}
+.story.big{padding:2px 0 15px;border-top:0}
+.hl{display:block;font-size:16px;line-height:1.34;font-weight:620;letter-spacing:-.018em;color:inherit;
+  text-decoration:none}
+.hl:hover{color:var(--blue)}
+.story.big .hl{font-size:clamp(21px,2.2vw,28px);line-height:1.18;letter-spacing:-.032em;font-weight:690}
+.dek{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:9px;max-width:64ch}
+.story .rowacts{margin-top:7px}
+.story .kick{margin-bottom:7px}
+
 /* ------------------------------------------------------- loading and motion */
 .sk .skline{height:11px;border-radius:6px;margin:7px 0;
   background:linear-gradient(90deg,var(--soft) 25%,rgba(140,160,200,.16) 37%,var(--soft) 63%);
@@ -971,12 +996,12 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .skline{animation:none}.newpill{animation:none}
   .live i{animation:none}.tick{transition:none}}
 </style>
-<style>.snapwrap{display:none}.snapwrap.on{display:block}.snapbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:300;display:flex;gap:4px;background:rgba(16,20,32,.93);padding:6px;border-radius:99px;font:600 12.5px -apple-system,sans-serif;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}.snapbar button{border:0;border-radius:99px;padding:6px 14px;background:none;color:#fff;cursor:pointer;font:inherit}.snapbar button.on{background:#fff;color:#111}.snapbar .sep{width:1px;background:rgba(255,255,255,.25);margin:4px 4px}#s-phone{display:none;padding:34px 0 90px;text-align:center}#s-phone.on{display:block}.phone{width:390px;height:800px;margin:0 auto;border-radius:44px;overflow:hidden;box-shadow:0 0 0 11px #14171f, 0 40px 80px -30px rgba(0,0,0,.55);background:#fff}.phone iframe{width:390px;height:800px;border:0;display:block}</style></head><body><div class="snapwrap on" id="s-feed">
+<style>.snapwrap{display:none}.snapwrap.on{display:block}.snapbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:300;display:flex;gap:4px;background:rgba(16,20,32,.93);padding:6px;border-radius:99px;font:600 12.5px -apple-system,sans-serif;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}.snapbar button{border:0;border-radius:99px;padding:6px 14px;background:none;color:#fff;cursor:pointer;font:inherit}.snapbar button.on{background:#fff;color:#111}.snapbar .sep{width:1px;background:rgba(255,255,255,.25);margin:4px 4px}#s-phone{display:none;padding:34px 0 90px;text-align:center}#s-phone.on{display:block}.phone{width:390px;height:800px;margin:0 auto;border-radius:44px;overflow:hidden;box-shadow:0 0 0 11px #14171f, 0 40px 80px -30px rgba(0,0,0,.55);background:#fff}.phone iframe{width:390px;height:800px;border:0;display:block}</style></head><body><div class="snapwrap on" id="s-today">
 
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1001,7 +1026,26 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 </defs></svg>
 
 <div class="stage">
-  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app" data-id="profile" style="animation-delay:0.03s">
+  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app on" data-id="today" style="animation-delay:0.03s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Today</span>
+      </button><button class="app" data-id="profile" style="animation-delay:0.06s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1017,7 +1061,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Profile</span>
-      </button><button class="app" data-id="endorsed" style="animation-delay:0.06s">
+      </button><button class="app" data-id="endorsed" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1029,7 +1073,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg><span class="badge">1</span></span>
       <span class="label">People</span>
-      </button><button class="app" data-id="compose" style="animation-delay:0.09s">
+      </button><button class="app" data-id="compose" style="animation-delay:0.12s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1043,7 +1087,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Chat</span>
-      </button><button class="app on" data-id="feed" style="animation-delay:0.12s">
+      </button><button class="app" data-id="feed" style="animation-delay:0.15s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1060,7 +1104,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Feed</span>
-      </button><button class="app" data-id="issues" style="animation-delay:0.15s">
+      </button><button class="app" data-id="issues" style="animation-delay:0.18s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1078,7 +1122,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Issues</span>
-      </button><button class="app" data-id="townhall" style="animation-delay:0.18s">
+      </button><button class="app" data-id="townhall" style="animation-delay:0.21s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1097,7 +1141,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Town Hall</span>
-      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.21s">
+      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.24s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1112,7 +1156,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Ballot</span>
-      </button><button class="app" data-id="polls" style="animation-delay:0.24s">
+      </button><button class="app" data-id="polls" style="animation-delay:0.27s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1126,7 +1170,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Polls</span>
-      </button><button class="app" data-id="fundraise" style="animation-delay:0.27s">
+      </button><button class="app" data-id="fundraise" style="animation-delay:0.30s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1139,7 +1183,351 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Fundraise</span>
-      </button><button class="app" data-id="reach" style="animation-delay:0.30s">
+      </button><button class="app" data-id="reach" style="animation-delay:0.33s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="60" cy="60" r="46" fill="none" stroke="#fff" stroke-width="8"></circle>
+       <circle cx="60" cy="60" r="31" fill="none" stroke="#fff" stroke-width="8"></circle>
+       <circle cx="60" cy="60" r="16" fill="none" stroke="#fff" stroke-width="8"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Reach</span>
+      </button><button class="app more" id="navMore" data-more="1">
+       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true"><g clip-path="url(#sq)">
+         <rect width="120" height="120" fill="#0A3FD6"></rect>
+         <circle cx="38" cy="60" r="9" fill="#fff"></circle><circle cx="60" cy="60" r="9" fill="#fff"></circle>
+         <circle cx="82" cy="60" r="9" fill="#fff"></circle>
+         <rect width="120" height="120" fill="url(#lift)"></rect><rect width="120" height="120" fill="url(#sheen)"></rect>
+         <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path></g>
+         <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path></svg></span>
+       <span class="label">More</span></button></div><div class="navfoot">
+    <button class="navpost" id="navPost">Post</button>
+    <button class="acct" id="navAcct" aria-label="Account">
+         <span class="whoav">M</span>
+         <span class="grow"><b>Michael K</b>
+           <small>@michael</small></span>
+         <span class="chev">⋮</span></button></div></nav>
+  <section class="panel" id="panel"><header class="phead">
+      <span class="hicon"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 4 stories from 4 newsrooms<span class="stamp">Updated 12:48 AM</span></p></div>
+      <div class="acts"><button class="btn ghost" id="tdRefresh">Refresh</button><button class="pclose" id="pclose">✕</button></div>
+    </header>
+    <div class="pbody"><div class="split"><div class="main">
+      <div class="topicbar">
+        <button class="tchip on" data-topic="">All</button>
+        <button class="tchip" data-topic="Voting rights">
+          Voting rights<i>2</i></button><button class="tchip" data-topic="Democracy">
+          Democracy<i>1</i></button><button class="tchip" data-topic="Congress">
+          Congress<i>1</i></button><button class="tchip" data-topic="Healthcare">
+          Healthcare<i>1</i></button><button class="tchip" data-topic="Labor">
+          Labor<i>1</i></button><button class="tchip" data-topic="Immigration">
+          Immigration<i>1</i></button><button class="tchip" data-topic="Courts">
+          Courts<i>1</i></button>
+      </div>
+
+      
+      <article class="story big">
+        <div class="kick">
+          <span class="live"><i></i>Just in</span><span class="sep">·</span>
+          <b>NPR</b>
+          <span class="sep">·</span><span class="place">8m ago</span>
+        </div>
+        <a class="hl" href="https://npr.org/a" target="_blank" rel="noopener noreferrer">Senate passes voting rights measure after all-night session</a>
+        <p class="dek">The bill expands early voting and restores federal oversight of election law.</p>
+        <div class="rowacts">
+          <a class="iconbtn" href="https://npr.org/a" target="_blank" rel="noopener noreferrer">Read</a>
+          <button class="iconbtn" data-post="https://npr.org/a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
+          <button class="iconbtn" data-floor="https://npr.org/a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
+        </div>
+      </article><div class="storylist">
+      <article class="story">
+        <div class="kick">
+          
+          <b>ProPublica</b>
+          <span class="sep">·</span><span class="place">3h ago</span>
+        </div>
+        <a class="hl" href="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Medicaid cuts would close rural hospitals, study finds</a>
+        
+        <div class="rowacts">
+          <a class="iconbtn" href="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Read</a>
+          <button class="iconbtn" data-post="https://propublica.org/b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
+          <button class="iconbtn" data-floor="https://propublica.org/b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
+        </div>
+      </article>
+      <article class="story">
+        <div class="kick">
+          
+          <b>The Hill</b>
+          <span class="sep">·</span><span class="place">5h ago</span>
+        </div>
+        <a class="hl" href="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Union files for election at third warehouse this month</a>
+        
+        <div class="rowacts">
+          <a class="iconbtn" href="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Read</a>
+          <button class="iconbtn" data-post="https://thehill.com/c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
+          <button class="iconbtn" data-floor="https://thehill.com/c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
+        </div>
+      </article>
+      <article class="story">
+        <div class="kick">
+          
+          <b>The Guardian</b>
+          <span class="sep">·</span><span class="place">9h ago</span>
+        </div>
+        <a class="hl" href="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Appeals court blocks deportation flights pending review</a>
+        
+        <div class="rowacts">
+          <a class="iconbtn" href="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Read</a>
+          <button class="iconbtn" data-post="https://guardian.com/d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
+          <button class="iconbtn" data-floor="https://guardian.com/d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
+        </div>
+      </article></div>
+           
+    </div>
+    <aside class="side">
+      <div class="card"><h5>Today, in a paragraph</h5>
+        <div id="tdBrief" class="briefout">A short read on what the day adds up to.</div>
+        <button class="mini-btn" id="tdBriefGo" style="align-self:flex-start">Write it</button>
+      </div>
+      <div class="card"><h5>Where people here stand</h5>
+        <div><div class="row"><span>Expand early voting</span><b>3</b></div>
+          <div class="splitbar"><i class="s" style="width:66.66666666666666%"></i><i class="o" style="width:33.33333333333333%"></i></div>
+    <div class="legend"><span>2 support</span><span>1 oppose</span></div></div>
+        <button class="mini-btn" data-go="issues" style="align-self:flex-start">Open Issues</button>
+      </div>
+      <div class="card"><h5>People here are saying</h5>
+        <button class="qpost" data-open="p1" style="text-align:left;border:0;background:none;
+            font-family:inherit;cursor:pointer;width:100%">
+          <p>Knocked 40 doors today. #canvassing with @renato</p>
+          <small>@michael · 2h</small></button><button class="qpost" data-open="p2" style="text-align:left;border:0;background:none;
+            font-family:inherit;cursor:pointer;width:100%">
+          <p>School board meeting was packed. #schools</p>
+          <small>@renato · 5h</small></button><button class="qpost" data-open="p3" style="text-align:left;border:0;background:none;
+            font-family:inherit;cursor:pointer;width:100%">
+          <p>Ballot drop box opened downtown</p>
+          <small>@wallace · 9h</small></button>
+      </div>
+      <div class="card"><h5>Sources</h5>
+        <p class="hint" style="text-align:left">NPR · ProPublica · The Hill · The Guardian</p>
+        <p class="hint" style="text-align:left;color:var(--dim)">Headlines are linked, never rewritten.
+          Opinions on this page are ours; the reporting is theirs.</p>
+      </div>
+    </aside></div></div></section>
+</div>
+
+
+
+
+
+</div><div class="snapwrap" id="s-feed">
+
+<div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
+<header class="mast">
+<a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<div class="topbar" id="topbar">
+  <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+    <span>Search</span><span class="kbd">⌘K</span></button>
+  <button class="tbtn" id="tBell" aria-label="Notifications" title="Notifications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path><path d="M10.3 20a2 2 0 0 0 3.4 0"></path></svg><span class="badge">6</span></button>
+  <button class="tbtn" id="tTheme" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.4 8.4 0 1 0 20 14.2Z"></path></svg></button>
+</div>
+</header>
+<div class="mode" id="mode" hidden=""></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<clipPath id="sq" clipPathUnits="userSpaceOnUse"><path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z"></path></clipPath>
+<linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#fff" stop-opacity=".13"></stop><stop offset=".5" stop-color="#fff" stop-opacity=".02"></stop>
+  <stop offset="1" stop-color="#040C22" stop-opacity=".07"></stop></linearGradient>
+<linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#fff" stop-opacity=".30"></stop><stop offset=".55" stop-color="#fff" stop-opacity=".04"></stop>
+  <stop offset="1" stop-color="#fff" stop-opacity=".12"></stop></linearGradient>
+<radialGradient id="lift" cx=".3" cy=".04" r=".9">
+  <stop offset="0" stop-color="#fff" stop-opacity=".14"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></radialGradient>
+</defs></svg>
+
+<div class="stage">
+  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app" data-id="today" style="animation-delay:0.03s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Today</span>
+      </button><button class="app" data-id="profile" style="animation-delay:0.06s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="60" cy="42" r="18" fill="#fff"></circle>
+       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"></path>
+       <circle cx="88" cy="60" r="16" fill="#0A3FD6"></circle>
+       <circle cx="88" cy="60" r="12" fill="#fff"></circle>
+       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="#0A3FD6" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Profile</span>
+      </button><button class="app" data-id="endorsed" style="animation-delay:0.09s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg><span class="badge">1</span></span>
+      <span class="label">People</span>
+      </button><button class="app" data-id="compose" style="animation-delay:0.12s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"></path>
+       <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="#0A3FD6" stroke-width="5"></path>
+       <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="#0A3FD6"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Chat</span>
+      </button><button class="app on" data-id="feed" style="animation-delay:0.15s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="27" cy="34" r="7" fill="#fff"></circle>
+       <rect x="44" y="28" width="52" height="12" rx="6" fill="#fff"></rect>
+       <circle cx="27" cy="60" r="7" fill="#fff"></circle>
+       <rect x="44" y="54" width="52" height="12" rx="6" fill="#fff"></rect>
+       <circle cx="27" cy="86" r="7" fill="#fff"></circle>
+       <rect x="44" y="80" width="34" height="12" rx="6" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Feed</span>
+      </button><button class="app" data-id="issues" style="animation-delay:0.18s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="60" cy="26" r="7" fill="#fff"></circle>
+       <rect x="56.5" y="30" width="7" height="62" rx="3.5" fill="#fff"></rect>
+       <rect x="18" y="40" width="84" height="7" rx="3.5" fill="#fff"></rect>
+       <path d="M28 47v9M92 47v9" stroke="#fff" stroke-width="3" stroke-linecap="round"></path>
+       <path d="M12 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
+       <path d="M76 58h32a16 16 0 0 1-32 0Z" fill="#fff"></path>
+       <rect x="38" y="92" width="44" height="8" rx="4" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Issues</span>
+      </button><button class="app" data-id="townhall" style="animation-delay:0.21s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="58.6" y="10" width="2.8" height="9" rx="1.4" fill="#fff"></rect>
+       <path d="M49 30a11 11 0 0 1 22 0Z" fill="#fff"></path>
+       <path d="M13 52 60 28l47 24Z" fill="#fff"></path>
+       <rect x="19" y="54" width="82" height="7" rx="2" fill="#fff"></rect>
+       <rect x="31" y="65" width="10" height="27" rx="2" fill="#fff"></rect>
+       <rect x="55" y="65" width="10" height="27" rx="2" fill="#fff"></rect>
+       <rect x="79" y="65" width="10" height="27" rx="2" fill="#fff"></rect>
+       <rect x="15" y="96" width="90" height="9" rx="3" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Town Hall</span>
+      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.24s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="38" y="14" width="44" height="42" rx="7" fill="#fff"></rect>
+       <path d="M50 34.5l7.5 7.5 14.5-15" stroke="#E5352B" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+       <rect x="16" y="52" width="88" height="54" rx="11" fill="#fff"></rect>
+       <rect x="42" y="60" width="36" height="9" rx="4.5" fill="#0A3FD6"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Ballot</span>
+      </button><button class="app" data-id="polls" style="animation-delay:0.27s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="16" y="56" width="20" height="42" rx="10" fill="#fff"></rect>
+       <rect x="50" y="30" width="20" height="68" rx="10" fill="#fff"></rect>
+       <rect x="84" y="44" width="20" height="54" rx="10" fill="#fff"></rect>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Polls</span>
+      </button><button class="app" data-id="fundraise" style="animation-delay:0.30s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M60 104C60 104 16 79 16 51.5A22 22 0 0 1 60 42 A22 22 0 0 1 104 51.5C104 79 60 104 60 104Z" fill="#fff"></path>
+       <path d="M60 38v46M72 51H55a7.5 7.5 0 0 0 0 15h11a7.5 7.5 0 0 1 0 15H48" stroke="#16A34A" stroke-width="7" fill="none" stroke-linecap="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Fundraise</span>
+      </button><button class="app" data-id="reach" style="animation-delay:0.33s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1184,7 +1572,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 12:28 AM</span></p></div>
+      <div class="grow"><h2>Feed</h2><p><span class="live"><i></i>Live</span> What people are saying<span class="stamp">Updated 12:48 AM</span></p></div>
       <div class="acts"><div class="seg tabs" data-tabs="feed"><button class="" data-v="near">Near you</button><button class="on" data-v="all">Everyone</button><button class="" data-v="follow">Following</button><button class="" data-v="saved">Saved</button><button class="" data-v="mine">Yours</button></div><button class="btn" id="feedPost">Post</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody"><div class="split"><div class="main">
@@ -1285,7 +1673,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1310,7 +1698,26 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 </defs></svg>
 
 <div class="stage">
-  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app" data-id="profile" style="animation-delay:0.03s">
+  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app" data-id="today" style="animation-delay:0.03s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Today</span>
+      </button><button class="app" data-id="profile" style="animation-delay:0.06s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1326,7 +1733,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Profile</span>
-      </button><button class="app" data-id="endorsed" style="animation-delay:0.06s">
+      </button><button class="app" data-id="endorsed" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1338,7 +1745,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg><span class="badge">1</span></span>
       <span class="label">People</span>
-      </button><button class="app" data-id="compose" style="animation-delay:0.09s">
+      </button><button class="app" data-id="compose" style="animation-delay:0.12s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1352,7 +1759,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Chat</span>
-      </button><button class="app" data-id="feed" style="animation-delay:0.12s">
+      </button><button class="app" data-id="feed" style="animation-delay:0.15s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1369,7 +1776,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Feed</span>
-      </button><button class="app" data-id="issues" style="animation-delay:0.15s">
+      </button><button class="app" data-id="issues" style="animation-delay:0.18s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1387,7 +1794,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Issues</span>
-      </button><button class="app on" data-id="townhall" style="animation-delay:0.18s">
+      </button><button class="app on" data-id="townhall" style="animation-delay:0.21s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1406,7 +1813,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Town Hall</span>
-      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.21s">
+      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.24s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1421,7 +1828,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Ballot</span>
-      </button><button class="app" data-id="polls" style="animation-delay:0.24s">
+      </button><button class="app" data-id="polls" style="animation-delay:0.27s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1435,7 +1842,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Polls</span>
-      </button><button class="app" data-id="fundraise" style="animation-delay:0.27s">
+      </button><button class="app" data-id="fundraise" style="animation-delay:0.30s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1448,7 +1855,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Fundraise</span>
-      </button><button class="app" data-id="reach" style="animation-delay:0.30s">
+      </button><button class="app" data-id="reach" style="animation-delay:0.33s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1495,7 +1902,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 12:28 AM</span></p></div>
+      <div class="grow"><h2>Town Hall</h2><p><span class="live"><i></i>On air</span> One room, everyone in it<span class="stamp">Updated 12:48 AM</span></p></div>
       <div class="acts"><button class="btn ghost" id="thAsk">Ask the desk</button><button class="pclose" id="pclose">✕</button></div>
     </header>
     <div class="pbody chatbody"><div class="split"><div class="main room">
@@ -1597,7 +2004,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
@@ -1622,7 +2029,26 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 </defs></svg>
 
 <div class="stage">
-  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app on" data-id="profile" style="animation-delay:0.03s">
+  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app" data-id="today" style="animation-delay:0.03s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
+       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
+       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
+       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Today</span>
+      </button><button class="app on" data-id="profile" style="animation-delay:0.06s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1638,7 +2064,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Profile</span>
-      </button><button class="app" data-id="endorsed" style="animation-delay:0.06s">
+      </button><button class="app" data-id="endorsed" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1650,7 +2076,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg><span class="badge">1</span></span>
       <span class="label">People</span>
-      </button><button class="app" data-id="compose" style="animation-delay:0.09s">
+      </button><button class="app" data-id="compose" style="animation-delay:0.12s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1664,7 +2090,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Chat</span>
-      </button><button class="app" data-id="feed" style="animation-delay:0.12s">
+      </button><button class="app" data-id="feed" style="animation-delay:0.15s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1681,7 +2107,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Feed</span>
-      </button><button class="app" data-id="issues" style="animation-delay:0.15s">
+      </button><button class="app" data-id="issues" style="animation-delay:0.18s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1699,7 +2125,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Issues</span>
-      </button><button class="app" data-id="townhall" style="animation-delay:0.18s">
+      </button><button class="app" data-id="townhall" style="animation-delay:0.21s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1718,7 +2144,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Town Hall</span>
-      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.21s">
+      <span class="livedot" title="People are talking right now"></span></button><button class="app" data-id="ballot" style="animation-delay:0.24s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1733,7 +2159,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Ballot</span>
-      </button><button class="app" data-id="polls" style="animation-delay:0.24s">
+      </button><button class="app" data-id="polls" style="animation-delay:0.27s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1747,7 +2173,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Polls</span>
-      </button><button class="app" data-id="fundraise" style="animation-delay:0.27s">
+      </button><button class="app" data-id="fundraise" style="animation-delay:0.30s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1760,7 +2186,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Fundraise</span>
-      </button><button class="app" data-id="reach" style="animation-delay:0.30s">
+      </button><button class="app" data-id="reach" style="animation-delay:0.33s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1865,4 +2291,4 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 
 
 
-</div><div id="s-phone"><div class="phone"><iframe src="preview-phone.html" title="phone"></iframe></div></div><div class="snapbar"><button class="on" data-s="feed">Feed</button><button class="" data-s="townhall">Town hall</button><button class="" data-s="profile">Profile</button><button data-s="phone">Phone</button><span class="sep"></span><button data-t="1">Dark</button></div><script>document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){document.querySelectorAll('[data-s]').forEach(function(x){x.classList.toggle('on',x===b)});document.querySelectorAll('.snapwrap,#s-phone').forEach(function(w){w.classList.toggle('on',w.id==='s-'+b.dataset.s)});}});document.querySelector('[data-t]').onclick=function(){var r=document.documentElement,d=r.dataset.theme==='dark';r.dataset.theme=d?'light':'dark';this.textContent=d?'Dark':'Light';var f=document.querySelector('.phone iframe');if(f&&f.contentDocument)f.contentDocument.documentElement.dataset.theme=r.dataset.theme;};</script></body></html>
+</div><div id="s-phone"><div class="phone"><iframe src="preview-phone.html" title="phone"></iframe></div></div><div class="snapbar"><button class="on" data-s="today">Today</button><button class="" data-s="feed">Feed</button><button class="" data-s="townhall">Town hall</button><button class="" data-s="profile">Profile</button><button data-s="phone">Phone</button><span class="sep"></span><button data-t="1">Dark</button></div><script>document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){document.querySelectorAll('[data-s]').forEach(function(x){x.classList.toggle('on',x===b)});document.querySelectorAll('.snapwrap,#s-phone').forEach(function(w){w.classList.toggle('on',w.id==='s-'+b.dataset.s)});}});document.querySelector('[data-t]').onclick=function(){var r=document.documentElement,d=r.dataset.theme==='dark';r.dataset.theme=d?'light':'dark';this.textContent=d?'Dark':'Light';var f=document.querySelector('.phone iframe');if(f&&f.contentDocument)f.contentDocument.documentElement.dataset.theme=r.dataset.theme;};</script></body></html>
