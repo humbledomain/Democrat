@@ -241,10 +241,15 @@ button.tag{cursor:pointer}
 .bar i{display:block;height:100%;border-radius:99px;background:var(--blue);transition:width .4s}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-radius:14px;overflow:hidden;
   background:var(--soft)}
-.stats>div{padding:15px 6px;text-align:center;border-left:1px solid var(--line)}
-.stats>div:first-child{border-left:0}
+.stats>div,.stats>button{padding:15px 6px;text-align:center;border-left:1px solid var(--line);
+  border-top:0;border-right:0;border-bottom:0;background:none;font-family:inherit;color:inherit;
+  cursor:pointer;transition:background .14s}
+.stats>button:hover{background:rgba(10,63,214,.07)}
+.stats>button:active{background:rgba(10,63,214,.12)}
+.stats>div:first-child,.stats>button:first-child{border-left:0}
 .stats b{display:block;font-size:21px;font-weight:660;letter-spacing:-.02em}
-.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+  display:block;margin-top:2px}
 .hint{font-size:12.5px;color:var(--muted);text-align:center}
 
 .pbody.pf{display:flex;align-items:center;justify-content:center}
@@ -603,10 +608,11 @@ button.tag{cursor:pointer}
 @media (max-width:900px){
   /* ---- a phone gets a real app shell: bar on top, tabs on the bottom ---- */
   :root{--tile:26px;--mast:88px;--tabs:calc(56px + env(safe-area-inset-bottom,0px))}
-  .mast{flex-wrap:wrap;height:var(--mast);padding:0 14px;align-content:center;row-gap:0}
+  /* the bar sizes itself and JS writes the real height back into --mast */
+  .mast{flex-wrap:wrap;height:auto;min-height:52px;padding:0 14px;align-content:flex-start;row-gap:0}
   .mast .mark{height:52px;display:flex;align-items:center}
   .topbar{height:52px}
-  .ticker{order:3;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
+  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
   .tick{font-size:12.5px}
   .tick b{font-size:9.5px}
 
@@ -659,6 +665,8 @@ button.tag{cursor:pointer}
   .pfhandle input,.pfield.loc{font-size:15px}
 
   .pbody{padding:14px 16px 20px;overflow:visible}
+  .gate{min-height:min(58vh,500px);margin:0}
+  .gatecard{padding:clamp(24px,6vw,34px) clamp(20px,5vw,26px) 22px}
   .phead{padding:12px 16px;gap:11px;position:sticky;top:calc(var(--mast) - 1px);z-index:7;
     background:var(--bg);border-bottom:1px solid var(--line)}
   .phead h2{font-size:16px}
@@ -696,8 +704,8 @@ button.tag{cursor:pointer}
   .person{padding:13px;border-radius:16px}
   .pface{width:48px;height:48px;font-size:17px}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .stats>div:nth-child(3){border-left:0}
-  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .stats>div:nth-child(3),.stats>button:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3),.stats>button:nth-child(n+3){border-top:1px solid var(--line)}
   .quick{flex-wrap:wrap}
   .quick textarea{min-width:60%}
   .quick .btn{margin-left:auto}
@@ -956,6 +964,43 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .hl:hover{color:var(--blue)}
 .story.big .hl{font-size:clamp(21px,2.2vw,28px);line-height:1.18;letter-spacing:-.032em;font-weight:690}
 .dek{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:9px;max-width:64ch}
+.story{display:flex;gap:14px;align-items:flex-start}
+.story .grow{flex:1;min-width:0}
+.story.big{display:block}
+.thumb-s{width:96px;height:72px;border-radius:10px;object-fit:cover;flex:none;background:var(--soft);
+  border:1px solid var(--line)}
+.hero{width:100%;max-height:340px;object-fit:cover;border-radius:14px;margin-bottom:12px;display:block;
+  background:var(--soft);border:1px solid var(--line)}
+
+/* the reader: a story opens here, not in another tab */
+.reader{position:fixed;inset:0;z-index:88;background:rgba(8,20,45,.42);backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);display:flex;justify-content:center;align-items:flex-start;
+  padding:5vh 20px 20px;animation:fade .18s ease}
+.readbox{width:100%;max-width:720px;max-height:90vh;max-height:90dvh;background:var(--card);
+  border-radius:22px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 40px 90px -30px rgba(8,26,72,.55);animation:rise .28s cubic-bezier(.2,.9,.25,1) both}
+.readtop{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);
+  flex:none}
+.readtop .kick{margin:0;flex:1;min-width:0}
+.readbody{overflow-y:auto;padding:20px 24px 8px;flex:1;min-height:0}
+.readbody h1{font-size:clamp(22px,2.4vw,30px);line-height:1.18;letter-spacing:-.03em;font-weight:690;
+  margin-bottom:10px}
+.readbody .dek{font-size:16px;line-height:1.55;color:var(--ink2);max-width:none}
+.readimg{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:16px;display:block;
+  background:var(--soft)}
+.readsrc{display:block;margin-top:16px;text-align:center;text-decoration:none}
+.readnote{font-size:11.5px;color:var(--dim);text-align:center;margin:10px 0 4px;line-height:1.5}
+.readfoot{display:flex;gap:8px;padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--line);flex:none;flex-wrap:wrap}
+.readfoot .btn{flex:1;min-width:120px}
+@media (max-width:900px){
+  .reader{padding:0;align-items:flex-end}
+  .readbox{max-width:none;border-radius:20px 20px 0 0;max-height:94dvh}
+  .readbody{padding:16px 16px 4px}
+  .readbody h1{font-size:23px}
+  .thumb-s{width:78px;height:60px}
+  .readfoot .btn{min-width:0;font-size:12.5px;padding:11px 8px}
+}
 .story .rowacts{margin-top:7px}
 .story .kick{margin-bottom:7px}
 
@@ -1002,13 +1047,13 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>NPR: Senate passes voting rights measure after all-night session</span></button><button class="tick" data-t="1"><b>Latest</b><span>Michael K: Knocked 40 doors today. #canvassing with @renato</span></button><button class="tick" data-t="2"><b>Today</b><span>3 new posts across the network</span></button><button class="tick" data-t="3"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="4"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="5"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"><button class="tick on" data-t="0"><span class="live"><i></i>Live</span><span>The Desk: Three new positions today. Turnout is the story.</span></button><button class="tick" data-t="1"><b>Coming up</b><span>Voter registration drive · Tue, Dec 1 · Library</span></button><button class="tick" data-t="2"><b>Trending</b><span>Expand early voting — 3 taking a position</span></button></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
     <span>Search</span><span class="kbd">⌘K</span></button>
   <button class="tbtn" id="tBell" aria-label="Notifications" title="Notifications">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path><path d="M10.3 20a2 2 0 0 0 3.4 0"></path></svg><span class="badge">6</span></button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"></path><path d="M10.3 20a2 2 0 0 0 3.4 0"></path></svg></button>
   <button class="tbtn" id="tTheme" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.4 8.4 0 1 0 20 14.2Z"></path></svg></button>
 </div>
 </header>
@@ -1027,7 +1072,35 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 </defs></svg>
 
 <div class="stage">
-  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app on" data-id="today" style="animation-delay:0.03s">
+  <nav class="rail settled" id="rail" aria-label="Apps"><div class="nav"><button class="app on" data-id="profile" style="animation-delay:0.03s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <circle cx="60" cy="42" r="18" fill="#fff"></circle>
+       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"></path>
+       <circle cx="88" cy="60" r="16" fill="#0A3FD6"></circle>
+       <circle cx="88" cy="60" r="12" fill="#fff"></circle>
+       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="#0A3FD6" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">Profile</span>
+      </button><button class="app" data-id="endorsed" style="animation-delay:0.06s">
+      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
+  <g clip-path="url(#sq)">
+    <rect width="120" height="120" fill="#0A3FD6"></rect>
+    <path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"></path>
+    <rect width="120" height="120" fill="url(#lift)"></rect>
+    <rect width="120" height="120" fill="url(#sheen)"></rect>
+    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
+  </g>
+  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
+</svg></span>
+      <span class="label">People</span>
+      </button><button class="app" data-id="today" style="animation-delay:0.09s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
@@ -1046,34 +1119,6 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
       <span class="label">Today</span>
-      </button><button class="app" data-id="profile" style="animation-delay:0.06s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <circle cx="60" cy="42" r="18" fill="#fff"></circle>
-       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"></path>
-       <circle cx="88" cy="60" r="16" fill="#0A3FD6"></circle>
-       <circle cx="88" cy="60" r="12" fill="#fff"></circle>
-       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="#0A3FD6" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg></span>
-      <span class="label">Profile</span>
-      </button><button class="app" data-id="endorsed" style="animation-delay:0.09s">
-      <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
-  <g clip-path="url(#sq)">
-    <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"></path>
-    <rect width="120" height="120" fill="url(#lift)"></rect>
-    <rect width="120" height="120" fill="url(#sheen)"></rect>
-    <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
-  </g>
-  <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
-</svg><span class="badge">1</span></span>
-      <span class="label">People</span>
       </button><button class="app" data-id="compose" style="animation-delay:0.12s">
       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
@@ -1207,134 +1252,47 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
          <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path></g>
          <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path></svg></span>
        <span class="label">More</span></button></div><div class="navfoot">
-    <button class="navpost" id="navPost">Post</button>
-    <button class="acct" id="navAcct" aria-label="Account">
-         <span class="whoav">M</span>
-         <span class="grow"><b>Michael K</b>
-           <small>@michael</small></span>
-         <span class="chev">⋮</span></button></div></nav>
+    
+    <button class="acct" id="navAcct" aria-label="Sign in">
+         <span class="whoav">+</span>
+         <span class="grow"><b>Sign in</b><small>Join the network</small></span></button></div></nav>
   <section class="panel" id="panel"><header class="phead">
       <span class="hicon"><svg viewBox="0 0 120 120" aria-hidden="true">
   <g clip-path="url(#sq)">
     <rect width="120" height="120" fill="#0A3FD6"></rect>
-    <rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"></rect>
-       <rect x="27" y="38" width="37" height="27" rx="4" fill="#0A3FD6"></rect>
-       <rect x="70" y="38" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
-       <rect x="70" y="49" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
-       <rect x="70" y="60" width="23" height="5" rx="2.5" fill="#0A3FD6"></rect>
-       <rect x="27" y="73" width="66" height="5" rx="2.5" fill="#0A3FD6"></rect>
-       <rect x="27" y="83" width="47" height="5" rx="2.5" fill="#0A3FD6"></rect>
-       <circle cx="97" cy="30" r="11" fill="#fff"></circle><circle cx="97" cy="30" r="8" fill="#E5352B"></circle>
+    <circle cx="60" cy="42" r="18" fill="#fff"></circle>
+       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"></path>
+       <circle cx="88" cy="60" r="16" fill="#0A3FD6"></circle>
+       <circle cx="88" cy="60" r="12" fill="#fff"></circle>
+       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="#0A3FD6" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
     <rect width="120" height="120" fill="url(#lift)"></rect>
     <rect width="120" height="120" fill="url(#sheen)"></rect>
     <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="url(#rim)" stroke-width="2"></path>
   </g>
   <path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"></path>
 </svg></span>
-      <div class="grow"><h2>Today</h2><p><span class="live"><i></i>The wire</span> 4 stories from 4 newsrooms<span class="stamp">Updated 12:48 AM</span></p></div>
-      <div class="acts"><button class="btn ghost" id="tdRefresh">Refresh</button><button class="pclose" id="pclose">✕</button></div>
+      <div class="grow"><h2>democrat.ai</h2></div>
+      <div class="acts"><button class="pclose" id="pclose">✕</button></div>
     </header>
-    <div class="pbody"><div class="split"><div class="main">
-      <div class="topicbar">
-        <button class="tchip on" data-topic="">All</button>
-        <button class="tchip" data-topic="Voting rights">
-          Voting rights<i>2</i></button><button class="tchip" data-topic="Democracy">
-          Democracy<i>1</i></button><button class="tchip" data-topic="Congress">
-          Congress<i>1</i></button><button class="tchip" data-topic="Healthcare">
-          Healthcare<i>1</i></button><button class="tchip" data-topic="Labor">
-          Labor<i>1</i></button><button class="tchip" data-topic="Immigration">
-          Immigration<i>1</i></button><button class="tchip" data-topic="Courts">
-          Courts<i>1</i></button>
-      </div>
-
-      
-      <article class="story big">
-        <div class="kick">
-          <span class="live"><i></i>Just in</span><span class="sep">·</span>
-          <b>NPR</b>
-          <span class="sep">·</span><span class="place">8m ago</span>
-        </div>
-        <a class="hl" href="https://npr.org/a" target="_blank" rel="noopener noreferrer">Senate passes voting rights measure after all-night session</a>
-        <p class="dek">The bill expands early voting and restores federal oversight of election law.</p>
-        <div class="rowacts">
-          <a class="iconbtn" href="https://npr.org/a" target="_blank" rel="noopener noreferrer">Read</a>
-          <button class="iconbtn" data-post="https://npr.org/a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
-          <button class="iconbtn" data-floor="https://npr.org/a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
-        </div>
-      </article><div class="storylist">
-      <article class="story">
-        <div class="kick">
-          
-          <b>ProPublica</b>
-          <span class="sep">·</span><span class="place">3h ago</span>
-        </div>
-        <a class="hl" href="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Medicaid cuts would close rural hospitals, study finds</a>
-        
-        <div class="rowacts">
-          <a class="iconbtn" href="https://propublica.org/b" target="_blank" rel="noopener noreferrer">Read</a>
-          <button class="iconbtn" data-post="https://propublica.org/b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
-          <button class="iconbtn" data-floor="https://propublica.org/b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
-        </div>
-      </article>
-      <article class="story">
-        <div class="kick">
-          
-          <b>The Hill</b>
-          <span class="sep">·</span><span class="place">5h ago</span>
-        </div>
-        <a class="hl" href="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Union files for election at third warehouse this month</a>
-        
-        <div class="rowacts">
-          <a class="iconbtn" href="https://thehill.com/c" target="_blank" rel="noopener noreferrer">Read</a>
-          <button class="iconbtn" data-post="https://thehill.com/c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
-          <button class="iconbtn" data-floor="https://thehill.com/c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
-        </div>
-      </article>
-      <article class="story">
-        <div class="kick">
-          
-          <b>The Guardian</b>
-          <span class="sep">·</span><span class="place">9h ago</span>
-        </div>
-        <a class="hl" href="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Appeals court blocks deportation flights pending review</a>
-        
-        <div class="rowacts">
-          <a class="iconbtn" href="https://guardian.com/d" target="_blank" rel="noopener noreferrer">Read</a>
-          <button class="iconbtn" data-post="https://guardian.com/d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"></path></svg><span>Post about this</span></button>
-          <button class="iconbtn" data-floor="https://guardian.com/d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span>Take it to the floor</span></button>
-        </div>
-      </article></div>
-           
+    <div class="pbody"><div class="gate">
+    <div class="halo" aria-hidden="true">
+      <i style="animation-delay:0s"></i><i style="animation-delay:4s"></i>
+      <i style="animation-delay:8s"></i><i style="animation-delay:12s"></i>
     </div>
-    <aside class="side">
-      <div class="card"><h5>Today, in a paragraph</h5>
-        <div id="tdBrief" class="briefout">A short read on what the day adds up to.</div>
-        <button class="mini-btn" id="tdBriefGo" style="align-self:flex-start">Write it</button>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="gatecard">
+      <span class="gatedot"></span>
+      <h2>Welcome</h2>
+      <div class="seg gtabs" id="auTabs">
+        <button class="on" data-m="in">Sign in</button>
+        <button class="" data-m="up">Sign up</button>
       </div>
-      <div class="card"><h5>Where people here stand</h5>
-        <div><div class="row"><span>Expand early voting</span><b>3</b></div>
-          <div class="splitbar"><i class="s" style="width:66.66666666666666%"></i><i class="o" style="width:33.33333333333333%"></i></div>
-    <div class="legend"><span>2 support</span><span>1 oppose</span></div></div>
-        <button class="mini-btn" data-go="issues" style="align-self:flex-start">Open Issues</button>
-      </div>
-      <div class="card"><h5>People here are saying</h5>
-        <button class="qpost" data-open="p1" style="text-align:left;border:0;background:none;
-            font-family:inherit;cursor:pointer;width:100%">
-          <p>Knocked 40 doors today. #canvassing with @renato</p>
-          <small>@michael · 2h</small></button><button class="qpost" data-open="p2" style="text-align:left;border:0;background:none;
-            font-family:inherit;cursor:pointer;width:100%">
-          <p>School board meeting was packed. #schools</p>
-          <small>@renato · 5h</small></button><button class="qpost" data-open="p3" style="text-align:left;border:0;background:none;
-            font-family:inherit;cursor:pointer;width:100%">
-          <p>Ballot drop box opened downtown</p>
-          <small>@wallace · 9h</small></button>
-      </div>
-      <div class="card"><h5>Sources</h5>
-        <p class="hint" style="text-align:left">NPR · ProPublica · The Hill · The Guardian</p>
-        <p class="hint" style="text-align:left;color:var(--dim)">Headlines are linked, never rewritten.
-          Opinions on this page are ours; the reporting is theirs.</p>
-      </div>
-    </aside></div></div></section>
+      <input class="inp big" id="auEmail" type="email" placeholder="Email" autocomplete="email">
+      <input class="inp big" id="auPw" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="btn big" id="auGo">Sign in</button>
+      
+    </div>
+  </div></div></section>
 </div>
 
 

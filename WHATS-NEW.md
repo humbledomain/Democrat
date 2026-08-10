@@ -1,5 +1,23 @@
 # What's new
 
+## This round
+
+**Today moved under People** in the rail, and the site opens on your profile again — it's a social
+network, so it opens where you are.
+
+**Stories open in a reader**, not another tab. Tap a headline and it comes up over the site: the
+picture, the headline, the summary, and a *Why it matters* button that reads only what's on screen.
+Close it and you're back where you were — Esc, the ✕, or a tap outside. The full story is one button
+away at the outlet that wrote it. Cmd-click a headline and you still get a real new tab.
+
+The wire now carries pictures too — a hero on the lead story, thumbnails down the list — pulled from
+the feeds themselves, with tracking pixels filtered out.
+
+**Every number is a button.** On a profile: Followers and Following open the actual list of people,
+each with a Message button; Posts goes to your posts in the feed; Shares opens the share sheet. On
+Reach the same, plus Votes cast → Polls.
+
+
 ## Today — the front page
 
 A new first screen, and the one the site now opens on. Two halves.

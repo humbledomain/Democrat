@@ -32,6 +32,23 @@ const tag = (block, name) => {
   const m = block.match(new RegExp('<' + name + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + name + '>', 'i'));
   return m ? m[1] : '';
 };
+/* a picture if the feed carried one, ignoring tracking pixels */
+const IMGBAD = /pixel|tracking|1x1|spacer|blank\.|\.gif(\?|$)/i;
+const image = block => {
+  const tries = [
+    /<media:content[^>]+url=["']([^"']+)["']/i,
+    /<media:thumbnail[^>]+url=["']([^"']+)["']/i,
+    /<enclosure[^>]+url=["']([^"']+\.(?:jpe?g|png|webp)[^"']*)["']/i,
+    /<image[^>]*>\s*<url>([^<]+)<\/url>/i,
+    /<img[^>]+src=["']([^"']+)["']/i
+  ];
+  for(const re of tries){
+    const m = block.match(re);
+    if(m && m[1] && !IMGBAD.test(m[1]))
+      return m[1].replace(/&amp;/g,'&').trim();
+  }
+  return '';
+};
 const atomLink = block => {
   const m = block.match(/<link[^>]*rel=["']alternate["'][^>]*href=["']([^"']+)["']/i)
          || block.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i);
@@ -56,7 +73,8 @@ function parse(xml, source){
     out.push({
       title, link, source,
       when: isFinite(t) ? new Date(t).toISOString() : null,
-      summary: summary && summary.toLowerCase() !== title.toLowerCase() ? summary : ''
+      summary: summary && summary.toLowerCase() !== title.toLowerCase() ? summary : '',
+      image: image(block)
     });
     if(out.length >= 25) break;
   }

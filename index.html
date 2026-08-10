@@ -250,10 +250,15 @@ button.tag{cursor:pointer}
 .bar i{display:block;height:100%;border-radius:99px;background:var(--blue);transition:width .4s}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-radius:14px;overflow:hidden;
   background:var(--soft)}
-.stats>div{padding:15px 6px;text-align:center;border-left:1px solid var(--line)}
-.stats>div:first-child{border-left:0}
+.stats>div,.stats>button{padding:15px 6px;text-align:center;border-left:1px solid var(--line);
+  border-top:0;border-right:0;border-bottom:0;background:none;font-family:inherit;color:inherit;
+  cursor:pointer;transition:background .14s}
+.stats>button:hover{background:rgba(10,63,214,.07)}
+.stats>button:active{background:rgba(10,63,214,.12)}
+.stats>div:first-child,.stats>button:first-child{border-left:0}
 .stats b{display:block;font-size:21px;font-weight:660;letter-spacing:-.02em}
-.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+  display:block;margin-top:2px}
 .hint{font-size:12.5px;color:var(--muted);text-align:center}
 
 .pbody.pf{display:flex;align-items:center;justify-content:center}
@@ -612,10 +617,11 @@ button.tag{cursor:pointer}
 @media (max-width:900px){
   /* ---- a phone gets a real app shell: bar on top, tabs on the bottom ---- */
   :root{--tile:26px;--mast:88px;--tabs:calc(56px + env(safe-area-inset-bottom,0px))}
-  .mast{flex-wrap:wrap;height:var(--mast);padding:0 14px;align-content:center;row-gap:0}
+  /* the bar sizes itself and JS writes the real height back into --mast */
+  .mast{flex-wrap:wrap;height:auto;min-height:52px;padding:0 14px;align-content:flex-start;row-gap:0}
   .mast .mark{height:52px;display:flex;align-items:center}
   .topbar{height:52px}
-  .ticker{order:3;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
+  .ticker{order:3;flex:0 0 100%;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
   .tick{font-size:12.5px}
   .tick b{font-size:9.5px}
 
@@ -668,6 +674,8 @@ button.tag{cursor:pointer}
   .pfhandle input,.pfield.loc{font-size:15px}
 
   .pbody{padding:14px 16px 20px;overflow:visible}
+  .gate{min-height:min(58vh,500px);margin:0}
+  .gatecard{padding:clamp(24px,6vw,34px) clamp(20px,5vw,26px) 22px}
   .phead{padding:12px 16px;gap:11px;position:sticky;top:calc(var(--mast) - 1px);z-index:7;
     background:var(--bg);border-bottom:1px solid var(--line)}
   .phead h2{font-size:16px}
@@ -705,8 +713,8 @@ button.tag{cursor:pointer}
   .person{padding:13px;border-radius:16px}
   .pface{width:48px;height:48px;font-size:17px}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .stats>div:nth-child(3){border-left:0}
-  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .stats>div:nth-child(3),.stats>button:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3),.stats>button:nth-child(n+3){border-top:1px solid var(--line)}
   .quick{flex-wrap:wrap}
   .quick textarea{min-width:60%}
   .quick .btn{margin-left:auto}
@@ -965,6 +973,43 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .hl:hover{color:var(--blue)}
 .story.big .hl{font-size:clamp(21px,2.2vw,28px);line-height:1.18;letter-spacing:-.032em;font-weight:690}
 .dek{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:9px;max-width:64ch}
+.story{display:flex;gap:14px;align-items:flex-start}
+.story .grow{flex:1;min-width:0}
+.story.big{display:block}
+.thumb-s{width:96px;height:72px;border-radius:10px;object-fit:cover;flex:none;background:var(--soft);
+  border:1px solid var(--line)}
+.hero{width:100%;max-height:340px;object-fit:cover;border-radius:14px;margin-bottom:12px;display:block;
+  background:var(--soft);border:1px solid var(--line)}
+
+/* the reader: a story opens here, not in another tab */
+.reader{position:fixed;inset:0;z-index:88;background:rgba(8,20,45,.42);backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);display:flex;justify-content:center;align-items:flex-start;
+  padding:5vh 20px 20px;animation:fade .18s ease}
+.readbox{width:100%;max-width:720px;max-height:90vh;max-height:90dvh;background:var(--card);
+  border-radius:22px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 40px 90px -30px rgba(8,26,72,.55);animation:rise .28s cubic-bezier(.2,.9,.25,1) both}
+.readtop{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);
+  flex:none}
+.readtop .kick{margin:0;flex:1;min-width:0}
+.readbody{overflow-y:auto;padding:20px 24px 8px;flex:1;min-height:0}
+.readbody h1{font-size:clamp(22px,2.4vw,30px);line-height:1.18;letter-spacing:-.03em;font-weight:690;
+  margin-bottom:10px}
+.readbody .dek{font-size:16px;line-height:1.55;color:var(--ink2);max-width:none}
+.readimg{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:16px;display:block;
+  background:var(--soft)}
+.readsrc{display:block;margin-top:16px;text-align:center;text-decoration:none}
+.readnote{font-size:11.5px;color:var(--dim);text-align:center;margin:10px 0 4px;line-height:1.5}
+.readfoot{display:flex;gap:8px;padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--line);flex:none;flex-wrap:wrap}
+.readfoot .btn{flex:1;min-width:120px}
+@media (max-width:900px){
+  .reader{padding:0;align-items:flex-end}
+  .readbox{max-width:none;border-radius:20px 20px 0 0;max-height:94dvh}
+  .readbody{padding:16px 16px 4px}
+  .readbody h1{font-size:23px}
+  .thumb-s{width:78px;height:60px}
+  .readfoot .btn{min-width:0;font-size:12.5px;padding:11px 8px}
+}
 .story .rowacts{margin-top:7px}
 .story .kick{margin-bottom:7px}
 
@@ -1064,6 +1109,12 @@ const SITE_DOMAIN = 'https://www.democrat.si';
 const SITE = SITE_DOMAIN || location.origin;
 const SQ = "M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z";
 const APPS = [
+{id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
+       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"/>
+       <circle cx="88" cy="60" r="16" fill="${BLUE}"/>
+       <circle cx="88" cy="60" r="12" fill="#fff"/>
+       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="${BLUE}" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`},
+{id:'endorsed',name:'People',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
 {id:'today',name:'Today',art:`<rect x="17" y="27" width="86" height="68" rx="9" fill="#fff"/>
        <rect x="27" y="38" width="37" height="27" rx="4" fill="${BLUE}"/>
        <rect x="70" y="38" width="23" height="5" rx="2.5" fill="${BLUE}"/>
@@ -1072,12 +1123,6 @@ const APPS = [
        <rect x="27" y="73" width="66" height="5" rx="2.5" fill="${BLUE}"/>
        <rect x="27" y="83" width="47" height="5" rx="2.5" fill="${BLUE}"/>
        <circle cx="97" cy="30" r="11" fill="#fff"/><circle cx="97" cy="30" r="8" fill="#E5352B"/>`},
-{id:'profile',name:'Profile',art:`<circle cx="60" cy="42" r="18" fill="#fff"/>
-       <path d="M60 66c19.5 0 35.5 14.6 37.6 33.4A4 4 0 0 1 93.6 104H26.4a4 4 0 0 1-4-4.6C24.5 80.6 40.5 66 60 66Z" fill="#fff"/>
-       <circle cx="88" cy="60" r="16" fill="${BLUE}"/>
-       <circle cx="88" cy="60" r="12" fill="#fff"/>
-       <path d="M82.6 60.2l3.9 3.9 7.3-7.8" stroke="${BLUE}" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`},
-{id:'endorsed',name:'People',art:`<path d="M 60.0,24.0 L 69.8,48.5 L 96.2,50.2 L 75.8,67.1 L 82.3,92.8 L 60.0,78.7 L 37.7,92.8 L 44.2,67.1 L 23.8,50.2 L 50.2,48.5 Z" fill="#fff" stroke="#F2B01E" stroke-width="7" stroke-linejoin="round"/>`},
 {id:'compose',name:'Chat',art:`<path d="M24 96 43.1 92.5 92.6 43 77 27.4 27.5 76.9Z" fill="#fff"/>
        <path d="M60.1 44.4 75.6 59.9M68.6 35.9 84.1 51.5" stroke="${BLUE}" stroke-width="5"/>
        <path d="M24 96 32.5 94.6 25.4 87.5Z" fill="${BLUE}"/>`},
@@ -1571,7 +1616,8 @@ const ico = {
   save :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6.5 4h11a1 1 0 0 1 1 1v15l-6.5-4.2L5.5 20V5a1 1 0 0 1 1-1Z"/></svg>',
   saved:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.5 4h11a1 1 0 0 1 1 1v15l-6.5-4.2L5.5 20V5a1 1 0 0 1 1-1Z"/></svg>',
   photo:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.6" cy="10" r="1.6"/><path d="m3.6 17.4 4.8-4.2 4 3.4 3-2.4 5 4"/></svg>',
-  more :'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg>'
+  more :'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg>',
+  read :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5Z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5Z"/></svg>'
 };
 const act = (k,label,on) => `<button class="iconbtn${on?' on':''}" data-act="${k}">${ico[k]||''}${label!==undefined&&label!==''?`<span>${label}</span>`:''}</button>`;
 
@@ -1686,10 +1732,10 @@ S.profile = {
 
       <div class="pcolR">
         <div class="stats">
-          <div><b>${D.followers}</b><span>Followers</span></div>
-          <div><b>${D.following}</b><span>Following</span></div>
-          <div><b>${D.posts.length}</b><span>Posts</span></div>
-          <div><b>${D.shares}</b><span>Shares</span></div>
+          <button data-stat="followers"><b>${D.followers}</b><span>Followers</span></button>
+          <button data-stat="following"><b>${D.following}</b><span>Following</span></button>
+          <button data-stat="posts"><b>${D.posts.length}</b><span>Posts</span></button>
+          <button data-stat="shares"><b>${D.shares}</b><span>Shares</span></button>
         </div>
 
         ${sec('Where '+(RO?'they stand':'I stand'), 'issues', stands)}
@@ -1717,6 +1763,8 @@ S.profile = {
     if(!V){ authInit(); return; }
     document.querySelector('.pbody').classList.add('pf');
     $('pfShare') && ($('pfShare').onclick = ()=>share(shareLine()));
+
+    wireStats();
 
     if(RO){
       if($('pfDM')) $('pfDM').onclick = ()=> dmSheet({id:V.id, handle:V.handle, name:V.name, photo_url:V.photo_url});
@@ -2973,6 +3021,109 @@ const newsWhen = ts =>{
 };
 const NEWSFRESH = 45 * 60e3;
 
+/* who follows whom — fetched when asked for, never guessed at */
+/* every number on a page goes somewhere */
+function wireStats(){
+  document.querySelectorAll('[data-stat]').forEach(b=>b.onclick = ()=>{
+    const k = b.dataset.stat;
+    if(k === 'followers') return peopleSheet(RO ? `Following @${V.handle}` : 'Following you', 'followers');
+    if(k === 'following') return peopleSheet(RO ? `@${V.handle} follows` : 'You follow', 'following');
+    if(k === 'posts' || k === 'likes'){ if(!RO) SC.feed = 'mine'; return open_('feed') }
+    if(k === 'votes')     return open_('polls');
+    if(k === 'shares')    return share(shareLine(), V && V.handle);
+  });
+}
+
+async function peopleSheet(title, kind){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>${esc(title)}</h3>
+    <div id="plList"><div class="spin"></div></div>
+    <div class="sheetfoot"><button class="btn ghost" id="plClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('plClose').onclick = close;
+
+  const box = $('plList');
+  if(!ONLINE || !V){ box.innerHTML = `<p class="sheetmsg">Nobody yet.</p>`; return }
+  try{
+    const col = kind === 'followers' ? 'followee' : 'follower';
+    const get = kind === 'followers' ? 'follower' : 'followee';
+    const r = await sb.from('follows').select(get).eq(col, V.id).limit(200);
+    const ids = ((r && r.data) || []).map(x => x[get]).filter(Boolean);
+    if(!ids.length){
+      box.innerHTML = `<p class="sheetmsg">${kind === 'followers'
+        ? 'Nobody is following this page yet.' : 'Not following anyone yet.'}</p>`;
+      return;
+    }
+    const pr = await sb.from('profiles').select('id,handle,name,photo_url,location,role')
+      .in('id', ids).not('handle','is',null);
+    const people = (pr && pr.data) || [];
+    box.innerHTML = people.length
+      ? people.map(p => personRow(p, (ME && p.id !== ME.id)
+          ? `<button class="mini-btn" data-pdm="${p.id}">Message</button>` : '')).join('')
+      : `<p class="sheetmsg">Those accounts have not finished setting up yet.</p>`;
+    box.querySelectorAll('[data-pdm]').forEach(b=>b.onclick = ()=>{
+      const who = people.find(x => x.id === b.dataset.pdm); close(); if(who) dmSheet(who);
+    });
+  }catch(e){ box.innerHTML = `<p class="sheetmsg">That list could not be loaded.</p>` }
+}
+
+/* a story opens here, on top of the site, and closes back to it */
+function readerOpen(link){
+  const it = (NEWS || []).find(x => x.link === link); if(!it) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'reader';
+  wrap.innerHTML = `<div class="readbox" role="dialog" aria-label="Story">
+    <header class="readtop">
+      <span class="kick">
+        ${it.when && Date.now() - new Date(it.when).getTime() < NEWSFRESH
+          ? `<span class="live"><i></i>Just in</span><span class="sep">&middot;</span>` : ''}
+        <b>${esc(it.source || 'Wire')}</b>
+        ${it.when ? `<span class="sep">&middot;</span><span class="place">${esc(newsWhen(it.when))}</span>` : ''}
+      </span>
+      <button class="pclose" id="rdClose" style="display:grid" aria-label="Close">&#10005;</button>
+    </header>
+    <div class="readbody">
+      ${it.image ? `<img class="readimg" src="${esc(it.image)}" alt="" onerror="this.remove()">` : ''}
+      <h1>${esc(it.title)}</h1>
+      ${it.summary ? `<p class="dek">${esc(it.summary)}</p>` : ''}
+      <div class="ai" id="rdAi" hidden></div>
+      <a class="btn big readsrc" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">
+        Read the full story at ${esc(it.source || 'the source')}</a>
+      <p class="readnote">Reported and published by ${esc(it.source || 'the source')}.
+        democrat.ai links to the story, it does not reprint it.</p>
+    </div>
+    <footer class="readfoot">
+      <button class="btn ghost" id="rdWhy">Why it matters</button>
+      ${(RO||GUEST())?'':`<button class="btn ghost" id="rdPost">Post about this</button>
+      <button class="btn ghost" id="rdFloor">To the floor</button>`}
+    </footer>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target === wrap) close() };
+  $('rdClose').onclick = close;
+  const why = $('rdWhy');
+  if(why) why.onclick = ()=> suggest('rdAi', why, 'story',
+    `${it.source}: ${it.title}${it.summary ? '\n' + it.summary : ''}`,
+    { note:'Read from the headline and summary only.' });
+  const post = $('rdPost');
+  if(post) post.onclick = ()=>{
+    const tag = (topicsOf(it)[0] || '').replace(/[^a-z0-9]+/gi,'').toLowerCase();
+    PREFILL.feed = `${it.title}\n${it.link}${tag?`\n#${tag}`:''}\n\n`;
+    close(); open_('feed');
+  };
+  const floor = $('rdFloor');
+  if(floor) floor.onclick = ()=>{
+    PREFILL.room = `${it.title} — ${it.link}\n@desk what should we make of this?`;
+    close(); open_('townhall');
+  };
+}
+
 S.today = {
   sub(){
     const n = (NEWS || []).length;
@@ -2992,21 +3143,29 @@ S.today = {
     const posts = unmuted(G.posts || []).filter(p => !TOPIC || matchesTopic(p.text, TOPIC)).slice(0,4);
     const stands = issueTally('all').filter(h => !TOPIC || matchesTopic(h.title, TOPIC)).slice(0,4);
 
+    const kickOf = it => `<div class="kick">
+      ${it.when && Date.now() - new Date(it.when).getTime() < NEWSFRESH
+        ? `<span class="live"><i></i>Just in</span><span class="sep">&middot;</span>` : ''}
+      <b>${esc(it.source || 'Wire')}</b>
+      ${it.when ? `<span class="sep">&middot;</span><span class="place">${esc(newsWhen(it.when))}</span>` : ''}
+    </div>`;
     const story = (it, big)=>`
       <article class="story${big?' big':''}">
-        <div class="kick">
-          ${it.when && Date.now() - new Date(it.when).getTime() < NEWSFRESH
-            ? `<span class="live"><i></i>Just in</span><span class="sep">&middot;</span>` : ''}
-          <b>${esc(it.source || 'Wire')}</b>
-          ${it.when ? `<span class="sep">&middot;</span><span class="place">${esc(newsWhen(it.when))}</span>` : ''}
+        ${big && it.image ? `<img class="hero" src="${esc(it.image)}" alt="" loading="lazy"
+             onerror="this.remove()">` : ''}
+        <div class="grow">
+          ${kickOf(it)}
+          <a class="hl" href="${esc(it.link)}" data-read="${esc(it.link)}"
+             target="_blank" rel="noopener noreferrer">${esc(it.title)}</a>
+          ${big && it.summary ? `<p class="dek">${esc(it.summary)}</p>` : ''}
+          <div class="rowacts">
+            <button class="iconbtn" data-read="${esc(it.link)}">${ico.read}<span>Read</span></button>
+            ${(RO||GUEST())?'':`<button class="iconbtn" data-post="${esc(it.link)}">${ico.talk}<span>Post about this</span></button>
+            <button class="iconbtn" data-floor="${esc(it.link)}">${ico.spark}<span>To the floor</span></button>`}
+          </div>
         </div>
-        <a class="hl" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">${esc(it.title)}</a>
-        ${big && it.summary ? `<p class="dek">${esc(it.summary)}</p>` : ''}
-        <div class="rowacts">
-          <a class="iconbtn" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">Read</a>
-          ${(RO||GUEST())?'':`<button class="iconbtn" data-post="${esc(it.link)}">${ico.talk}<span>Post about this</span></button>
-          <button class="iconbtn" data-floor="${esc(it.link)}">${ico.spark}<span>Take it to the floor</span></button>`}
-        </div>
+        ${!big && it.image ? `<img class="thumb-s" src="${esc(it.image)}" alt="" loading="lazy"
+             onerror="this.remove()">` : ''}
       </article>`;
 
     return `<div class="split"><div class="main">
@@ -3062,6 +3221,10 @@ S.today = {
     if(more) more.onclick = ()=>{ NEWSN += 18; open_('today', true) };
     document.querySelectorAll('[data-topic]').forEach(b=>b.onclick = ()=>{
       TOPIC = b.dataset.topic; NEWSN = 18; open_('today', true);
+    });
+    document.querySelectorAll('[data-read]').forEach(b=>b.onclick = e=>{
+      if(e.metaKey || e.ctrlKey || e.shiftKey) return;   /* let a real new tab happen */
+      e.preventDefault(); readerOpen(b.dataset.read);
     });
     document.querySelectorAll('[data-post]').forEach(b=>b.onclick = ()=>{
       const it = (NEWS||[]).find(x=>x.link === b.dataset.post); if(!it) return;
@@ -3668,10 +3831,10 @@ S.reach = {
 
     return `<div class="split"><div class="main">
       <div class="stats">
-        <div><b>${D.shares}</b><span>Shares</span></div>
-        <div><b>${D.followers}</b><span>Followers</span></div>
-        <div><b>${likes}</b><span>Likes</span></div>
-        <div><b>${votes}</b><span>Votes cast</span></div>
+        <button data-stat="shares"><b>${D.shares}</b><span>Shares</span></button>
+        <button data-stat="followers"><b>${D.followers}</b><span>Followers</span></button>
+        <button data-stat="likes"><b>${likes}</b><span>Likes</span></button>
+        <button data-stat="votes"><b>${votes}</b><span>Votes cast</span></button>
       </div>
       <div class="card">
         <h5>Your posting, last 14 days</h5>
@@ -3703,6 +3866,7 @@ S.reach = {
   init(){
     const r=$('rShare');
     if(r) r.onclick=()=>share(V.name?`${V.name} on democrat.ai`:'democrat.ai');
+    wireStats();
   }
 };
 
@@ -4448,7 +4612,8 @@ function mentionable(input){
 
 /* =========================================================== the keys themselves */
 function topLayer(){
-  return document.querySelector('.lbox') || (PAL.el ? PAL.el : null) || document.querySelector('.sheet');
+  return document.querySelector('.lbox') || (PAL.el ? PAL.el : null)
+      || document.querySelector('.reader') || document.querySelector('.sheet');
 }
 document.addEventListener('keydown', e=>{
   const el = e.target || {};
@@ -4532,6 +4697,7 @@ function paintTicker(){
   const lines = tickerLines();
   const tk = $('ticker');
   if(tk) tk.hidden = !lines.length;            /* nothing to report, no empty crawl */
+  sizeMast();                                  /* the bar just changed height */
   if(!lines.length){ box.innerHTML = ''; clearInterval(TICKT); return }
   box.innerHTML = lines.map((l,i)=>
     `<button class="tick${i===0?' on':''}" data-t="${i}">${l.live
@@ -4663,6 +4829,27 @@ function netWatch(){
   paint();
 }
 
+/* the masthead is one row on a desktop and two on a phone, and it disappears a
+   row when the crawl has nothing to say. Measure it rather than assume. */
+function sizeMast(){
+  const m = document.querySelector('.mast'); if(!m) return;
+  const h = Math.round(m.getBoundingClientRect().height);
+  if(h > 20) document.documentElement.style.setProperty('--mast', h + 'px');
+}
+function watchMast(){
+  sizeMast();
+  try{ addEventListener('resize', sizeMast); addEventListener('orientationchange', sizeMast) }catch(e){}
+  try{
+    if(typeof ResizeObserver === 'function'){
+      const m = document.querySelector('.mast');
+      if(m) new ResizeObserver(sizeMast).observe(m);
+    }
+  }catch(e){}
+  /* fonts landing late can change the height by a pixel or two */
+  try{ if(document.fonts && document.fonts.ready) document.fonts.ready.then(sizeMast) }catch(e){}
+  setTimeout(sizeMast, 300);
+}
+
 function wireTopbar(){
   const s = $('tSearch'), b = $('tBell'), t = $('tTheme');
   if(s) s.onclick = ()=>palOpen();
@@ -4672,11 +4859,11 @@ function wireTopbar(){
   paintBell();
   paintTicker();
   netWatch();
+  watchMast();
 }
 
 /* --------------------------------------------------------------------- boot */
 (async function boot(){
-  if(!qHandle()) current = 'today';        /* the front page, unless a profile was shared */
   wireTopbar();
   renderRail();
   panel.innerHTML = '<div class="spin"></div>';

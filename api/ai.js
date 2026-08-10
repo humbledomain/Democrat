@@ -232,6 +232,16 @@ Never concede a settled right. Never sneer.`
 };
 
 const TASKS = {
+  /* one story, read from its headline and summary — nothing else is known */
+  story: { max:400, system:
+    'You are given one news headline and its summary, with the outlet that reported it. In 60 to 90 ' +
+    'words say why it matters, from the point of view of an American Democrat who has done the ' +
+    'reading. Name who is affected and what is actually at stake. Use ONLY what is in the headline ' +
+    'and summary — do not add a number, a quote, a date or a consequence that is not there, and do ' +
+    'not guess what happened next. If the summary is too thin to say anything useful, say exactly ' +
+    'that in one sentence. No headings, no bullet points, no slogans, no "in conclusion". Plain and ' +
+    'level.' },
+
   tighten: { max:400, system:
     'Rewrite the text to be shorter and clearer. Keep the writer\'s meaning, claims, tone and point of view ' +
     'exactly. Add no facts, statistics, names or examples that are not already there. No call to action, no ' +
