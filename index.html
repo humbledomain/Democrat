@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>democrat.ai</title>
 <meta name="description" content="A political presence, in one place.">
 <!-- The icon is embedded here so it works even before the icon files deploy. -->
@@ -24,6 +24,10 @@ try{var _t=localStorage.getItem('dai.theme')||'auto';
     if(m) m.setAttribute('content', _t==='dark'?'#080b12':'#ffffff') });
 }catch(e){}</script>
 <meta name="apple-mobile-web-app-title" content="democrat.ai">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 
 <meta property="og:url" content="https://www.democrat.si/">
 <meta property="og:site_name" content="democrat.si">
@@ -41,11 +45,11 @@ try{var _t=localStorage.getItem('dai.theme')||'auto';
 :root{
   --blue:#0A3FD6; --ink:#0b0d12; --muted:#6b7488;
   --line:rgba(10,32,90,.10); --soft:rgba(10,32,90,.05);
-  --tile:clamp(52px,5.6vw,80px); --pad:clamp(20px,3.2vw,44px);
+  --tile:clamp(34px,2.6vw,40px); --pad:clamp(20px,3.2vw,44px);
   /* surfaces and text tones, so the whole app can turn dark in one place */
   --bg:#fff; --card:#fff; --panelbg:rgba(255,255,255,.9); --raise:rgba(255,255,255,.78);
   --ink2:#39415a; --ink3:#28304a; --dim:#8b93a8; --ph:#9aa3b8; --faint:#c9d2e6;
-  --gutter:clamp(20px,2.4vw,40px); --mast:58px; --live:#E5352B;
+  --gutter:clamp(20px,2.4vw,40px); --mast:58px; --live:#E5352B; --tabs:0px;
 }
 html[data-theme="dark"]{
   color-scheme:dark;
@@ -84,27 +88,57 @@ button,input,textarea{font:inherit;color:inherit}
 .stage{position:relative;z-index:2;min-height:100svh;display:grid;grid-template-columns:auto minmax(0,1fr);
   gap:clamp(22px,3vw,52px);
   padding:calc(var(--mast) + clamp(14px,2.4vh,26px)) var(--pad) clamp(28px,4vh,48px)}
-.rail{display:grid;grid-template-columns:repeat(2,var(--tile));column-gap:calc(var(--tile)*.45);
-  row-gap:calc(var(--tile)*.30);align-content:center;justify-content:start}
+.rail{display:flex;flex-direction:column;min-width:0}
+.nav{display:flex;flex-direction:column;gap:1px}
 .rail.settled .app{animation:none;opacity:1;transform:none}
-.app{display:flex;flex-direction:column;align-items:center;gap:calc(var(--tile)*.085);background:none;border:0;
-  padding:0;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;
-  opacity:0;transform:translateY(12px);animation:pop .5s cubic-bezier(.2,.9,.25,1) forwards}
+.app{display:flex;align-items:center;gap:11px;background:none;border:0;width:100%;
+  padding:6px 14px 6px 6px;border-radius:14px;position:relative;cursor:pointer;text-align:left;
+  -webkit-tap-highlight-color:transparent;transition:background .16s;
+  opacity:0;transform:translateY(8px);animation:pop .45s cubic-bezier(.2,.9,.25,1) forwards}
 @keyframes pop{to{opacity:1;transform:none}}
-.tile{width:var(--tile);height:var(--tile);display:block;position:relative;
+.app:hover{background:var(--soft)}
+.app.on{background:var(--soft)}
+.tile{width:var(--tile);height:var(--tile);display:block;position:relative;flex:none;
   transition:transform .22s cubic-bezier(.2,.9,.25,1),filter .18s}
 .tile svg{width:100%;height:100%;display:block}
-.app:hover .tile{transform:scale(1.035)}
-.app:active .tile{transform:scale(.90);filter:brightness(.86);transition-duration:.09s}
-.app:focus-visible{outline:none}
+.app:hover .tile{transform:scale(1.04)}
+.app:active .tile{transform:scale(.92);filter:brightness(.88);transition-duration:.09s}
+.app:focus-visible{outline:none;background:var(--soft)}
 .app:focus-visible .tile{filter:drop-shadow(0 0 3px rgba(10,63,214,.9))}
-.label{font-size:calc(var(--tile)*.175);font-weight:400;color:var(--ink);white-space:nowrap;line-height:1.2}
-.app.on .label{font-weight:590}
-.app.on::after{content:"";position:absolute;bottom:calc(var(--tile)*-.20);width:5px;height:5px;
-  border-radius:50%;background:var(--blue)}
-.badge{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;
-  background:var(--blue);color:#fff;font-size:11px;font-weight:650;display:grid;place-items:center;
+.label{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;line-height:1.2;
+  letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.app.on .label{font-weight:700}
+.app.on::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
+  width:3px;height:20px;border-radius:0 3px 3px 0;background:var(--blue)}
+.app.more{display:none}          /* only a phone needs it: the desktop shows all ten */
+.livedot{width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;
+  animation:livepulse 1.9s ease-in-out infinite}
+.badge{position:absolute;top:-3px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;
+  background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;
   box-shadow:0 0 0 2.5px var(--bg)}
+
+/* the foot of the nav: one primary action and who you are */
+.navfoot{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:flex;
+  flex-direction:column;gap:8px}
+.navpost{border:0;border-radius:14px;padding:12px 16px;font-family:inherit;font-size:14.5px;font-weight:640;
+  background:var(--blue);color:#fff;cursor:pointer;width:100%;
+  box-shadow:0 10px 22px -14px rgba(10,63,214,.95);transition:transform .16s,box-shadow .16s,opacity .16s}
+.navpost:hover{transform:translateY(-1px);box-shadow:0 14px 26px -14px rgba(10,63,214,1)}
+.navpost:active{transform:translateY(0)}
+.acct{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;cursor:pointer;
+  padding:7px 8px;border-radius:14px;text-align:left;font-family:inherit;transition:background .16s}
+.acct:hover{background:var(--soft)}
+.acct .grow{min-width:0;flex:1}
+.acct b{display:block;font-size:13.5px;font-weight:640;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct small{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.acct .whoav{width:32px;height:32px;font-size:12.5px}
+.acct .chev{color:var(--faint);font-size:15px;flex:none}
+.menu{display:flex;flex-direction:column;gap:1px;margin:-6px 0}
+.menu button{display:flex;align-items:center;gap:11px;border:0;background:none;font-family:inherit;
+  font-size:14.5px;color:inherit;text-align:left;padding:12px 10px;border-radius:12px;cursor:pointer}
+.menu button:hover{background:var(--soft)}
+.menu button.warn{color:var(--live)}
 
 .panel{background:var(--panelbg);backdrop-filter:blur(18px) saturate(1.4);
   -webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--line);border-radius:26px;
@@ -561,7 +595,10 @@ button.tag{cursor:pointer}
   .stage{height:100svh;min-height:0;gap:0}
   /* one surface: the rail and the content are two regions of the same app,
      divided by a single line that the header rule runs into */
-  .rail{align-content:center;padding-right:var(--gutter);border-right:1px solid var(--line)}
+  .rail{width:clamp(178px,15vw,224px);padding-right:var(--gutter);border-right:1px solid var(--line);
+    justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .stage>.rail{padding-top:2px}
   .panel{height:100%;min-height:0;background:none;border:0;border-radius:0;box-shadow:none;
     backdrop-filter:none;-webkit-backdrop-filter:none}
   .phead{padding:15px var(--gutter) 15px var(--gutter)}
@@ -573,19 +610,53 @@ button.tag{cursor:pointer}
   .split>.side::-webkit-scrollbar{display:none}
 }
 @media (max-width:900px){
-  :root{--tile:clamp(58px,16vw,78px);--mast:96px}
-  .mast{flex-wrap:wrap;height:var(--mast);padding:0 16px;align-content:center;row-gap:0}
+  /* ---- a phone gets a real app shell: bar on top, tabs on the bottom ---- */
+  :root{--tile:26px;--mast:88px;--tabs:calc(56px + env(safe-area-inset-bottom,0px))}
+  .mast{flex-wrap:wrap;height:var(--mast);padding:0 14px;align-content:center;row-gap:0}
   .mast .mark{height:52px;display:flex;align-items:center}
   .topbar{height:52px}
-  /* the crawl drops to its own band, the way a news app does */
-  .ticker{order:3;width:100%;height:43px;border-top:1px solid var(--line);gap:10px}
+  .ticker{order:3;width:100%;height:36px;border-top:1px solid var(--line);gap:10px}
   .tick{font-size:12.5px}
-  .stage{grid-template-columns:1fr}
-  .rail{grid-template-columns:repeat(4,var(--tile));justify-content:center;align-content:start}
-  .panel{position:fixed;inset:auto 0 0 0;height:88vh;height:88dvh;z-index:20;border-radius:24px 24px 0 0;
-    transform:translateY(101%);transition:transform .38s cubic-bezier(.25,.9,.3,1)}
-  body.open .panel{transform:none}
-  .pclose{display:grid}
+  .tick b{font-size:9.5px}
+
+  .stage{display:block;height:auto;min-height:0;padding:calc(var(--mast) + 6px) 0 calc(var(--tabs) + 4px)}
+
+  /* the rail becomes the tab bar */
+  .rail{position:fixed;left:0;right:0;bottom:0;z-index:30;width:auto;height:var(--tabs);
+    display:flex;align-items:stretch;padding:0 4px env(safe-area-inset-bottom,0px);gap:0;overflow:visible;
+    background:var(--panelbg);backdrop-filter:blur(18px) saturate(1.5);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);border-top:1px solid var(--line)}
+  .nav{display:flex;flex:1;flex-direction:row;align-items:stretch;gap:0}
+  .app{flex:1;flex-direction:column;justify-content:center;gap:3px;padding:7px 2px 6px;border-radius:12px;
+    text-align:center;animation:none;opacity:1;transform:none}
+  .app:hover{background:none}
+  .app.on{background:none}
+  .app.on::before{display:none}
+  .app.on .tile{transform:translateY(-1px)}
+  .label{font-size:10px;font-weight:600;flex:none;width:100%;text-align:center;letter-spacing:-.01em}
+  .app.on .label{font-weight:800;color:var(--blue)}
+  .badge{top:-4px;right:calc(50% - 18px);min-width:16px;height:16px;font-size:9.5px}
+  .livedot{position:absolute;top:6px;right:calc(50% - 16px)}
+  /* the five that do not fit live behind More */
+  .app[data-id="issues"],.app[data-id="ballot"],.app[data-id="polls"],
+  .app[data-id="fundraise"],.app[data-id="reach"]{display:none}
+  .app[data-id="feed"]{order:1}.app[data-id="townhall"]{order:2}
+  .app[data-id="compose"]{order:3}.app[data-id="endorsed"]{order:4}
+  .app[data-id="profile"]{order:5}
+  .app.more{display:flex;order:6}
+
+  /* one thumb-sized way to post */
+  .navfoot{position:fixed;right:14px;bottom:calc(var(--tabs) + 12px);z-index:29;margin:0;padding:0;
+    border:0;width:auto;flex-direction:row}
+  .acct{display:none}
+  .navpost{width:auto;border-radius:99px;padding:14px 20px;font-size:14px;
+    box-shadow:0 12px 26px -10px rgba(10,63,214,.85)}
+
+  /* the panel is simply the page now */
+  .panel{position:static;height:auto;min-height:calc(100dvh - var(--mast) - var(--tabs) - 10px);
+    z-index:1;border-radius:0;border:0;background:none;box-shadow:none;transform:none;
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  .pclose{display:none}
   .mode{display:none}
 }
 
@@ -596,21 +667,35 @@ button.tag{cursor:pointer}
   input,textarea,select{font-size:16px}
   .pfhandle input,.pfield.loc{font-size:15px}
 
-  .stage{padding-left:16px;padding-right:16px;gap:18px}
-  .mark{left:16px}
-  .panel{height:88vh;height:88dvh;padding-bottom:env(safe-area-inset-bottom,0px)}
-  .pbody{padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
-  .phead{padding:13px 15px;gap:11px}
+  .pbody{padding:14px 16px 20px;overflow:visible}
+  .phead{padding:12px 16px;gap:11px;position:sticky;top:calc(var(--mast) - 1px);z-index:7;
+    background:var(--bg);border-bottom:1px solid var(--line)}
   .phead h2{font-size:16px}
   .acts{gap:6px}
   .acts .btn{padding:9px 13px}
   .acts .seg button{padding:7px 10px;font-size:12px}
 
   /* thumbs need something to hit */
-  .tag{padding:7px 12px}
-  .iconbtn{padding:7px 9px}
+  .tag{padding:8px 13px}
+  .iconbtn{padding:9px 10px;min-height:40px}
+  .rowacts{gap:0;margin-left:-10px}
   .net{width:46px;height:46px}
   .btn{padding:11px 16px}
+  .linkbtn{padding:8px 10px;margin-left:-10px}
+  .newpill{top:calc(var(--mast) + 46px)}
+
+  /* one scroller per screen: the page. Composers stick above the tabs. */
+  .pbody.chatbody{overflow:visible;display:block}
+  .pbody.chatbody .split{display:block}
+  .chat{height:auto;min-height:0}
+  .msgs{overflow:visible;max-height:none;min-height:40vh;padding-right:0}
+  .room{height:auto}
+  .roommsgs{overflow:visible;max-height:none;min-height:44vh}
+  .chatbar{position:sticky;bottom:calc(var(--tabs) + 8px);z-index:8;background:var(--card);
+    box-shadow:0 -6px 18px -12px rgba(8,26,72,.5), 0 0 0 1px var(--line)}
+  .bots{position:sticky;bottom:calc(var(--tabs) + 62px);z-index:8;padding:6px 0;
+    background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
+  .quick{position:sticky;top:calc(var(--mast) + 54px);z-index:6}
 
   .split{gap:20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -642,7 +727,7 @@ button.tag{cursor:pointer}
   .talist{left:0;right:0}
 }
 @media (max-width:420px){
-  .rail{grid-template-columns:repeat(3,var(--tile))}
+  .rail{grid-template-columns:repeat(4,1fr)}
   .grid{grid-template-columns:repeat(2,1fr)}
   .pgrid{gap:16px}
   .datechip{width:42px}
@@ -784,6 +869,10 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;display:block;border:1px solid var(--line)}
 .thumbx{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;
   background:var(--ink);color:var(--bg);font-size:11px;cursor:pointer;display:grid;place-items:center;line-height:1}
+.wlink{color:var(--blue);text-decoration:none;word-break:break-word}
+.wlink:hover{text-decoration:underline}
+.qcount{font-size:11.5px;font-weight:700;color:var(--dim);align-self:center;min-width:12px;text-align:right}
+.qcount.hot{color:var(--live)}
 .mention,.hash{color:var(--blue);font-weight:560;text-decoration:none;background:none;border:0;padding:0;
   font-size:inherit;font-family:inherit;cursor:pointer;line-height:inherit}
 .mention:hover,.hash:hover{text-decoration:underline}
@@ -850,12 +939,45 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 .botchip .whoav{width:22px;height:22px;font-size:10px}
 @media (max-width:900px){
   .room{height:auto}
-  .roommsgs{min-height:200px;max-height:52vh}
-  .botchip{font-size:11.5px;padding:3px 11px 3px 3px}
+  .botchip{font-size:11.5px;padding:5px 12px 5px 4px}
   .botchip .whoav{width:20px;height:20px;font-size:9.5px}
 }
 
+/* ------------------------------------------------------- loading and motion */
+.sk .skline{height:11px;border-radius:6px;margin:7px 0;
+  background:linear-gradient(90deg,var(--soft) 25%,rgba(140,160,200,.16) 37%,var(--soft) 63%);
+  background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+.sk .w30{width:30%}.sk .w90{width:90%}.sk .w70{width:70%}.sk .w50{width:50%}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+.iconbtn.pop svg{animation:pip .34s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pip{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+.newpill{position:sticky;top:0;z-index:6;align-self:center;border:0;border-radius:99px;padding:9px 18px;
+  background:var(--blue);color:#fff;font-family:inherit;font-size:13px;font-weight:640;cursor:pointer;
+  box-shadow:0 12px 26px -12px rgba(10,63,214,.9);animation:drop .3s cubic-bezier(.2,.9,.25,1) both}
+@keyframes drop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.pcard{position:fixed;z-index:70;width:270px;background:var(--card);border-radius:16px;padding:14px;
+  box-shadow:0 20px 50px -18px rgba(8,26,72,.45), 0 0 0 1px var(--line);
+  display:flex;flex-direction:column;gap:9px;animation:fade .14s ease;pointer-events:auto}
+.pcard .top{display:flex;align-items:center;gap:10px}
+.pcard .whoav{width:42px;height:42px;font-size:16px}
+.pcard b{font-size:14.5px;font-weight:660;display:block}
+.pcard small{font-size:12.5px;color:var(--muted);display:block}
+.pcard p{font-size:13px;line-height:1.45;color:var(--ink2)}
+.pcard .row{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.pcard .row b{font-size:12.5px;color:var(--ink);display:inline}
+.pcard .acts2{display:flex;gap:7px}
+.pcard .acts2 .btn{flex:1;padding:8px;font-size:12.5px}
+.pbody>.split,.pbody>.screen{max-width:1280px}
+.offline{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabs) + 16px);z-index:75;
+  background:rgba(12,18,34,.94);color:#fff;font-size:12.5px;font-weight:560;padding:9px 16px;
+  border-radius:99px;max-width:88vw;text-align:center;animation:drop .3s cubic-bezier(.2,.9,.25,1) both}
+.moregrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.moretile{display:flex;align-items:center;gap:10px;border:0;background:var(--soft);border-radius:14px;
+  padding:11px 12px;font-family:inherit;font-size:14px;font-weight:600;color:inherit;cursor:pointer;
+  text-align:left}
+.moretile .tile{width:30px;height:30px}
 @media (prefers-reduced-motion:reduce){.rings,.glow,.dot::after{animation:none}
+  .skline{animation:none}.newpill{animation:none}
   .live i{animation:none}.tick{transition:none}}
 </style>
 </head>
@@ -864,10 +986,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
 <header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="ticker" id="ticker">
-  <span class="live"><i></i>Live</span>
-  <div class="ticks" id="ticks"></div>
-</div>
+<div class="ticker" id="ticker"><div class="ticks" id="ticks"></div></div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
@@ -1107,6 +1226,7 @@ let DMS = [], DMUNREAD = 0, OPENPOST = null;   /* conversations, unread count, e
 const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
 let PSEARCH = '';            // per-screen scope
+let FEEDLIMIT = 60;          // grows when someone asks for more
 
 function blank(){
   return {posts:[],issues:[],ends:[],events:[],polls:[],gifts:[],
@@ -1243,7 +1363,7 @@ async function loadGlobalInner(kind){
   if(kind==='posts'){
     const { data } = await sb.from('posts')
       .select('*, profiles!posts_author_fkey(handle,name,photo_url,location)')
-      .order('created_at',{ascending:false}).limit(60);
+      .order('created_at',{ascending:false}).limit(FEEDLIMIT);
     G.posts = data||[]; await decorate(G.posts); await attachComments(G.posts);
   }
   if(kind==='polls'){
@@ -1417,7 +1537,8 @@ const ico = {
   spark:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.6"/></svg>',
   save :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6.5 4h11a1 1 0 0 1 1 1v15l-6.5-4.2L5.5 20V5a1 1 0 0 1 1-1Z"/></svg>',
   saved:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.5 4h11a1 1 0 0 1 1 1v15l-6.5-4.2L5.5 20V5a1 1 0 0 1 1-1Z"/></svg>',
-  photo:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.6" cy="10" r="1.6"/><path d="m3.6 17.4 4.8-4.2 4 3.4 3-2.4 5 4"/></svg>'
+  photo:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.6" cy="10" r="1.6"/><path d="m3.6 17.4 4.8-4.2 4 3.4 3-2.4 5 4"/></svg>',
+  more :'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg>'
 };
 const act = (k,label,on) => `<button class="iconbtn${on?' on':''}" data-act="${k}">${ico[k]||''}${label!==undefined&&label!==''?`<span>${label}</span>`:''}</button>`;
 
@@ -2097,7 +2218,8 @@ S.feed = {
     const mine = RO || !ONLINE || SC.feed==='mine';
     const got = scoped('feed', D.posts, G.posts);
     const note = got.note, loading = got.loading;
-    const list = TAG ? got.list.filter(p => tagsIn(p.text).includes(TAG)) : got.list;
+    const shown = unmuted(got.list);
+    const list = TAG ? shown.filter(p => tagsIn(p.text).includes(TAG)) : shown;
     const people = (G.people||[])
       .filter(x=>!ME || x.id!==ME.id)
       .filter(x=>!MYFOLLOWS.has(x.id))                       /* already following? nothing to suggest */
@@ -2109,6 +2231,7 @@ S.feed = {
       ${(RO||GUEST())?'':`<div class="quick">
         <span class="whoav" style="width:34px;height:34px">${V&&V.photo_url?`<img src="${V.photo_url}" alt="">`:esc(initials(V||{}))}</span>
         <textarea id="qText" rows="1" maxlength="1000" placeholder="Say something. @someone, #atopic"></textarea>
+        <span class="qcount" id="qCount"></span>
         <button class="iconbtn" id="qPhoto" title="Add a photo" aria-label="Add a photo">${ico.photo}</button>
         <button class="btn" id="qPost" disabled>Post</button>
         <input type="file" id="qFile" accept="image/*" hidden>
@@ -2117,8 +2240,8 @@ S.feed = {
 `}
       ${TAG ? `<button class="filterchip" id="tagOff">#${esc(TAG)} &#10005;</button>` : ''}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map((p,i)=>{
-        const cs = p.comments || [];
+      ${loading ? skel(4) : list.length ? `<div class="list">${list.map((p,i)=>{
+        const cs = unmuted(p.comments || []);
         const open = OPENPOST === p.id;
         const lead = i===0 && !TAG && SC.feed!=='mine' && SC.feed!=='saved';
         return `
@@ -2134,7 +2257,7 @@ S.feed = {
             <button class="iconbtn" data-act="analyse">${ico.spark}<span>Analyse</span></button>
             ${(ONLINE && !GUEST()) ? `<button class="iconbtn${MYSAVES.has(p.id)?' on':''}" data-act="save"
               title="${MYSAVES.has(p.id)?'Saved':'Save'}" aria-label="Save">${MYSAVES.has(p.id)?ico.saved:ico.save}</button>` : ''}
-            ${((!ONLINE && !RO) || (ME && p.author===ME.id && !RO)) ? act('del') : ''}
+            <button class="iconbtn" data-act="more" aria-label="More" title="More">${ico.more}</button>
           </div>
           <div class="ai" id="an-${p.id}" hidden></div>
           ${open ? `<div class="thread">
@@ -2158,6 +2281,9 @@ S.feed = {
              TAG ? 'Be the first to post about it.' : SC.feed==='saved' ? 'Tap the bookmark on any post to keep it.'
              : SC.feed==='follow' ? 'Follow a few people and their posts land here.'
              : mine?'Write your first post.':'Be the first to say something.'}</div>`}
+      ${(!loading && !TAG && SC.feed!=='saved' && SC.feed!=='mine'
+         && (G.posts||[]).length >= FEEDLIMIT)
+        ? `<button class="mini-btn" id="moreFeed" style="align-self:center">Show older posts</button>` : ''}
     </div>
     <aside class="side">
       ${people.length?`<div class="card"><h5>People to follow</h5>
@@ -2176,13 +2302,24 @@ S.feed = {
   },
   init(){
     wireTabs();
+    if(SC.feed !== 'mine' && SC.feed !== 'saved') ensure('posts','feed');
     ensure('people','feed');
     ensure('issues','feed');
+    if(feedUnseen()){ markFeedSeen(); setTimeout(renderRail, 30) } else markFeedSeen();
     if(SC.feed==='saved' && G.saved===null && ONLINE && ME)
       loadSaved().then(()=>{ if(current==='feed') open_('feed',true) },
                        ()=>{ G.saved=[]; if(current==='feed') open_('feed',true) });
     const off = $('tagOff');
     if(off) off.onclick = ()=>{ TAG=''; open_('feed',true) };
+    const top0 = scoped('feed', D.posts, G.posts).list[0];
+    FEEDTOP = top0 ? top0.created_at : new Date().toISOString();
+    const more = $('moreFeed');
+    if(more) more.onclick = async ()=>{
+      more.disabled = true; more.textContent = 'Loading…';
+      FEEDLIMIT += 60; G.posts = null;
+      await loadGlobal('posts');
+      if(current==='feed') open_('feed', true);
+    };
     const fp=$('feedPost');
     if(fp) fp.onclick=()=>{ const el=$('qText'); if(el){ el.focus(); el.scrollIntoView && el.scrollIntoView({block:'center'}) } };
     const q=$('qText');
@@ -2205,8 +2342,20 @@ S.feed = {
         shrink(f, 1400, (blob, url)=>{ QIMG = {blob, url}; paintMedia(); b.disabled = false });
         file.value = '';
       };
+      let draft = ''; try{ draft = localStorage.getItem('dai.draft') || '' }catch(e){}
+      if(draft && !q.value){ q.value = draft }
+      const count = $('qCount');
+      const tally = ()=>{
+        if(!count) return;
+        const n = q.value.length;
+        count.textContent = n > 850 ? (1000 - n) : '';
+        count.className = 'qcount' + (n > 970 ? ' hot' : '');
+      };
       q.oninput=()=>{ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px';
-        b.disabled=!q.value.trim() && !QIMG; };
+        b.disabled=!q.value.trim() && !QIMG; tally();
+        try{ localStorage.setItem('dai.draft', q.value) }catch(e){} };
+      if(q.value){ q.style.height='auto'; q.style.height=Math.min(q.scrollHeight,160)+'px';
+                   b.disabled = false; tally() }
       b.onclick=async ()=>{
         if(!await needAuth()) return;
         const text=q.value.trim(); b.disabled=true;
@@ -2224,6 +2373,7 @@ S.feed = {
             image_url ? {author:ME.id,text:body||'📷',image_url} : {author:ME.id,text:body})).error,
           clears:['posts'] });
         QIMG = null;
+        try{ localStorage.removeItem('dai.draft') }catch(e){}
         toast('Posted');
       };
     }
@@ -2258,8 +2408,8 @@ S.feed = {
       if(brief) out.innerHTML = md(brief);
     };
 
-    const sc0 = scoped('feed', D.posts, G.posts);
-    const list = TAG ? sc0.list.filter(p => tagsIn(p.text).includes(TAG)) : sc0.list;
+    const sc0 = unmuted(scoped('feed', D.posts, G.posts).list);
+    const list = TAG ? sc0.filter(p => tagsIn(p.text).includes(TAG)) : sc0;
 
     /* replies */
     document.querySelectorAll('[data-csend]').forEach(b=>b.onclick = async ()=>{
@@ -2283,17 +2433,33 @@ S.feed = {
     rows(list, async (p,a,btn)=>{
       if(a==='talk'){ OPENPOST = OPENPOST===p.id ? null : p.id; return open_('feed', true) }
       if(a==='save') return toggleSave(p);
+      if(a==='more') return postMenu(p);
       if(a==='analyse') return suggest('an-'+p.id, btn, 'analyse', p.text,
         { note:'A reading of the post, not a fact check.' });
       if(a==='share') return share(p.text, p.profiles && p.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
         remote:async()=>(await sb.from('posts').delete().eq('id',p.id)).error, clears:['posts'] });
       if(!await needAuth()) return;
-      mutate({ local:db=>{ const x=db.posts.find(y=>y.id===p.id); x.liked=!x.liked; x.likes=(x.likes||0)+(x.liked?1:-1) },
-        remote:async()=>{ const r = p.liked
-          ? await sb.from('likes').delete().eq('post_id',p.id).eq('user_id',ME.id)
-          : await sb.from('likes').insert({post_id:p.id,user_id:ME.id});
-          return r.error }, clears:['posts'] });
+      /* answer the tap immediately, then tell the database */
+      const was = !!p.liked;
+      const paint = ()=>{
+        btn.classList.toggle('on', !!p.liked);
+        btn.innerHTML = ico[p.liked ? 'liked' : 'like'] + (p.likes ? `<span>${p.likes}</span>` : '');
+        btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
+      };
+      p.liked = !was; p.likes = Math.max(0, (p.likes || 0) + (was ? -1 : 1));
+      paint();
+      const mirror = (G.posts||[]).concat(D.posts||[], G.saved||[]).filter(x=>x.id===p.id && x!==p);
+      mirror.forEach(x=>{ x.liked = p.liked; x.likes = p.likes });
+      if(!ONLINE){ const db = localDB(); const x = db.posts.find(y=>y.id===p.id);
+                   if(x){ x.liked = p.liked; x.likes = p.likes; localSave(db) } return }
+      const r = was ? await sb.from('likes').delete().eq('post_id',p.id).eq('user_id',ME.id)
+                    : await sb.from('likes').insert({post_id:p.id, user_id:ME.id});
+      if(r.error){
+        p.liked = was; p.likes = Math.max(0, (p.likes || 0) + (was ? 1 : -1));
+        mirror.forEach(x=>{ x.liked = p.liked; x.likes = p.likes });
+        paint(); toast(friendly(r.error));
+      }
     });
   }
 };
@@ -2756,7 +2922,7 @@ function paintHere(){
 
 const botOf = m => m.bot && BOTS[m.bot] ? BOTS[m.bot] : null;
 function roomHTML(){
-  const msgs = G.room || [];
+  const msgs = (G.room || []).filter(m => m.bot || !isMuted(m.profiles && m.profiles.handle));
   if(!msgs.length && !ROOMBUSY)
     return `<div class="empty"><b>Nobody has spoken yet</b>Say something, or ask the desk what is happening.</div>`;
   let last = '';
@@ -2916,6 +3082,7 @@ S.townhall = {
     </aside></div>`;
   },
   init(){
+    ensure('events','townhall');
     joinFloor(); paintHere();
     if(ONLINE && G.room === null)
       loadRoom().then(()=>{ if(current==='townhall'){ paintRoom();
@@ -3142,6 +3309,7 @@ S.polls = {
   },
   init(){
     wireTabs();
+    if(SC.polls !== 'mine') ensure('polls','polls');
     const {list} = scoped('polls', D.polls, G.polls);
     if(!RO && !GUEST()){
       const Q=$('pQ'), chk=$('pCheck');
@@ -3320,22 +3488,152 @@ function rows(list, fn){
 /* -------------------------------------------------------------------- shell */
 const rail = $('rail'), panel = $('panel');
 
+/* the feed badge counts what you have not seen, not what you have written */
+const feedSeenKey = ()=> 'dai.feedseen.' + (ME ? ME.id : 'guest');
+function feedUnseen(){
+  if(!ONLINE) return 0;
+  let seen = ''; try{ seen = localStorage.getItem(feedSeenKey()) || '' }catch(e){}
+  if(!seen) return 0;
+  return (G.posts || []).filter(p => (!ME || p.author !== ME.id) && p.created_at > seen).length;
+}
+function markFeedSeen(){
+  try{ localStorage.setItem(feedSeenKey(), new Date().toISOString()) }catch(e){}
+}
+/* the red dot lives where something is actually happening */
+const floorLive = ()=> ONLINE && ((G.room || []).some(m => isFresh(m.created_at)) || HERE.length > 1);
+
+function railFoot(){
+  const me = ME || (!ONLINE && V) || null;
+  const canPost = !RO && (!ONLINE || !!ME);
+  const acct = me
+    ? `<button class="acct" id="navAcct" aria-label="Account">
+         <span class="whoav">${me.photo_url ? `<img src="${me.photo_url}" alt="">` : esc(initials(me))}</span>
+         <span class="grow"><b>${esc(me.name || 'Your page')}</b>
+           <small>${me.handle ? '@' + esc(me.handle) : 'pick a handle'}</small></span>
+         <span class="chev">&#8942;</span></button>`
+    : `<button class="acct" id="navAcct" aria-label="Sign in">
+         <span class="whoav">&#43;</span>
+         <span class="grow"><b>Sign in</b><small>Join the network</small></span></button>`;
+  return `<div class="navfoot">
+    ${canPost ? `<button class="navpost" id="navPost">Post</button>` : ''}
+    ${acct}</div>`;
+}
+/* everything that does not fit on a phone's tab bar */
+const MORE_IDS = ['issues','ballot','polls','fundraise','reach'];
+function moreSheet(){
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  const tiles = MORE_IDS.map(id=>{
+    const a = APPS.find(x=>x.id===id); if(!a) return '';
+    return `<button class="moretile" data-go2="${id}"><span class="tile">${icon(a)}</span>${esc(a.name)}</button>`;
+  }).join('');
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>More</h3>
+    <div class="moregrid">${tiles}</div>
+    <div class="menu">
+      <button data-m2="search">Search</button>
+      <button data-m2="notes">Notifications${NOTEUNSEEN?` · ${NOTEUNSEEN}`:''}</button>
+      <button data-m2="acct">Account</button>
+      <button data-m2="theme">${themeNow()==='dark'?'Switch to light':'Switch to dark'}</button>
+    </div>
+    <div class="sheetfoot"><button class="btn ghost" id="moClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('moClose').onclick = close;
+  wrap.querySelectorAll('[data-go2]').forEach(b=>b.onclick = ()=>{ const id=b.dataset.go2; close(); open_(id) });
+  wrap.querySelectorAll('[data-m2]').forEach(b=>b.onclick = ()=>{
+    const m = b.dataset.m2; close();
+    if(m==='search') return palOpen();
+    if(m==='notes')  return notesSheet();
+    if(m==='acct')   return acctMenu();
+    if(m==='theme')  return toggleTheme();
+  });
+}
+
+function acctMenu(){
+  const me = ME || (!ONLINE && V);
+  if(!me) return open_('profile');
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>${esc(me.name || 'Your page')}</h3>
+    <div class="menu">
+      <button data-m="profile">Your profile</button>
+      <button data-m="share">Share your page</button>
+      <button data-m="invite">Invite someone</button>
+      <button data-m="notes">Notifications</button>
+      <button data-m="muted">Muted${MUTED.size?` · ${MUTED.size}`:''}</button>
+      <button data-m="keys">Keyboard shortcuts</button>
+      <button data-m="theme">${themeNow()==='dark' ? 'Switch to light' : 'Switch to dark'}</button>
+      ${ONLINE && ME ? `<button data-m="out" class="warn">Sign out</button>` : ''}
+    </div>
+    <div class="sheetfoot"><button class="btn ghost" id="amClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('amClose').onclick = close;
+  wrap.querySelectorAll('[data-m]').forEach(b=>b.onclick = async ()=>{
+    const m = b.dataset.m; close();
+    if(m==='profile') return open_('profile');
+    if(m==='share')   return share(shareLine(), me.handle);
+    if(m==='invite')  return inviteSheet();
+    if(m==='notes')   return notesSheet();
+    if(m==='muted')   return mutedSheet();
+    if(m==='keys')    return keysSheet();
+    if(m==='theme')   return toggleTheme();
+    if(m==='out'){ chatReset(true); await sb.auth.signOut(); location.href = '/' }
+  });
+}
+
 let railPainted = false;
 function renderRail(){
-  rail.innerHTML = APPS.map((a,i)=>{
-    const n = a.id==='feed' ? D.posts.length : a.id==='endorsed' ? DMUNREAD : 0;
-    return `<button class="app${a.id===current?' on':''}" data-id="${a.id}" style="animation-delay:${(i*.045+.05).toFixed(2)}s">
-      <span class="tile">${icon(a)}${n?`<span class="badge">${n}</span>`:''}</span>
-      <span class="label">${a.name}</span></button>`;
-  }).join('');
+  const live = floorLive();
+  rail.innerHTML = `<div class="nav">` + APPS.map((a,i)=>{
+    const n = a.id==='feed' ? feedUnseen() : a.id==='endorsed' ? DMUNREAD : 0;
+    const hot = a.id==='townhall' && live;
+    return `<button class="app${a.id===current?' on':''}" data-id="${a.id}" style="animation-delay:${(i*.03+.03).toFixed(2)}s">
+      <span class="tile">${icon(a)}${n?`<span class="badge">${n>99?'99+':n}</span>`:''}</span>
+      <span class="label">${a.name}</span>
+      ${hot ? `<span class="livedot" title="People are talking right now"></span>` : ''}</button>`;
+  }).join('')
+  + `<button class="app more" id="navMore" data-more="1">
+       <span class="tile"><svg viewBox="0 0 120 120" aria-hidden="true"><g clip-path="url(#sq)">
+         <rect width="120" height="120" fill="${BLUE}"/>
+         <circle cx="38" cy="60" r="9" fill="#fff"/><circle cx="60" cy="60" r="9" fill="#fff"/>
+         <circle cx="82" cy="60" r="9" fill="#fff"/>
+         <rect width="120" height="120" fill="url(#lift)"/><rect width="120" height="120" fill="url(#sheen)"/>
+         <path d="${SQ}" fill="none" stroke="url(#rim)" stroke-width="2"/></g>
+         <path d="${SQ}" fill="none" stroke="rgba(5,18,56,.10)" stroke-width="1"/></svg></span>
+       <span class="label">More</span></button>`
+  + `</div>` + railFoot();
+  const np = $('navPost');
+  if(np) np.onclick = ()=>{ open_('feed');
+    setTimeout(()=>{ const t = $('qText'); if(t){ t.focus();
+      t.scrollIntoView && t.scrollIntoView({block:'center'}) } }, 70) };
+  const na = $('navAcct');
+  if(na) na.onclick = acctMenu;
+  const nm = $('navMore');
+  if(nm) nm.onclick = moreSheet;
   if(railPainted) rail.classList.add('settled');
   railPainted = true;
 }
 function render(){ renderRail(); paintTicker(); if(current) open_(current, true); }
 
+const SCROLLS = {};
+const phone = ()=> innerWidth <= 900;
 function open_(id, quiet){
   const a = APPS.find(x=>x.id===id), s = S[id]; if(!a||!s) return;
   const first = current!==id;
+  /* a repaint should never throw you back to the top, and coming back to a
+     screen should put you where you left it */
+  const oldBody = panel.querySelector('.pbody');
+  if(current) SCROLLS[current] = phone() ? (window.scrollY || 0)
+                                         : (oldBody ? oldBody.scrollTop : 0);
+  const keep = first ? (SCROLLS[id] || 0) : (phone() ? (window.scrollY || 0)
+                                                     : (oldBody ? oldBody.scrollTop : 0));
   current = id;
   delete panel.dataset.edit;
   document.querySelectorAll('.app').forEach(el=>el.classList.toggle('on', el.dataset.id===id));
@@ -3350,6 +3648,10 @@ function open_(id, quiet){
     <div class="pbody">${s.view()}</div>`;
   if(id==='compose' || id==='townhall') panel.querySelector('.pbody').classList.add('chatbody');
   if(s.init) s.init();
+  const body = panel.querySelector('.pbody');
+  if(phone()){ if(keep) requestAnimationFrame(()=>window.scrollTo(0, keep));
+               else if(first) window.scrollTo(0, 0); }
+  else if(body && keep) body.scrollTop = keep;
   document.body.classList.add('open');
   panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
   $('pclose').onclick = ()=>{ document.body.classList.remove('open'); current='';
@@ -3364,7 +3666,7 @@ function open_(id, quiet){
 }
 
 rail.addEventListener('click', e=>{
-  const b = e.target.closest('.app'); if(!b) return;
+  const b = e.target.closest('.app'); if(!b || b.dataset.more) return;
   if(b.dataset.id==='profile' && RO){ location.href = '/'; return; }  /* back to your own page */
   open_(b.dataset.id);
 });
@@ -3389,14 +3691,39 @@ function goLive(){
     })
     .subscribe();
 }
+let FEEDTOP = '';                     /* newest story on screen, so we can count what arrives after */
 async function refreshLive(){
   const typing = ['INPUT','TEXTAREA'].includes((document.activeElement||{}).tagName);
+  const body = panel.querySelector('.pbody');
+  const deep = !!(body && body.scrollTop > 180);
   await load();
   const kind = {feed:'posts', polls:'polls', townhall:'events', issues:'issues', endorsed:'ends'}[current];
   if(kind) await loadGlobal(kind);
   if(SC.feed === 'saved') await loadSaved();
-  if(!typing) render();              // never yank the page out from under someone mid-sentence
-  else renderRail();
+  if(typing || deep){                 /* never yank the page out from under someone */
+    renderRail(); paintTicker();
+    if(current === 'feed') newPill();
+    return;
+  }
+  render();
+}
+/* something arrived while you were reading — offer it rather than jumping */
+function newPill(){
+  const main = panel.querySelector('.split>.main'); if(!main) return;
+  const n = (G.posts || []).filter(p => FEEDTOP && p.created_at > FEEDTOP
+                                     && (!ME || p.author !== ME.id)).length;
+  const old = $('newPill');
+  if(!n){ if(old) old.remove(); return }
+  const label = `${n} new post${n===1?'':'s'}`;
+  if(old){ old.textContent = label; return }
+  const b = document.createElement('button');
+  b.className = 'newpill'; b.id = 'newPill'; b.textContent = label;
+  b.onclick = ()=>{
+    const body = panel.querySelector('.pbody');
+    if(body) body.scrollTop = 0;
+    open_('feed', true);
+  };
+  main.insertBefore(b, main.firstChild);
 }
 
 /* ====================================================================== theme
@@ -3430,10 +3757,83 @@ try{ matchMedia('(prefers-color-scheme:dark)')
    anyone types can become markup. */
 function rich(t){
   return esc(t || '')
+    /* real links, opened safely, shown without the scheme */
+    .replace(/(^|[\s(\[])((?:https?:\/\/|www\.)[^\s<]+[^\s<.,;:!?)\]])/gi, (m,a,url)=>{
+      const href = /^www\./i.test(url) ? 'https://' + url : url;
+      const show = url.replace(/^https?:\/\//i,'').replace(/\/$/,'');
+      return `${a}<a class="wlink" href="${href}" target="_blank" rel="noopener noreferrer nofollow">${
+        show.length > 46 ? show.slice(0,46) + '…' : show}</a>`;
+    })
     .replace(/(^|[\s(\[])@([a-zA-Z0-9_]{2,20})\b/g,
       (m,a,h)=>`${a}<a class="mention" href="/${h.toLowerCase()}">@${h}</a>`)
     .replace(/(^|[\s(\[])#([a-zA-Z0-9_]{2,30})\b/g,
       (m,a,h)=>`${a}<button class="hash" data-tag="${h.toLowerCase()}">#${h}</button>`);
+}
+
+/* ------------------------------------------------------------------- muting
+   Entirely on this device: no list of who you have muted leaves the browser. */
+let MUTED = new Set((()=>{ try{ return JSON.parse(localStorage.getItem('dai.muted') || '[]') }
+                           catch(e){ return [] } })());
+const isMuted = h => !!h && MUTED.has(String(h).toLowerCase());
+function saveMuted(){ try{ localStorage.setItem('dai.muted', JSON.stringify([...MUTED])) }catch(e){} }
+function muteToggle(handle){
+  const h = String(handle||'').toLowerCase(); if(!h) return;
+  if(MUTED.has(h)){ MUTED.delete(h); toast('@'+h+' unmuted') }
+  else { MUTED.add(h); toast('@'+h+' muted on this device') }
+  saveMuted();
+  G.saved = null;
+  render();
+}
+const unmuted = rows => (rows || []).filter(r => !isMuted(r.profiles && r.profiles.handle));
+function mutedSheet(){
+  const list = [...MUTED];
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>Muted</h3>
+    ${list.length ? `<div class="menu">${list.map(h=>
+      `<button data-un="${esc(h)}">@${esc(h)}<span style="margin-left:auto;color:var(--blue)">Unmute</span></button>`
+      ).join('')}</div>`
+    : `<p class="sheetmsg">You have not muted anyone. Muting hides someone from your feed on this
+       device only — they are not told, and nothing is sent anywhere.</p>`}
+    <div class="sheetfoot"><button class="btn ghost" id="muClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('muClose').onclick = close;
+  wrap.querySelectorAll('[data-un]').forEach(b=>b.onclick = ()=>{ muteToggle(b.dataset.un); close() });
+}
+
+/* the menu behind the … on a post */
+function postMenu(p){
+  const h = (p.profiles && p.profiles.handle) || (V && V.handle) || '';
+  const mine = (!ONLINE && !RO) || (ME && p.author === ME.id);
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet';
+  wrap.innerHTML = `<div class="sheetbox">
+    <h3>Post</h3>
+    <div class="menu">
+      <button data-p="share">Share this</button>
+      <button data-p="copy">Copy the text</button>
+      ${(h && !mine) ? `<button data-p="mute">${isMuted(h) ? 'Unmute' : 'Mute'} @${esc(h)}</button>` : ''}
+      ${mine ? `<button data-p="del" class="warn">Delete</button>` : ''}
+    </div>
+    <div class="sheetfoot"><button class="btn ghost" id="pmClose">Close</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = ()=>wrap.remove();
+  wrap.onclick = e=>{ if(e.target===wrap) close() };
+  $('pmClose').onclick = close;
+  wrap.querySelectorAll('[data-p]').forEach(b=>b.onclick = async ()=>{
+    const k = b.dataset.p; close();
+    if(k==='share') return share(p.text, h);
+    if(k==='copy'){ try{ await navigator.clipboard.writeText(p.text); toast('Copied') }
+                    catch(e){ toast('Could not copy') } return }
+    if(k==='mute') return muteToggle(h);
+    if(k==='del') return mutate({ local:db=>db.posts=db.posts.filter(x=>x.id!==p.id),
+      remote:async()=>(await sb.from('posts').delete().eq('id',p.id)).error, clears:['posts'] });
+  });
 }
 const tagsIn = t => [...new Set((String(t||'').match(/#[a-zA-Z0-9_]{2,30}\b/g) || [])
                      .map(x => x.slice(1).toLowerCase()))];
@@ -3856,23 +4256,31 @@ document.addEventListener('click', e=>{
   if(im){ e.preventDefault(); return lightbox(im.dataset.full || im.src) }
 });
 
+const skel = (n=3) => `<div class="list">${Array.from({length:n}, ()=>
+  `<div class="item sk"><div class="grow"><div class="skline w30"></div>
+   <div class="skline w90"></div><div class="skline w70"></div></div></div>`).join('')}</div>`;
+
 /* ================================================================== the crawl
    What the newsroom would put on the bottom of the screen: whatever is
    actually happening on the network, in rotation, each one clickable. */
 let TICKI = 0, TICKT = null;
+const FRESH = 15 * 60e3;                       /* what counts as happening now */
+const isFresh = ts => ts && Date.now() - new Date(ts).getTime() < FRESH;
 function tickerLines(){
   const out = [];
   const posts = (G.posts || []).slice();
   if(posts.length){
     const p = posts[0];
     const nm = (p.profiles && (p.profiles.name || '@' + p.profiles.handle)) || 'Someone';
-    out.push({k:'Latest', t:`${nm}: ${trim60(p.text)}`, go:()=>openPost(p.id)});
+    out.push({k:'Latest', t:`${nm}: ${trim60(p.text)}`, live:isFresh(p.created_at),
+              go:()=>openPost(p.id)});
     const today = posts.filter(x => Date.now() - new Date(x.created_at).getTime() < 864e5).length;
     if(today) out.push({k:'Today', t:`${today} new post${today===1?'':'s'} across the network`,
                         go:()=>{ SC.feed = 'all'; open_('feed') }});
   }
   const room = (G.room || []).slice(-1)[0];
-  if(room) out.push({k:'Town Hall', t:`${room.bot ? BOTS[room.bot] ? BOTS[room.bot].name : room.bot
+  if(room) out.push({k:'On the floor', live:isFresh(room.created_at),
+      t:`${room.bot ? BOTS[room.bot] ? BOTS[room.bot].name : room.bot
       : (room.profiles && (room.profiles.name || '@'+room.profiles.handle)) || 'Someone'}: ${trim60(room.text)}`,
       go:()=>open_('townhall')});
   const ev = (G.events || [])[0];
@@ -3885,15 +4293,17 @@ function tickerLines(){
   if(q) out.push({k:'Poll', t:`${q.question} · ${q.total || 0} vote${q.total===1?'':'s'}`, go:()=>open_('polls')});
   const n = (G.people || []).length;
   if(n) out.push({k:'Network', t:`${n} ${n===1?'person':'people'} on democrat.ai`, go:()=>open_('endorsed')});
-  if(!out.length) out.push({k:'democrat.ai', t:'A political presence, in one place.',
-                            go:()=>open_('profile')});
   return out.slice(0, 6);
 }
 function paintTicker(){
   const box = $('ticks'); if(!box) return;
   const lines = tickerLines();
+  const tk = $('ticker');
+  if(tk) tk.hidden = !lines.length;            /* nothing to report, no empty crawl */
+  if(!lines.length){ box.innerHTML = ''; clearInterval(TICKT); return }
   box.innerHTML = lines.map((l,i)=>
-    `<button class="tick${i===0?' on':''}" data-t="${i}"><b>${esc(l.k)}</b><span>${esc(l.t)}</span></button>`).join('');
+    `<button class="tick${i===0?' on':''}" data-t="${i}">${l.live
+      ? `<span class="live"><i></i>Live</span>` : `<b>${esc(l.k)}</b>`}<span>${esc(l.t)}</span></button>`).join('');
   box.querySelectorAll('[data-t]').forEach(b=>b.onclick = ()=>{
     const l = lines[+b.dataset.t]; if(l && l.go) l.go();
   });
@@ -3937,6 +4347,90 @@ function byline(p){
                        : `<span class="byline">${inner}</span>`;
 }
 
+/* ============================================================== hover cards
+   Point at anyone's name and their page comes to you. Desktop only, and only
+   from what is already loaded — no extra request to open a card. */
+let HOVERT = null, HCARD = null, HOVERFOR = '';
+const finePointer = ()=>{ try{ return matchMedia('(hover:hover) and (pointer:fine)').matches }
+                          catch(e){ return false } };
+function personByHandle(h){
+  h = String(h || '').toLowerCase();
+  if(!h) return null;
+  return (G.people || []).find(p => String(p.handle||'').toLowerCase() === h)
+      || (V && String(V.handle||'').toLowerCase() === h ? V : null)
+      || (ME && String(ME.handle||'').toLowerCase() === h ? ME : null);
+}
+function killCard(){
+  clearTimeout(HOVERT);
+  if(HCARD){ HCARD.remove(); HCARD = null; HOVERFOR = '' }
+}
+function showCard(el, p){
+  killCard();
+  HOVERFOR = p.handle;
+  const posts = (G.posts || []).filter(x => x.author === p.id).length;
+  const stands = (G.issues || []).filter(x => x.author === p.id).length;
+  const mine = ME && p.id === ME.id;
+  const c = document.createElement('div');
+  c.className = 'pcard';
+  c.innerHTML = `<div class="top">
+      <span class="whoav">${p.photo_url ? `<img src="${p.photo_url}" alt="">` : esc(initials(p))}</span>
+      <span class="grow"><b>${esc(p.name || '@'+p.handle)}</b><small>@${esc(p.handle)}</small></span>
+    </div>
+    ${p.role || p.location ? `<p>${esc([p.role, p.location].filter(Boolean).join(' · '))}</p>` : ''}
+    <div class="row"><span><b>${stands}</b> position${stands===1?'':'s'}</span>
+      <span><b>${posts}</b> post${posts===1?'':'s'}</span></div>
+    <div class="acts2">
+      <a class="btn ghost" href="/${esc(p.handle)}">View</a>
+      ${(ME && !mine) ? `<button class="btn" data-hdm="${p.id}">Message</button>` : ''}
+    </div>`;
+  document.body.appendChild(c);
+  HCARD = c;
+  const r = el.getBoundingClientRect();
+  const w = 270, h = c.offsetHeight || 170;
+  let left = Math.min(Math.max(10, r.left), innerWidth - w - 10);
+  let top  = r.bottom + 9;
+  if(top + h > innerHeight - 10) top = Math.max(10, r.top - h - 9);
+  c.style.left = left + 'px'; c.style.top = top + 'px';
+  c.addEventListener('mouseleave', ()=>{ HOVERT = setTimeout(killCard, 180) });
+  c.addEventListener('mouseenter', ()=>clearTimeout(HOVERT));
+  const dm = c.querySelector('[data-hdm]');
+  if(dm) dm.onclick = ()=>{ const who = p; killCard(); dmSheet(who) };
+}
+document.addEventListener('mouseover', e=>{
+  if(!finePointer()) return;
+  const a = e.target.closest && e.target.closest('a[href^="/"]');
+  if(!a){ return }
+  const seg = decodeURIComponent(a.getAttribute('href').replace(/^\/+/,'')).split('/')[0];
+  if(!seg || RESERVED.has(seg)) return;
+  if(seg === HOVERFOR) { clearTimeout(HOVERT); return }
+  const p = personByHandle(seg);
+  if(!p || !p.handle) return;
+  clearTimeout(HOVERT);
+  HOVERT = setTimeout(()=>showCard(a, p), 420);
+  a.addEventListener('mouseleave', ()=>{ clearTimeout(HOVERT); HOVERT = setTimeout(killCard, 220) },
+                     {once:true});
+});
+document.addEventListener('click', ()=>killCard(), true);
+
+/* say it plainly when the network drops, and catch up when it comes back */
+function netWatch(){
+  const paint = ()=>{
+    const off = typeof navigator !== 'undefined' && navigator.onLine === false;
+    let el = document.getElementById('offline');
+    if(!off){ if(el) el.remove(); return }
+    if(el) return;
+    el = document.createElement('div');
+    el.id = 'offline'; el.className = 'offline';
+    el.textContent = 'No connection — showing the last thing loaded';
+    document.body.appendChild(el);
+  };
+  try{
+    addEventListener('online', ()=>{ paint(); if(ONLINE) refreshLive() });
+    addEventListener('offline', paint);
+  }catch(e){}
+  paint();
+}
+
 function wireTopbar(){
   const s = $('tSearch'), b = $('tBell'), t = $('tTheme');
   if(s) s.onclick = ()=>palOpen();
@@ -3945,6 +4439,7 @@ function wireTopbar(){
   applyTheme();
   paintBell();
   paintTicker();
+  netWatch();
 }
 
 /* --------------------------------------------------------------------- boot */
