@@ -45,6 +45,7 @@ try{var _t=localStorage.getItem('dai.theme')||'auto';
   /* surfaces and text tones, so the whole app can turn dark in one place */
   --bg:#fff; --card:#fff; --panelbg:rgba(255,255,255,.9); --raise:rgba(255,255,255,.78);
   --ink2:#39415a; --ink3:#28304a; --dim:#8b93a8; --ph:#9aa3b8; --faint:#c9d2e6;
+  --gutter:clamp(20px,2.4vw,40px); --mast:58px; --live:#E5352B;
 }
 html[data-theme="dark"]{
   color-scheme:dark;
@@ -70,8 +71,10 @@ button,input,textarea{font:inherit;color:inherit}
 @keyframes breathe{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.16) rotate(4deg)}}
 @keyframes drift{0%{transform:translate3d(-2%,-1%,0)}100%{transform:translate3d(3%,2%,0) scale(1.08)}}
 
-.mark{position:fixed;z-index:5;top:clamp(20px,3.4vh,38px);left:var(--pad);display:flex;align-items:center;
-  gap:clamp(9px,1vw,14px);text-decoration:none;color:inherit}
+/* the masthead: one bar across the top, the way a news front page opens */
+.mast{position:fixed;top:0;left:0;right:0;height:var(--mast);z-index:8;display:flex;align-items:center;
+  gap:clamp(12px,1.8vw,26px);padding:0 var(--pad);background:var(--bg);border-bottom:1px solid var(--line)}
+.mark{display:flex;align-items:center;gap:clamp(9px,1vw,14px);text-decoration:none;color:inherit;flex:none}
 .dot{width:clamp(13px,1.35vw,19px);aspect-ratio:1;border-radius:50%;background:var(--blue);position:relative;flex:none}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;animation:pulse 6s cubic-bezier(.25,.6,.3,1) infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(10,63,214,.26)}70%{box-shadow:0 0 0 22px rgba(10,63,214,0)}100%{box-shadow:0 0 0 0 rgba(10,63,214,0)}}
@@ -79,7 +82,8 @@ button,input,textarea{font:inherit;color:inherit}
 .word .tld{color:var(--blue)}
 
 .stage{position:relative;z-index:2;min-height:100svh;display:grid;grid-template-columns:auto minmax(0,1fr);
-  gap:clamp(22px,3vw,52px);padding:clamp(84px,11vh,120px) var(--pad) clamp(28px,4vh,48px)}
+  gap:clamp(22px,3vw,52px);
+  padding:calc(var(--mast) + clamp(14px,2.4vh,26px)) var(--pad) clamp(28px,4vh,48px)}
 .rail{display:grid;grid-template-columns:repeat(2,var(--tile));column-gap:calc(var(--tile)*.45);
   row-gap:calc(var(--tile)*.30);align-content:center;justify-content:start}
 .rail.settled .app{animation:none;opacity:1;transform:none}
@@ -121,10 +125,12 @@ button,input,textarea{font:inherit;color:inherit}
 .split{display:grid;grid-template-columns:minmax(0,1fr) clamp(240px,26%,320px);gap:clamp(18px,2.2vw,30px);
   align-items:start}
 .split>.main{display:flex;flex-direction:column;gap:16px;min-width:0}
-.split>.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:0}
-@media (max-width:900px){ .split{grid-template-columns:1fr} .split>.side{position:static} }
-.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:15px;display:flex;
-  flex-direction:column;gap:11px}
+.split>.side{display:flex;flex-direction:column;gap:17px;position:sticky;top:0;
+  border-left:1px solid var(--line);padding-left:clamp(16px,1.8vw,26px)}
+@media (max-width:900px){ .split{grid-template-columns:1fr}
+  .split>.side{position:static;border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:18px} }
+.card{border:0;background:none;padding:0;display:flex;flex-direction:column;gap:11px}
+.card + .card{padding-top:17px;border-top:1px solid var(--line)}
 .card h5{font-size:11.5px;font-weight:660;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .card .row{display:flex;align-items:center;gap:10px;justify-content:space-between;font-size:13.5px}
 .mini-btn{border:0;background:var(--soft);color:var(--ink3);border-radius:9px;padding:6px 10px;font-size:12.5px;
@@ -160,8 +166,9 @@ button,input,textarea{font:inherit;color:inherit}
 .ring b{font-size:22px;font-weight:660;letter-spacing:-.02em;display:block}
 .ring small{font-size:12px;color:var(--muted)}
 /* quick composer at the top of the feed */
-.quick{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:16px;
-  padding:13px 15px;flex-wrap:wrap}
+.quick{display:flex;gap:11px;align-items:flex-start;border:1px solid transparent;border-radius:16px;
+  padding:13px 15px;flex-wrap:wrap;background:var(--soft);transition:background .15s,border-color .15s}
+.quick:focus-within{background:var(--card);border-color:rgba(10,63,214,.35)}
 .quick textarea{flex:1;min-width:min(240px,60%);border:0;resize:none;font-size:15px;line-height:1.5;
   min-height:26px;max-height:160px;background:none}
 .quick textarea:focus{outline:none}
@@ -178,10 +185,10 @@ button,input,textarea{font:inherit;color:inherit}
   text-decoration:none}
 .iconbtn:hover{background:var(--soft);color:var(--ink)}
 .iconbtn.on{color:var(--blue);font-weight:640}
-.inp,.ta{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card);padding:12px 14px;
-  font-size:14.5px;line-height:1.5}
+.inp,.ta{width:100%;border:1px solid transparent;border-radius:13px;background:var(--soft);padding:12px 14px;
+  font-size:14.5px;line-height:1.5;transition:background .15s,border-color .15s}
 .inp::placeholder,.ta::placeholder{color:var(--ph)}
-.inp:focus,.ta:focus{outline:none;border-color:rgba(10,63,214,.5)}
+.inp:focus,.ta:focus{outline:none;border-color:rgba(10,63,214,.45);background:var(--card)}
 .ta{resize:none;min-height:96px}
 .frow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .frow .inp[type=date],.frow .inp[type=number]{max-width:190px;flex:0 1 190px}
@@ -207,8 +214,8 @@ button.tag{cursor:pointer}
 .empty b{display:block;color:var(--ink);font-size:15.5px;font-weight:620;margin-bottom:5px}
 .bar{height:7px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:7px}
 .bar i{display:block;height:100%;border-radius:99px;background:var(--blue);transition:width .4s}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:16px;
-  overflow:hidden;background:var(--card)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-radius:14px;overflow:hidden;
+  background:var(--soft)}
 .stats>div{padding:15px 6px;text-align:center;border-left:1px solid var(--line)}
 .stats>div:first-child{border-left:0}
 .stats b{display:block;font-size:21px;font-weight:660;letter-spacing:-.02em}
@@ -237,14 +244,14 @@ button.tag{cursor:pointer}
   border-radius:7px;width:150px}
 .pfname:focus,.pfhandle input:focus{outline:none;background:rgba(10,63,214,.06)}
 .panel[data-edit="1"] .pfname,.panel[data-edit="1"] .pfhandle input{background:var(--soft)}
-.pfbio{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:14.5px;
+.pfbio{width:100%;border:1px solid transparent;border-radius:14px;background:var(--soft);font-size:14.5px;
   line-height:1.5;padding:12px 14px;resize:none;text-align:center}
 .pfbio::placeholder{color:var(--ph)}
 .pfbio:focus{outline:none;border-color:rgba(10,63,214,.5)}
 .pfbio[readonly]{border-color:transparent;background:none}
 
 /* profile page layout */
-.pbody.pf{display:block;padding:clamp(18px,2.6vh,26px) clamp(18px,2.4vw,30px)}
+.pbody.pf{display:block;padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
 .pgrid{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
   align-items:start;max-width:1100px;margin:0 auto}
 .pcolL{display:flex;flex-direction:column;gap:13px;position:sticky;top:0}
@@ -286,14 +293,15 @@ button.tag{cursor:pointer}
 .qpost:first-child{border-top:0}
 .qpost p{font-size:14px;line-height:1.5}
 .qpost small{font-size:12px;color:var(--muted)}
-.next{display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:14px}
+.next{display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid transparent;
+  border-radius:14px;background:var(--soft)}
 .next b{display:block;font-size:14.5px;font-weight:600}
 .next small{font-size:12.5px;color:var(--muted)}
 .datechip{flex:none;width:46px;text-align:center}
 .datechip i{display:block;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--blue)}
 .datechip b{font-size:20px;font-weight:660;line-height:1.05;letter-spacing:-.02em}
 .start{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.start button{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px;text-align:left;
+.start button{border:1px solid transparent;background:var(--soft);border-radius:14px;padding:14px;text-align:left;
   cursor:pointer;transition:.15s}
 .start button:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03)}
 .start b{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
@@ -319,9 +327,9 @@ button.tag{cursor:pointer}
 .blink:hover span{opacity:1}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:12px}
-.person{border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;
-  align-items:center;text-align:center;gap:7px;background:var(--card);height:100%;
-  transition:border-color .15s,transform .15s}
+.person{border:1px solid transparent;border-radius:18px;padding:16px;display:flex;flex-direction:column;
+  align-items:center;text-align:center;gap:7px;background:var(--soft);height:100%;
+  transition:border-color .15s,transform .15s,background .15s}
 .person:hover{border-color:rgba(10,63,214,.3);transform:translateY(-2px)}
 .pface{width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;
   font-size:19px;font-weight:650;overflow:hidden;text-decoration:none;flex:none}
@@ -402,9 +410,10 @@ button.tag{cursor:pointer}
 .typing i:nth-child(2){animation-delay:.18s}
 .typing i:nth-child(3){animation-delay:.36s}
 @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
-.chatbar{display:flex;gap:9px;align-items:flex-end;border:1px solid var(--line);border-radius:22px;
-  padding:7px 7px 7px 18px;background:var(--card);transition:border-color .18s,box-shadow .18s;flex:none}
-.chatbar:focus-within{border-color:rgba(10,63,214,.4);box-shadow:0 0 0 4px rgba(10,63,214,.07)}
+.chatbar{display:flex;gap:9px;align-items:flex-end;border:1px solid transparent;border-radius:22px;
+  padding:7px 7px 7px 18px;background:var(--soft);transition:border-color .18s,box-shadow .18s,background .18s;flex:none}
+.chatbar:focus-within{border-color:rgba(10,63,214,.4);box-shadow:0 0 0 4px rgba(10,63,214,.07);
+  background:var(--card)}
 .chatbar textarea{flex:1;border:0;resize:none;font-size:15px;line-height:1.55;padding:9px 0;max-height:170px;
   background:none}
 .chatbar textarea:focus{outline:none}
@@ -421,7 +430,7 @@ button.tag{cursor:pointer}
 .chatintro h3{font-size:21px;font-weight:640;letter-spacing:-.028em}
 .chatintro p{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:10px}
 .starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px;width:100%}
-.starter{border:1px solid var(--line);background:var(--card);border-radius:15px;padding:14px 16px;text-align:left;
+.starter{border:1px solid transparent;background:var(--soft);border-radius:15px;padding:14px 16px;text-align:left;
   font-size:13.5px;line-height:1.45;color:var(--ink3);cursor:pointer;transition:.15s}
 .starter:hover{border-color:rgba(10,63,214,.4);background:rgba(10,63,214,.03);color:var(--blue)}
 
@@ -450,11 +459,11 @@ button.tag{cursor:pointer}
   background:rgba(10,63,214,.05);border:1px solid rgba(10,63,214,.14)}
 .joinbar span{flex:1;font-size:14px;color:var(--ink3);min-width:180px}
 .joinbar .btn{flex:none}.topics{display:flex;flex-wrap:wrap;gap:6px}
-.topic{border:1px solid var(--line);background:var(--card);color:var(--ink2);border-radius:99px;padding:6px 12px;
+.topic{border:1px solid transparent;background:var(--soft);color:var(--ink2);border-radius:99px;padding:6px 12px;
   font-size:12.5px;font-weight:540;cursor:pointer;transition:.14s}
 .topic:hover{border-color:rgba(10,63,214,.42);color:var(--blue);background:rgba(10,63,214,.04)}
 .mact{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
-.mact button{border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:7px;
+.mact button{border:1px solid transparent;background:var(--soft);color:var(--dim);border-radius:7px;
   padding:2px 8px;font-size:11px;font-weight:560;line-height:1.7;cursor:pointer;transition:.14s;white-space:nowrap}
 .mact button.sym{min-width:24px;padding:2px 0;font-size:13px;text-align:center}
 .mact button:hover{border-color:rgba(10,63,214,.4);color:var(--blue);background:rgba(10,63,214,.05)}.thread{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
@@ -525,8 +534,9 @@ button.tag{cursor:pointer}
   padding:5px 8px;margin-left:-8px;border-radius:8px}
 .linkbtn:hover{background:rgba(10,63,214,.07)}
 .linkbtn:disabled{opacity:.5;cursor:default}
-.ai{border:1px solid rgba(10,63,214,.22);background:rgba(10,63,214,.04);border-radius:14px;padding:14px;
+.ai{border:0;background:rgba(10,63,214,.05);border-radius:14px;padding:14px;
   display:flex;flex-direction:column;gap:11px;animation:fade .25s ease}
+.ai[hidden]{display:none}
 .ai p{font-size:14px;line-height:1.55;white-space:pre-wrap}
 .aiacts{display:flex;gap:8px}
 .ainote{font-size:11.5px;color:var(--muted)}
@@ -548,18 +558,29 @@ button.tag{cursor:pointer}
 
 @media (min-width:901px){
   html,body{height:100%;overflow:hidden}
-  .stage{height:100svh;min-height:0}
-  .panel{height:100%;min-height:0}
-  .pbody{overflow-y:auto;overscroll-behavior:contain}
-  .rail{align-content:center}
+  .stage{height:100svh;min-height:0;gap:0}
+  /* one surface: the rail and the content are two regions of the same app,
+     divided by a single line that the header rule runs into */
+  .rail{align-content:center;padding-right:var(--gutter);border-right:1px solid var(--line)}
+  .panel{height:100%;min-height:0;background:none;border:0;border-radius:0;box-shadow:none;
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  .phead{padding:15px var(--gutter) 15px var(--gutter)}
+  .pbody{overflow-y:auto;overscroll-behavior:contain;
+    padding:clamp(16px,2.4vh,26px) var(--gutter) clamp(20px,3vh,30px)}
   .split{max-height:100%}
   .split>.side{max-height:100%;overflow-y:auto;overscroll-behavior:contain;
     scrollbar-width:none}
   .split>.side::-webkit-scrollbar{display:none}
 }
 @media (max-width:900px){
-  :root{--tile:clamp(58px,16vw,78px)}
-  .stage{grid-template-columns:1fr;padding-top:92px}
+  :root{--tile:clamp(58px,16vw,78px);--mast:96px}
+  .mast{flex-wrap:wrap;height:var(--mast);padding:0 16px;align-content:center;row-gap:0}
+  .mast .mark{height:52px;display:flex;align-items:center}
+  .topbar{height:52px}
+  /* the crawl drops to its own band, the way a news app does */
+  .ticker{order:3;width:100%;height:43px;border-top:1px solid var(--line);gap:10px}
+  .tick{font-size:12.5px}
+  .stage{grid-template-columns:1fr}
   .rail{grid-template-columns:repeat(4,var(--tile));justify-content:center;align-content:start}
   .panel{position:fixed;inset:auto 0 0 0;height:88vh;height:88dvh;z-index:20;border-radius:24px 24px 0 0;
     transform:translateY(101%);transition:transform .38s cubic-bezier(.25,.9,.3,1)}
@@ -660,23 +681,61 @@ html[data-theme="dark"] .panel{box-shadow:0 18px 48px -20px rgba(0,0,0,.7)}
 html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--blue)}
 
 /* ------------------------------------------------------------------ top bar */
-.topbar{position:fixed;z-index:6;top:clamp(20px,3.4vh,38px);right:var(--pad);display:flex;align-items:center;gap:8px}
-.tbtn{height:36px;width:36px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);
-  cursor:pointer;display:grid;place-items:center;position:relative;transition:border-color .15s,color .15s;flex:none;
+.topbar{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}
+.ticker{flex:1;min-width:0;display:flex;align-items:center;gap:clamp(10px,1.2vw,16px);height:100%}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.11em;
+  color:var(--live);flex:none;text-transform:uppercase}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;
+  animation:livepulse 1.9s ease-in-out infinite}
+@keyframes livepulse{
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(229,53,43,.45)}
+  50%{opacity:.5;box-shadow:0 0 0 6px rgba(229,53,43,0)}}
+.ticks{position:relative;flex:1;min-width:0;height:100%;overflow:hidden}
+.tick{position:absolute;inset:0;display:flex;align-items:center;gap:9px;min-width:0;border:0;background:none;
+  font-family:inherit;font-size:13px;color:var(--ink);text-align:left;cursor:pointer;padding:0;
+  opacity:0;transform:translateY(7px);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
+.tick.on{opacity:1;transform:none;pointer-events:auto}
+.tick b{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);flex:none}
+.tick span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.tick:hover span{text-decoration:underline}
+
+/* section heads, kickers and bylines: the news furniture */
+.phead h2{font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.phead h2::after{content:"";display:block;width:30px;height:3px;border-radius:2px;background:var(--blue);
+  margin:6px 0 0}
+.stamp{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+  margin-left:9px;white-space:nowrap}
+.kick{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10.5px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:7px;line-height:1.4}
+.kick .kb{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer;letter-spacing:inherit}
+.kick .kb:hover{text-decoration:underline}
+.kick .sep{color:var(--faint);font-weight:700}
+.kick .place{color:var(--dim);font-weight:700}
+.kick .live{margin-right:1px}
+.byline{display:flex;align-items:center;gap:7px;margin-top:9px;text-decoration:none;color:var(--dim);
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.byline b{font-weight:800;color:var(--ink2)}
+.byline .sep{color:var(--faint)}
+.byline .whoav{width:22px;height:22px;font-size:9.5px}
+.byline:hover b{text-decoration:underline}
+.item.lead p{font-size:clamp(17px,1.5vw,20px);line-height:1.34;font-weight:520;letter-spacing:-.02em}
+.item.lead .pimg{max-height:300px}
+.tbtn{height:36px;width:36px;border-radius:99px;border:0;background:none;color:var(--muted);
+  cursor:pointer;display:grid;place-items:center;position:relative;transition:background .15s,color .15s;flex:none;
   -webkit-tap-highlight-color:transparent}
-.tbtn:hover{border-color:rgba(10,63,214,.42);color:var(--blue)}
+.tbtn:hover{background:var(--soft);color:var(--blue)}
 .tbtn svg{width:17px;height:17px}
 .tbtn .badge{top:-5px;right:-5px}
 .tbtn.wide{width:auto;padding:0 11px 0 12px;gap:8px;display:flex;align-items:center;color:var(--muted);
   font-size:12.5px;font-weight:540}
-.kbd{font-size:10.5px;font-weight:660;border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+.kbd{font-size:10.5px;font-weight:660;background:var(--soft);border-radius:5px;padding:2px 5px;
   color:var(--muted);line-height:1.5}
 
 /* --------------------------------------------------------- command palette */
 .pal{position:fixed;inset:0;z-index:90;background:rgba(8,20,45,.34);backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:flex-start;
   padding:11vh 20px 20px;animation:fade .16s ease}
-.palbox{width:100%;max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:20px;
+.palbox{width:100%;max-width:560px;background:var(--card);border:0;border-radius:20px;
   box-shadow:0 40px 90px -30px rgba(8,26,72,.5);overflow:hidden;display:flex;flex-direction:column;
   max-height:74vh;max-height:74dvh;animation:rise .22s cubic-bezier(.2,.9,.25,1) both}
 .palin{border:0;background:none;padding:16px 20px;font-size:16px;width:100%;border-bottom:1px solid var(--line);
@@ -736,8 +795,7 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   border-radius:6px;padding:2px 7px;background:var(--soft);white-space:nowrap}
 
 @media (max-width:900px){
-  .topbar{gap:6px;top:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));right:14px;z-index:19}
-  body.open .topbar{display:none}
+  .topbar{gap:2px}
   .tbtn.wide span:not(.kbd){display:none}
   .tbtn.wide .kbd{display:none}
   .tbtn.wide{width:36px;padding:0}
@@ -748,14 +806,68 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
   .pimg{max-height:340px}
 }
 
-@media (prefers-reduced-motion:reduce){.rings,.glow,.dot::after{animation:none}}
+
+/* ------------------------------------------------------------- the floor */
+.room{display:flex;flex-direction:column;min-height:0;gap:12px;height:100%}
+.roomtop{display:flex;align-items:center;gap:12px;justify-content:space-between;flex:none;
+  padding-bottom:10px;border-bottom:1px solid var(--line)}
+.here{display:flex;align-items:center;min-width:0}
+.here .whoav{width:24px;height:24px;font-size:10px;margin-right:-7px;box-shadow:0 0 0 2px var(--bg)}
+.herecount{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  margin-left:16px;white-space:nowrap}
+.here .whoav + .herecount{margin-left:18px}
+.roommsgs{flex:1;min-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+  padding:2px 4px 6px 0;scroll-behavior:smooth}
+.rmsg{display:flex;gap:10px;align-items:flex-start;animation:fade .22s ease}
+.rmsg.run{margin-top:-9px}
+.rgutter{width:28px;flex:none}
+.rmsg .whoav.sm{width:28px;height:28px;font-size:11px}
+.rmsg .grow{min-width:0;flex:1}
+.rwho{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-bottom:3px}
+.rwho b{font-size:12.5px;font-weight:800}
+.rname{text-decoration:none;color:inherit}
+.rname:hover b{text-decoration:underline}
+.bottag{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+  background:var(--soft);padding:2px 6px;border-radius:4px}
+.rtime{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.rdel{border:0;background:none;color:var(--faint);font-size:10px;cursor:pointer;padding:0 3px;
+  opacity:0;transition:opacity .14s}
+.rmsg:hover .rdel{opacity:1}
+.rdel:hover{color:var(--live)}
+.rtext{font-size:14px;line-height:1.55;word-wrap:break-word;overflow-wrap:anywhere}
+.rtext p{margin:0 0 7px}
+.rtext p:last-child{margin:0}
+.rtext ul,.rtext ol{margin:4px 0 7px;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.rtext strong{font-weight:640}
+.rmsg.isbot .rtext{background:var(--soft);border-radius:0 12px 12px 0;padding:10px 14px;
+  border-left:3px solid var(--blue)}
+.whoav.bot{font-weight:800;letter-spacing:.02em}
+.bots{display:flex;gap:6px;flex-wrap:wrap;flex:none}
+.botchip{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;background:var(--soft);
+  border-radius:99px;padding:4px 13px 4px 4px;font-family:inherit;font-size:12px;font-weight:600;
+  color:var(--ink2);cursor:pointer;transition:.14s}
+.botchip:hover{border-color:rgba(10,63,214,.35);color:var(--blue)}
+.botchip .whoav{width:22px;height:22px;font-size:10px}
+@media (max-width:900px){
+  .room{height:auto}
+  .roommsgs{min-height:200px;max-height:52vh}
+  .botchip{font-size:11.5px;padding:3px 11px 3px 3px}
+  .botchip .whoav{width:20px;height:20px;font-size:9.5px}
+}
+
+@media (prefers-reduced-motion:reduce){.rings,.glow,.dot::after{animation:none}
+  .live i{animation:none}.tick{transition:none}}
 </style>
 </head>
 <body>
 
 <div class="field" aria-hidden="true"><div class="rings"></div><div class="glow"></div><div class="vignette"></div></div>
+<header class="mast">
 <a class="mark" href="/"><span class="dot"></span><span class="word">democrat<span class="tld">.ai</span></span></a>
-<div class="mode" id="mode" hidden></div>
+<div class="ticker" id="ticker">
+  <span class="live"><i></i>Live</span>
+  <div class="ticks" id="ticks"></div>
+</div>
 <div class="topbar" id="topbar">
   <button class="tbtn wide" id="tSearch" aria-label="Search" title="Search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
@@ -764,6 +876,8 @@ html[data-theme="dark"] .spin{border-color:var(--soft);border-top-color:var(--bl
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></button>
   <button class="tbtn" id="tTheme" aria-label="Dark mode" title="Dark mode"></button>
 </div>
+</header>
+<div class="mode" id="mode" hidden></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <clipPath id="sq" clipPathUnits="userSpaceOnUse"><path d="M 77.040 0.000 C 92.077 0.000 99.596 0.000 105.340 2.926 A 26.850 26.850 0 0 1 117.074 14.660 C 120.000 20.404 120.000 27.923 120.000 42.960 L 120.000 77.040 C 120.000 92.077 120.000 99.596 117.074 105.340 A 26.850 26.850 0 0 1 105.340 117.074 C 99.596 120.000 92.077 120.000 77.040 120.000 L 42.960 120.000 C 27.923 120.000 20.404 120.000 14.660 117.074 A 26.850 26.850 0 0 1 2.926 105.340 C 0.000 99.596 0.000 92.077 0.000 77.040 L 0.000 42.960 C 0.000 27.923 0.000 20.404 2.926 14.660 A 26.850 26.850 0 0 1 14.660 2.926 C 20.404 0.000 27.923 0.000 42.960 0.000 Z"/></clipPath>
@@ -894,12 +1008,12 @@ function crop(file,size,cb){
 
 /* --------------------------------------------------------------- Anthropic */
 let AI_OK = true;                       // flips false the first time the endpoint is missing
-async function ai(task, input){
+async function ai(task, input, extra){
   if(!AI_OK) return null;
   try{
     const r = await fetch('/api/ai', {
       method:'POST', headers:{'content-type':'application/json'},
-      body: JSON.stringify({task, input})
+      body: JSON.stringify(Object.assign({task, input}, extra || {}))
     });
     if(r.status===404 || r.status===501){ AI_OK=false; toast('AI is not switched on yet'); return null; }
     const d = await r.json().catch(()=>({}));
@@ -988,7 +1102,7 @@ let V  = null;            // profile being viewed
 let D  = blank();         // that profile's content
 let RO = false;           // viewing someone else
 let current = 'profile';
-const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null, saved:null};
+const G  = {posts:null, polls:null, events:null, issues:null, ends:null, people:null, saved:null, room:null};
 let DMS = [], DMUNREAD = 0, OPENPOST = null;   /* conversations, unread count, expanded post */   // everyone's content
 const SC = {feed:'all', polls:'all', townhall:'all', issues:'mine', endorsed:'all'};
 const CAL = {month:new Date().toISOString().slice(0,7), pick:null};
@@ -1972,7 +2086,8 @@ async function dmSheet(who){
 
 /* --------------------------------------------------------------------- feed */
 S.feed = {
-  sub(){ return RO ? `Posts by @${V.handle}` : 'What people are saying' },
+  sub(){ return RO ? `Posts by @${V.handle}`
+    : `${(ONLINE?'<span class="live"><i></i>Live</span> ':'')}What people are saying` },
   acts(){
     const tb = GUEST() ? []
       : [['all','Everyone'],['follow','Following'],['saved','Saved'],['mine','Yours']];
@@ -2002,14 +2117,16 @@ S.feed = {
 `}
       ${TAG ? `<button class="filterchip" id="tagOff">#${esc(TAG)} &#10005;</button>` : ''}
       ${note?`<p class="meta">${note}</p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map(p=>{
+      ${loading ? '<div class="spin"></div>' : list.length ? `<div class="list">${list.map((p,i)=>{
         const cs = p.comments || [];
         const open = OPENPOST === p.id;
+        const lead = i===0 && !TAG && SC.feed!=='mine' && SC.feed!=='saved';
         return `
-        <article class="item" data-id="${p.id}"><div class="grow">
-          ${(!mine || SC.feed==='saved') && p.profiles ? who(p.profiles) : ''}
+        <article class="item${lead?' lead':''}" data-id="${p.id}"><div class="grow">
+          <div class="kick">${kicker(p, lead)}</div>
           <p>${rich(p.text)}</p>
           ${p.image_url ? `<img class="pimg" src="${esc(p.image_url)}" alt="" loading="lazy">` : ''}
+          ${byline(p)}
           <div class="rowacts">
             ${act(p.liked?'liked':'like', p.likes||'', p.liked)}
             <button class="iconbtn${open?' on':''}" data-act="talk">${ico.talk}${cs.length?`<span>${cs.length}</span>`:''}</button>
@@ -2018,7 +2135,6 @@ S.feed = {
             ${(ONLINE && !GUEST()) ? `<button class="iconbtn${MYSAVES.has(p.id)?' on':''}" data-act="save"
               title="${MYSAVES.has(p.id)?'Saved':'Save'}" aria-label="Save">${MYSAVES.has(p.id)?ico.saved:ico.save}</button>` : ''}
             ${((!ONLINE && !RO) || (ME && p.author===ME.id && !RO)) ? act('del') : ''}
-            <span class="iconbtn" style="pointer-events:none">${ago(p.created_at)}</span>
           </div>
           <div class="ai" id="an-${p.id}" hidden></div>
           ${open ? `<div class="thread">
@@ -2580,17 +2696,159 @@ S.endorsed = {
   }
 };
 
-/* ---------------------------------------------------------------- town hall */
-S.townhall = {
-  sub(){ return RO ? `Events from @${V.handle}` : 'Show up in person' },
-  acts(){ return tabs('townhall',[['all','Everyone'],['mine','Yours']]) },
-  view(){
-    const mine = RO || !ONLINE || SC.townhall==='mine';
-    let {list, note, loading} = scoped('townhall', D.events, G.events);
-    const today = new Date().toISOString().slice(0,10);
-    const days = new Set(list.map(e=>e.date));
-    if(CAL.pick) list = list.filter(e=>e.date===CAL.pick);
+/* ---------------------------------------------------------------- town hall
+   The floor: one room everyone is in, live. Five voices from the desk can be
+   pulled in by name — they read the room and the database before they speak. */
+const BOTS = {
+  desk:      {name:'The Desk',      letter:'D', color:'#0A3FD6', tag:'Anchor',
+              blurb:'What just happened on the network'},
+  organizer: {name:'The Organizer', letter:'O', color:'#16A34A', tag:'Field',
+              blurb:'Turns talk into a plan for this week'},
+  analyst:   {name:'The Analyst',   letter:'A', color:'#7C3AED', tag:'Numbers',
+              blurb:'What the numbers actually say'},
+  historian: {name:'The Historian', letter:'H', color:'#B45309', tag:'Context',
+              blurb:'Where we have seen this before'},
+  skeptic:   {name:'The Skeptic',   letter:'S', color:'#0E7490', tag:'Pressure',
+              blurb:'Tests our arguments before they do'}
+};
+const BOTKEYS = Object.keys(BOTS);
+let ROOMBUSY = null, ROOMCH = null, HERE = [];
 
+async function loadRoom(){
+  if(!ONLINE){ G.room = []; return }
+  try{
+    const { data, error } = await sb.from('room_messages')
+      .select('*, profiles!room_messages_author_fkey(handle,name,photo_url,location)')
+      .order('created_at', {ascending:false}).limit(120);
+    if(error) throw error;
+    G.room = (data || []).slice().reverse();
+  }catch(e){ G.room = []; LOADFAIL.room = (e && e.message) || 'could not load' }
+}
+
+/* who is on the floor right now — best effort, the room works without it */
+function joinFloor(){
+  if(!ONLINE || ROOMCH || !sb.channel) return;
+  try{
+    const key = (ME && ME.id) || 'guest';
+    ROOMCH = sb.channel('floor', {config:{presence:{key}}});
+    if(ROOMCH.on) ROOMCH.on('presence', {event:'sync'}, ()=>{
+      try{
+        const st = ROOMCH.presenceState ? ROOMCH.presenceState() : {};
+        HERE = Object.values(st).map(v => (v && v[0]) || {}).filter(x => x.handle);
+        if(current === 'townhall') paintHere();
+      }catch(e){}
+    });
+    ROOMCH.subscribe(async status => {
+      if(status === 'SUBSCRIBED' && ME && ROOMCH.track)
+        try{ await ROOMCH.track({handle:ME.handle, name:ME.name, photo_url:ME.photo_url}) }catch(e){}
+    });
+  }catch(e){ ROOMCH = null }
+}
+function paintHere(){
+  const el = $('here'); if(!el) return;
+  const n = HERE.length;
+  el.innerHTML = n
+    ? `${HERE.slice(0,6).map(p=>`<span class="whoav sm" title="@${esc(p.handle||'')}">${
+        p.photo_url ? `<img src="${p.photo_url}" alt="">` : esc(initials(p))}</span>`).join('')}
+       <span class="herecount">${n} here now</span>`
+    : `<span class="herecount">The floor is open</span>`;
+}
+
+const botOf = m => m.bot && BOTS[m.bot] ? BOTS[m.bot] : null;
+function roomHTML(){
+  const msgs = G.room || [];
+  if(!msgs.length && !ROOMBUSY)
+    return `<div class="empty"><b>Nobody has spoken yet</b>Say something, or ask the desk what is happening.</div>`;
+  let last = '';
+  const rows = msgs.map(m=>{
+    const b = botOf(m);
+    const mine = !b && ME && m.author === ME.id;
+    const nm = b ? b.name : (m.profiles && (m.profiles.name || '@' + m.profiles.handle)) || 'Someone';
+    const run = last === (b ? 'bot:'+m.bot : 'me:'+m.author);   /* same speaker again */
+    last = b ? 'bot:'+m.bot : 'me:'+m.author;
+    const av = b
+      ? `<span class="whoav sm bot" style="background:${b.color}">${b.letter}</span>`
+      : `<span class="whoav sm">${m.profiles && m.profiles.photo_url
+          ? `<img src="${m.profiles.photo_url}" alt="">` : esc(initials(m.profiles || {}))}</span>`;
+    return `<div class="rmsg${b?' isbot':''}${mine?' mine':''}${run?' run':''}" data-rid="${m.id}">
+      ${run ? '<span class="rgutter"></span>' : av}
+      <div class="grow">
+        ${run ? '' : `<div class="rwho">
+          ${b ? `<b style="color:${b.color}">${esc(nm)}</b><span class="bottag">${esc(b.tag)}</span>`
+              : `${m.profiles && m.profiles.handle
+                   ? `<a class="rname" href="/${esc(m.profiles.handle)}"><b>${esc(nm)}</b></a>`
+                   : `<b>${esc(nm)}</b>`}`}
+          <span class="rtime">${ago(m.created_at)}</span>
+          ${(ME && m.author === ME.id) ? `<button class="rdel" data-rdel="${m.id}" aria-label="Delete">&#10005;</button>` : ''}
+        </div>`}
+        <div class="rtext"${b?` style="border-color:${b.color}"`:''}>${b ? md(m.text) : rich(m.text)}</div>
+      </div></div>`;
+  }).join('');
+  const busy = ROOMBUSY && BOTS[ROOMBUSY]
+    ? `<div class="rmsg isbot"><span class="whoav sm bot" style="background:${BOTS[ROOMBUSY].color}">${
+        BOTS[ROOMBUSY].letter}</span><div class="grow">
+        <div class="rwho"><b style="color:${BOTS[ROOMBUSY].color}">${esc(BOTS[ROOMBUSY].name)}</b>
+          <span class="rtime">is writing</span></div>
+        <div class="typing"><i></i><i></i><i></i></div></div></div>` : '';
+  return rows + busy;
+}
+function paintRoom(){
+  if(!ONLINE) return;                       /* local mode has no shared room to paint */
+  const box = $('roomMsgs'); if(!box) return;
+  const stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 60;
+  box.innerHTML = roomHTML();
+  box.querySelectorAll('[data-rdel]').forEach(b=>b.onclick = async ()=>{
+    const { error } = await sb.from('room_messages').delete().eq('id', b.dataset.rdel);
+    if(error) return toast(friendly(error));
+    await loadRoom(); paintRoom();
+  });
+  if(stick) box.scrollTop = box.scrollHeight;
+}
+
+async function sayRoom(){
+  const t = $('roomText'); if(!t) return;
+  const text = t.value.trim(); if(!text) return;
+  if(!await needAuth()) return;
+  t.value = ''; t.style.height = 'auto';
+  const send = $('roomSend'); if(send) send.disabled = true;
+  const { error } = await sb.from('room_messages').insert({author:ME.id, text:text.slice(0,2000)});
+  if(error) return toast(/does not exist|schema cache/i.test(error.message)
+    ? 'Run the latest update.sql to open the floor' : friendly(error));
+  await loadRoom(); paintRoom();
+  const hit = text.match(/@(desk|organizer|analyst|historian|skeptic)\b/i);
+  if(hit) summon(hit[1].toLowerCase(), text);
+}
+
+/* pull a voice from the desk into the room */
+async function summon(key, ask){
+  const b = BOTS[key]; if(!b) return;
+  if(!await needAuth()) return;
+  if(ROOMBUSY) return toast(BOTS[ROOMBUSY].name + ' is still writing');
+  ROOMBUSY = key; paintRoom();
+  const transcript = (G.room || []).slice(-18).map(m=>{
+    const who_ = botOf(m) ? botOf(m).name
+      : (m.profiles && (m.profiles.name || '@' + m.profiles.handle)) || 'Someone';
+    return `${who_}: ${m.text}`;
+  }).join('\n');
+  let text = null;
+  try{ text = await ai('room', transcript || '(the room is quiet)',
+                       {bot:key, ask:ask || '', context:meContext()}) }catch(e){}
+  ROOMBUSY = null;
+  if(!text){ paintRoom(); return toast('The desk is quiet — check the AI key on Vercel') }
+  const { error } = await sb.from('room_messages')
+    .insert({author:ME.id, bot:key, text:String(text).slice(0,2000)});
+  if(error) toast(friendly(error));
+  await loadRoom(); paintRoom();
+}
+
+S.townhall = {
+  sub(){ return RO ? `Events from @${V.handle}`
+    : `${ONLINE?'<span class="live"><i></i>On air</span> ':''}One room, everyone in it` },
+  acts(){ return `${(RO||GUEST()||!ONLINE)?'':`<button class="btn ghost" id="thAsk">Ask the desk</button>`}` },
+  view(){
+    const today = new Date().toISOString().slice(0,10);
+    const evs = ((RO || !ONLINE) ? D.events : (G.events || D.events) || []).filter(e=>e.date >= today);
+    const days = new Set(evs.map(e=>e.date));
     const [cy,cm] = CAL.month.split('-').map(Number);
     const first = new Date(cy,cm-1,1), start = first.getDay(), len = new Date(cy,cm,0).getDate();
     const cells = [];
@@ -2599,33 +2857,36 @@ S.townhall = {
       const iso = `${cy}-${String(cm).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       cells.push(`<button data-day="${iso}" class="${days.has(iso)?'has':''}${CAL.pick===iso?' on':''}">${d}</button>`);
     }
+    const shown = CAL.pick ? evs.filter(e=>e.date===CAL.pick) : evs;
 
-    return `<div class="split"><div class="main">
-      ${GUEST() ? joinBar('Sign in to add an event or RSVP.') : ''}
-      ${(RO||GUEST())?'':`<div class="frow"><input class="inp" id="tTitle" placeholder="Event">
-        <input class="inp" id="tDate" type="date" value="${CAL.pick||''}"></div>
-      <div class="frow"><input class="inp" id="tPlace" placeholder="Where">
-        <button class="linkbtn" id="tInvite" hidden>Write the invite</button>
-        <button class="btn" id="tAdd">Add</button></div>
-      <div class="ai" id="tAi" hidden></div>`}
-      ${note?`<p class="meta">${note}</p>`:''}
-      ${CAL.pick?`<p class="meta">Showing ${dfmt(CAL.pick)} · <button class="linkbtn" id="calClear">clear</button></p>`:''}
-      ${loading ? '<div class="spin"></div>' : list.length?`<div class="list">${list.map(e=>`
-        <div class="item" data-id="${e.id}">
-          <div class="datechip" style="padding-top:2px">
-            <i>${new Date(e.date+'T00:00').toLocaleDateString(undefined,{month:'short'}).toUpperCase()}</i>
-            <b>${+e.date.split('-')[2]}</b></div>
-          <div class="grow">
-            ${!mine && e.profiles ? who(e.profiles) : ''}
-            <h3>${esc(e.title)}</h3>
-            <small>${dfmt(e.date)}${e.place?' · '+esc(e.place):''}${e.going?' · '+e.going+' going':''}${e.date<today?' · past':''}</small>
-            <div class="rowacts">${act('share','Share')}${(mine&&!RO)?act('del'):''}</div>
-          </div>
-          ${(ONLINE && !GUEST())?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}
-        </div>`).join('')}</div>`
-        :`<div class="empty"><b>Nothing coming up</b>${mine?'Add something people can show up to.':'No events posted yet.'}</div>`}
+    return `<div class="split"><div class="main room">
+      ${GUEST() ? joinBar('Sign in to take the floor.') : ''}
+      <div class="roomtop">
+        <div class="here" id="here"><span class="herecount">The floor is open</span></div>
+        <span class="meta">${(G.room||[]).length} message${(G.room||[]).length===1?'':'s'}</span>
+      </div>
+      <div class="roommsgs" id="roomMsgs">${ONLINE ? roomHTML()
+        : `<div class="empty"><b>The floor opens with the backend</b>Add your Supabase keys and everyone lands in the same room.</div>`}</div>
+      ${(RO||GUEST()||!ONLINE)?'':`
+      <div class="bots">${BOTKEYS.map(k=>`<button class="botchip" data-bot="${k}" title="${esc(BOTS[k].blurb)}">
+          <span class="whoav sm bot" style="background:${BOTS[k].color}">${BOTS[k].letter}</span>
+          ${esc(BOTS[k].name)}</button>`).join('')}</div>
+      <div class="chatbar">
+        <textarea id="roomText" rows="1" maxlength="2000" placeholder="Say something to the room. @desk to bring in the anchor"></textarea>
+        <button class="sendbtn" id="roomSend" aria-label="Send" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+        </button>
+      </div>`}
     </div>
     <aside class="side">
+      ${(RO||GUEST())?'':`<div class="card"><h5>Put something on the calendar</h5>
+        <input class="inp" id="tTitle" placeholder="Event">
+        <input class="inp" id="tDate" type="date" value="${CAL.pick||''}">
+        <input class="inp" id="tPlace" placeholder="Where">
+        <div class="frow"><button class="linkbtn" id="tInvite" hidden>Write the invite</button>
+          <button class="btn" id="tAdd" style="margin-left:auto">Add</button></div>
+        <div class="ai" id="tAi" hidden></div>
+      </div>`}
       <div class="card">
         <div class="calhead">
           <button class="idnav" id="calPrev">&#8249;</button>
@@ -2636,17 +2897,45 @@ S.townhall = {
           ${['S','M','T','W','T','F','S'].map(d=>`<span>${d}</span>`).join('')}
           ${cells.join('')}
         </div>
+        ${CAL.pick?`<button class="linkbtn" id="calClear" style="align-self:flex-start">Clear ${dfmt(CAL.pick)}</button>`:''}
       </div>
-      ${(D.events||[]).filter(e=>e.rsvped).length?`<div class="card"><h5>You are going to</h5>
-        ${D.events.filter(e=>e.rsvped).slice(0,4).map(e=>`<div class="row"><span>${esc(e.title)}</span><b>${dfmt(e.date).split(',')[1]||''}</b></div>`).join('')}
-      </div>`:''}
+      <div class="card"><h5>Coming up</h5>
+        ${shown.length ? shown.slice(0,6).map(e=>`
+          <div class="next" data-id="${e.id}">
+            <div class="datechip">
+              <i>${new Date(e.date+'T00:00').toLocaleDateString(undefined,{month:'short'}).toUpperCase()}</i>
+              <b>${+e.date.split('-')[2]}</b></div>
+            <div class="grow"><b>${esc(e.title)}</b>
+              <small>${e.place?esc(e.place)+' · ':''}${e.going?e.going+' going':'be the first'}</small>
+              <div class="rowacts">${act('share','Share')}${(ME && e.author===ME.id && !RO)?act('del'):''}</div>
+            </div>
+            ${(ONLINE && !GUEST())?`<button class="tag ${e.rsvped?'b':''}" data-rsvp="${e.id}">${e.rsvped?'Going':'RSVP'}</button>`:''}
+          </div>`).join('')
+        : `<p class="hint" style="text-align:left">Nothing on the calendar yet.</p>`}
+      </div>
     </aside></div>`;
   },
   init(){
-    wireTabs();
-    const mine = RO || !ONLINE || SC.townhall==='mine';
-    let {list} = scoped('townhall', D.events, G.events);
-    if(CAL.pick) list = list.filter(e=>e.date===CAL.pick);
+    joinFloor(); paintHere();
+    if(ONLINE && G.room === null)
+      loadRoom().then(()=>{ if(current==='townhall'){ paintRoom();
+        const t = $('here'); if(t) paintHere(); } });
+    const box = $('roomMsgs'); if(box) box.scrollTop = box.scrollHeight;
+    paintRoom();
+
+    const t = $('roomText'), send = $('roomSend');
+    if(t){
+      mentionable(t);
+      const grow = ()=>{ t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,150)+'px';
+                         send.disabled = !t.value.trim() };
+      t.oninput = grow; grow();
+      send.onclick = sayRoom;
+      t.addEventListener('keydown', e=>{
+        if(e.key==='Enter' && !e.shiftKey && !document.querySelector('.talist')){ e.preventDefault(); sayRoom() }
+      });
+    }
+    document.querySelectorAll('[data-bot]').forEach(b=>b.onclick = ()=>summon(b.dataset.bot, ''));
+    const ask = $('thAsk'); if(ask) ask.onclick = ()=>summon('desk', '');
 
     const shift = n => {
       const [y,m] = CAL.month.split('-').map(Number);
@@ -2662,7 +2951,7 @@ S.townhall = {
     });
     const cc=$('calClear'); if(cc) cc.onclick=()=>{ CAL.pick=null; open_('townhall',true) };
 
-    if(!RO && !GUEST()){
+    if(!RO && !GUEST() && $('tTitle')){
       const T=$('tTitle'), Dt=$('tDate'), P=$('tPlace'), inv=$('tInvite');
       const canInvite = ()=>{ inv.hidden = !(T.value.trim() && Dt.value) };
       [T,Dt,P].forEach(el=>el.addEventListener('input',canInvite)); canInvite();
@@ -2674,19 +2963,22 @@ S.townhall = {
         if(!title||!date) return toast('Add a name and a date');
         if(!await needAuth()) return;
         mutate({ local:db=>db.events.push({id:uid(),title,date,place}),
-          remote:async()=>(await sb.from('events').insert({author:ME.id,title,date,place})).error, clears:['events'] });
+          remote:async()=>(await sb.from('events').insert({author:ME.id,title,date,place})).error,
+          clears:['events'] });
       };
     }
+    const evs = ((RO || !ONLINE) ? D.events : (G.events || D.events) || []);
     document.querySelectorAll('[data-rsvp]').forEach(b=>b.onclick=async ()=>{
       if(!await needAuth()) return;
-      const e=list.find(x=>x.id===b.dataset.rsvp); if(!e) return;
+      const e=evs.find(x=>x.id===b.dataset.rsvp); if(!e) return;
       mutate({ remote:async()=>{ const q = e.rsvped
         ? await sb.from('rsvps').delete().eq('event_id',e.id).eq('user_id',ME.id)
         : await sb.from('rsvps').insert({event_id:e.id,user_id:ME.id});
         return q.error }, clears:['events'] });
     });
-    rows(list,(e,a)=>{
-      if(a==='share') return share(`${e.title} — ${dfmt(e.date)}${e.place?' at '+e.place:''}`, e.profiles && e.profiles.handle);
+    rows(evs,(e,a)=>{
+      if(a==='share') return share(`${e.title} — ${dfmt(e.date)}${e.place?' at '+e.place:''}`,
+                                   e.profiles && e.profiles.handle);
       if(a==='del') return mutate({ local:db=>db.events=db.events.filter(x=>x.id!==e.id),
         remote:async()=>(await sb.from('events').delete().eq('id',e.id)).error, clears:['events'] });
     });
@@ -3039,7 +3331,7 @@ function renderRail(){
   if(railPainted) rail.classList.add('settled');
   railPainted = true;
 }
-function render(){ renderRail(); if(current) open_(current, true); }
+function render(){ renderRail(); paintTicker(); if(current) open_(current, true); }
 
 function open_(id, quiet){
   const a = APPS.find(x=>x.id===id), s = S[id]; if(!a||!s) return;
@@ -3048,13 +3340,15 @@ function open_(id, quiet){
   delete panel.dataset.edit;
   document.querySelectorAll('.app').forEach(el=>el.classList.toggle('on', el.dataset.id===id));
   const sub = typeof s.sub==='function' ? s.sub() : s.sub;
+  const stamp = `<span class="stamp">Updated ${new Date().toLocaleTimeString(undefined,
+    {hour:'numeric', minute:'2-digit'})}</span>`;
   panel.innerHTML = `<header class="phead">
       <span class="hicon">${icon(a)}</span>
-      <div class="grow">${s.head?s.head():`<h2>${a.name}</h2><p>${sub}</p>`}</div>
+      <div class="grow">${s.head?s.head():`<h2>${a.name}</h2><p>${sub}${stamp}</p>`}</div>
       <div class="acts">${s.acts?s.acts():''}<button class="pclose" id="pclose">&#10005;</button></div>
     </header>
     <div class="pbody">${s.view()}</div>`;
-  if(id==='compose') panel.querySelector('.pbody').classList.add('chatbody');
+  if(id==='compose' || id==='townhall') panel.querySelector('.pbody').classList.add('chatbody');
   if(s.init) s.init();
   document.body.classList.add('open');
   panel.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>open_(b.dataset.go));
@@ -3078,12 +3372,16 @@ rail.addEventListener('click', e=>{
 /* ---------------- live: the database tells us when anything changes -------- */
 const TABLE_KIND = {posts:'posts', likes:'posts', comments:'posts', saves:'saved', polls:'polls', poll_options:'polls',
                     poll_votes:'polls', events:'events', rsvps:'events', issues:'issues',
-                    endorsements:'ends', profiles:null, messages:null};
+                    endorsements:'ends', profiles:null, messages:null, room_messages:'room'};
 let liveTimer;
 function goLive(){
   if(!ONLINE || !sb.channel) return;
   sb.channel('everything')
     .on('postgres_changes', {event:'*', schema:'public'}, payload => {
+      if(payload.table === 'room_messages'){          /* the floor updates in place */
+        loadRoom().then(()=>{ if(current === 'townhall') paintRoom(); paintTicker() });
+        return;
+      }
       const kind = TABLE_KIND[payload.table];
       if(kind !== undefined) G[kind] = null;
       clearTimeout(liveTimer);
@@ -3558,6 +3856,87 @@ document.addEventListener('click', e=>{
   if(im){ e.preventDefault(); return lightbox(im.dataset.full || im.src) }
 });
 
+/* ================================================================== the crawl
+   What the newsroom would put on the bottom of the screen: whatever is
+   actually happening on the network, in rotation, each one clickable. */
+let TICKI = 0, TICKT = null;
+function tickerLines(){
+  const out = [];
+  const posts = (G.posts || []).slice();
+  if(posts.length){
+    const p = posts[0];
+    const nm = (p.profiles && (p.profiles.name || '@' + p.profiles.handle)) || 'Someone';
+    out.push({k:'Latest', t:`${nm}: ${trim60(p.text)}`, go:()=>openPost(p.id)});
+    const today = posts.filter(x => Date.now() - new Date(x.created_at).getTime() < 864e5).length;
+    if(today) out.push({k:'Today', t:`${today} new post${today===1?'':'s'} across the network`,
+                        go:()=>{ SC.feed = 'all'; open_('feed') }});
+  }
+  const room = (G.room || []).slice(-1)[0];
+  if(room) out.push({k:'Town Hall', t:`${room.bot ? BOTS[room.bot] ? BOTS[room.bot].name : room.bot
+      : (room.profiles && (room.profiles.name || '@'+room.profiles.handle)) || 'Someone'}: ${trim60(room.text)}`,
+      go:()=>open_('townhall')});
+  const ev = (G.events || [])[0];
+  if(ev) out.push({k:'Coming up', t:`${ev.title} · ${dfmt(ev.date)}${ev.place ? ' · ' + ev.place : ''}`,
+                   go:()=>open_('townhall')});
+  const hot = issueTally('all')[0];
+  if(hot) out.push({k:'Trending', t:`${hot.title} — ${hot.s + hot.o} taking a position`,
+                    go:()=>open_('issues')});
+  const q = (G.polls || [])[0];
+  if(q) out.push({k:'Poll', t:`${q.question} · ${q.total || 0} vote${q.total===1?'':'s'}`, go:()=>open_('polls')});
+  const n = (G.people || []).length;
+  if(n) out.push({k:'Network', t:`${n} ${n===1?'person':'people'} on democrat.ai`, go:()=>open_('endorsed')});
+  if(!out.length) out.push({k:'democrat.ai', t:'A political presence, in one place.',
+                            go:()=>open_('profile')});
+  return out.slice(0, 6);
+}
+function paintTicker(){
+  const box = $('ticks'); if(!box) return;
+  const lines = tickerLines();
+  box.innerHTML = lines.map((l,i)=>
+    `<button class="tick${i===0?' on':''}" data-t="${i}"><b>${esc(l.k)}</b><span>${esc(l.t)}</span></button>`).join('');
+  box.querySelectorAll('[data-t]').forEach(b=>b.onclick = ()=>{
+    const l = lines[+b.dataset.t]; if(l && l.go) l.go();
+  });
+  TICKI = 0;
+  clearInterval(TICKT);
+  const still = (()=>{ try{ return matchMedia('(prefers-reduced-motion:reduce)').matches }catch(e){ return false } })();
+  if(lines.length > 1 && !still) TICKT = setInterval(()=>{
+    const items = box.querySelectorAll('.tick');
+    if(items.length < 2) return;
+    items[TICKI % items.length].classList.remove('on');
+    TICKI = (TICKI + 1) % items.length;
+    items[TICKI].classList.add('on');
+  }, 6500);
+}
+
+/* ------------------------------------------------------- news furniture */
+const newsTime = ts =>{
+  const t = ago(ts);
+  return t === 'now' ? 'Just now' : /^\d/.test(t) ? t + ' ago' : t;
+};
+function kicker(p, lead){
+  const tag = tagsIn(p.text)[0];
+  const place = (p.profiles && p.profiles.location) || (!p.profiles && V && V.location) || '';
+  const fresh = Date.now() - new Date(p.created_at).getTime() < 20 * 60e3;
+  const bits = [];
+  if(fresh)     bits.push(`<span class="live"><i></i>Just in</span>`);
+  else if(lead) bits.push(`<span class="live"><i></i>Latest</span>`);
+  if(tag) bits.push(`<button class="kb" data-tag="${esc(tag)}">${esc(tag)}</button>`);
+  if(!bits.length) bits.push(`<b>Update</b>`);
+  if(place) bits.push(`<span class="place">${esc(place)}</span>`);
+  return bits.join('<span class="sep">&middot;</span>');
+}
+function byline(p){
+  const a = p.profiles;
+  const src = a || (V || {});
+  const name = a ? (a.name || '@' + a.handle) : ((V && (V.name || (V.handle && '@'+V.handle))) || 'You');
+  const av = src.photo_url ? `<img src="${src.photo_url}" alt="">` : esc(initials(src));
+  const inner = `<span class="whoav sm">${av}</span><b>${esc(name)}</b>
+    <span class="sep">&middot;</span><span>${newsTime(p.created_at)}</span>`;
+  return a && a.handle ? `<a class="byline" href="/${esc(a.handle)}">${inner}</a>`
+                       : `<span class="byline">${inner}</span>`;
+}
+
 function wireTopbar(){
   const s = $('tSearch'), b = $('tBell'), t = $('tTheme');
   if(s) s.onclick = ()=>palOpen();
@@ -3565,6 +3944,7 @@ function wireTopbar(){
   if(t) t.onclick = ()=>toggleTheme();
   applyTheme();
   paintBell();
+  paintTicker();
 }
 
 /* --------------------------------------------------------------------- boot */
@@ -3585,8 +3965,9 @@ function wireTopbar(){
   await load();
   goLive();
   if(ONLINE){
-    if(myState()) ['feed','polls','townhall'].forEach(k=>SC[k]='near');   /* People stays on Everyone */
-    await loadGlobal('issues');
+    if(myState()) ['feed','polls'].forEach(k=>SC[k]='near');   /* People stays on Everyone */
+    await Promise.all([loadGlobal('issues'), loadGlobal('events'), loadRoom()]);
+    joinFloor();
   }
   render();
 })();

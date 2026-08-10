@@ -137,3 +137,31 @@ begin
   exception when duplicate_object then null;
   end;
 end $$;
+
+-- 10. the floor: one public room everyone is in, plus the voices from the desk.
+--     A bot message carries the id of whoever called it in, so the same
+--     "you may only write your own rows" rule covers both.
+create table if not exists room_messages (
+  id         uuid primary key default gen_random_uuid(),
+  author     uuid not null references profiles on delete cascade,
+  bot        text,
+  text       text not null check (char_length(text) between 1 and 2000),
+  created_at timestamptz not null default now()
+);
+create index if not exists room_time_idx on room_messages(created_at desc);
+alter table room_messages enable row level security;
+
+drop policy if exists read_all   on room_messages;
+drop policy if exists own_insert on room_messages;
+drop policy if exists own_delete on room_messages;
+create policy read_all   on room_messages for select using      (true);
+create policy own_insert on room_messages for insert with check (auth.uid() = author);
+create policy own_delete on room_messages for delete using      (auth.uid() = author);
+
+do $$
+begin
+  begin
+    execute 'alter publication supabase_realtime add table public.room_messages';
+  exception when duplicate_object then null;
+  end;
+end $$;

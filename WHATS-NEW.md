@@ -1,57 +1,58 @@
 # What's new
 
 **Do this first:** Supabase → SQL Editor → New query → paste all of `update.txt` → Run.
-It adds photos on posts, saved posts, and the timestamps notifications need. Safe to run twice.
-Then upload everything in this folder to GitHub as usual.
+It adds photos, saved posts, the timestamps notifications need, and the town hall room.
+Safe to run twice. Then upload everything in this folder to GitHub.
+
+`preview.html` is a snapshot of the new look — open it to see the feed and the floor, light and dark,
+without deploying anything.
 
 ---
 
-### Search, everywhere — ⌘K
+## It reads like a newsroom now
 
-One box that reaches the whole site: people, posts, positions, events, every screen, and a few
-actions worth a keystroke. Arrow keys move, Enter opens, Escape closes. Type a bare word and the
-first result offers it as a topic. `/` opens it too.
+**A masthead across the top.** The logo, a live crawl, and your tools all sit in one bar with a rule
+under it. The rail divider drops from that rule, so the whole page is one frame instead of parts
+floating on a background.
 
-### Notifications
+**The crawl is real.** It rotates through what has actually happened — the latest post, how many went
+up today, the last thing said on the floor, the next event, the position the most people are taking,
+the newest poll, how many people are here. Every line is clickable and goes to the thing it names.
+On a phone it drops to its own band under the logo.
 
-The bell keeps a count. Likes, replies, new followers, RSVPs to your events, votes in your polls
-and messages, newest first. Tap any one and it takes you to the thing itself. Nothing new is
-stored — it is assembled from rows that already exist, and what you have looked at is remembered
-in your browser.
+**Stories have kickers.** Every post carries an eyebrow line above it: the topic, the place, and a red
+**JUST IN** on anything under twenty minutes old. The top story runs at headline size. Bylines sit
+underneath with a small face and how long ago.
 
-### Photos on posts
+**Section heads** are set in heavy uppercase with a blue rule under them and an *Updated 2:14 PM* stamp,
+the way a section front is dated.
 
-A camera button in the composer. The image is resized in the browser before it leaves, so a
-12-megapixel phone photo doesn't cost anyone a slow feed. Tap any photo to see it full size.
+Red appears in exactly two places — the live dot and **JUST IN** — where it reads as broadcast rather
+than as the other party. Everything else stays blue.
 
-### @mentions and #topics
+## Town hall is now a live floor
 
-Type `@` in the composer and it completes handles for you. In a post, `@someone` links to their
-page and `#atopic` becomes a button — press it and the feed filters to that topic, with a chip
-to clear it.
+One room. Everyone is in it, in real time, and you can see who else is there right now.
 
-### Saved posts
-
-A bookmark on every post, and a **Saved** tab to find them again. Private to you — the database
-enforces it, not just the interface.
-
-### Following
-
-A tab that shows only the people you follow.
-
-### Dark mode
-
-Follows your system by default. The moon button overrules it, and the choice sticks. The whole
-app is themed through variables, so every screen turns over together.
-
-### Keyboard
+**Five voices from the desk** can be pulled into the conversation by name or by tapping their chip:
 
 | | |
 |---|---|
-| ⌘K or / | Search |
-| 1–9, 0 | Jump to a screen |
-| N | Write a post |
-| M | Notifications |
-| D | Light or dark |
-| ? | This list |
-| Esc | Close what's open |
+| **The Desk** | The anchor. What just happened on the network and what it adds up to. |
+| **The Organizer** | Turns talk into the call, the meeting, the door, the deadline. |
+| **The Analyst** | What the numbers say, and what would need looking up. |
+| **The Historian** | The earlier bill, the earlier fight, what it implies now. |
+| **The Skeptic** | Finds the weak joint in our own argument before the other side does. |
+
+They read the last twenty messages before they speak, they can query the site's real database, and
+they answer in three sentences because it's a chat room. They share the same politics as the rest of
+the site — they differ in the job they do, not in what they believe. Type `@desk` in a message and
+the anchor walks in.
+
+Nothing was lost: the calendar, events, invites and RSVPs moved to the right-hand column.
+
+## Everything from the last build
+
+⌘K search across people, posts, positions and events · notifications with an unread count · photos on
+posts · @mentions with autocomplete · #topics that filter the feed · saved posts · a Following tab ·
+dark mode that follows your system · keyboard shortcuts (press `?`).

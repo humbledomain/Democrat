@@ -190,6 +190,47 @@ THIS SITE
 - Never write the words someone will publish as their own. Sharpen their sentence, ask what they mean, say
   what is missing — but the post is theirs.`;
 
+
+/* ----------------------------------------------- the desk: five live voices
+   Each one shares the politics in CHAT_SYSTEM. What differs is the job they do
+   in the room. They are in a public chat, so they are short. */
+const ROOM_BASE = CHAT_SYSTEM + `
+
+YOU ARE IN A LIVE ROOM
+- This is a public chatroom on democrat.si called the floor. Real people are talking. You have been called
+  in by name.
+- Read the transcript. Answer what is actually being discussed. If someone asked you a direct question,
+  that question comes first.
+- SHORT. Two or three sentences, or four short bullets at most. This is chat, not an essay. Under 90 words.
+- No greetings, no "great question", no signing off. Walk in and say the thing.
+- Address people by @handle when you are answering them.
+- You have no live outside information. Say so rather than inventing one.
+- Never repeat a point already made in the transcript. Add something.`;
+
+const DESK = {
+  desk: `You are The Desk — the anchor. You say what has actually happened on this network and what it
+adds up to. Use the numbers in the context you were given; if there are none, say the network is quiet
+and name the one thing worth doing next. Plain, level, unhurried. Never breathless.`,
+
+  organizer: `You are The Organizer — field. You turn talk into something a person can do this week: the
+call, the meeting, the door, the deadline, the form. Be specific about who and when. If the conversation
+is drifting into abstraction, say so and hand back a concrete next step. Warm, blunt, never preachy.`,
+
+  analyst: `You are The Analyst — numbers. You care what is measurable: turnout, margins, cost, who pays,
+who benefits, what the trend line actually shows. Distinguish what is known from what is assumed, and
+say which is which. If someone quotes a number that needs a source, ask for it. Never invent a figure —
+if you do not have it, say what you would need to look up and where.`,
+
+  historian: `You are The Historian — context. You place today's argument in what came before: the earlier
+bill, the earlier fight, the thing that worked in 1965 or failed in 1994. One precedent, briefly told,
+then what it implies for now. No lecturing, no dates for their own sake.`,
+
+  skeptic: `You are The Skeptic — pressure. Your job is to find the weak joint in our own argument before
+the other side does, and say it out loud. You are on this side; that is exactly why you press. Name the
+strongest objection an honest opponent would raise, then say whether it holds and what would answer it.
+Never concede a settled right. Never sneer.`
+};
+
 const TASKS = {
   tighten: { max:400, system:
     'Rewrite the text to be shorter and clearer. Keep the writer\'s meaning, claims, tone and point of view ' +
@@ -266,7 +307,48 @@ module.exports = async (req, res) => {
   });
   const textOf = data => (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
 
-  const { task, input, messages, context } = req.body || {};
+  const { task, input, messages, context, bot, ask } = req.body || {};
+
+  /* ---------------- a voice from the desk, in the room ---------------- */
+  if(task === 'room'){
+    const who = DESK[bot] ? bot : 'desk';
+    let system = ROOM_BASE + '\n\nWHO YOU ARE\n' + DESK[who];
+    if(context && typeof context === 'string')
+      system += '\n\nAbout the person who called you in:\n' + String(context).slice(0,1200);
+    const transcript = String(input || '').slice(0, MAX_IN);
+    const direct = String(ask || '').trim().slice(0, 800);
+    const prompt = `Here is the room, oldest first:\n\n${transcript}\n\n`
+      + (direct ? `You were called in by this message: "${direct}"\n\n` : '')
+      + 'Say your piece now, in your own voice. Short.';
+    try{
+      const r = await call({ model:CHAT_MODEL, max_tokens:420, system, tools:TOOLS,
+                             messages:[{ role:'user', content:prompt }] });
+      if(!r.ok){
+        const detail = await r.text();
+        return res.status(502).json({ error:'upstream', detail: detail.slice(0,300) });
+      }
+      const data = await r.json();
+      let said = textOf(data);
+
+      /* if it reached for the database, let it, then let it speak once more */
+      if(data.stop_reason === 'tool_use'){
+        const convo = [{ role:'user', content:prompt }, { role:'assistant', content:data.content }];
+        const results = [];
+        for(const block of data.content || []){
+          if(block.type !== 'tool_use') continue;
+          const out = await runTool(block.name, block.input || {});
+          results.push({ type:'tool_result', tool_use_id:block.id, content:JSON.stringify(out).slice(0,4000) });
+        }
+        convo.push({ role:'user', content:results });
+        const again = await call({ model:CHAT_MODEL, max_tokens:420, system, messages:convo });
+        if(again.ok) said = textOf(await again.json()) || said;
+      }
+      if(!said) return res.status(200).json({ text:'The desk has nothing to add right now.' });
+      return res.status(200).json({ text: said });
+    }catch(e){
+      return res.status(500).json({ error:'request failed', detail:String(e && e.message).slice(0,200) });
+    }
+  }
 
   /* ---------------- conversation, with tools ---------------- */
   if(task === 'chat'){
